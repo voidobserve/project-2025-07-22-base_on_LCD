@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.7.0   UART0                                                             07/11/2025 11:11:27 PAGE 1   
+C51 COMPILER V9.60.7.0   UART0                                                             07/22/2025 16:02:11 PAGE 1   
 
 
 C51 COMPILER V9.60.7.0, COMPILATION OF MODULE UART0
@@ -62,7 +62,7 @@ line level    source
   45   1          FOUT_S03 |= GPIO_FOUT_UART0_TX;       // 配置P03为UART0_TX
   46   1          FIN_S7 |= GPIO_FIN_SEL_P00;           // 配置P00为UART0_RX
   47   1      #endif
-C51 COMPILER V9.60.7.0   UART0                                                             07/11/2025 11:11:27 PAGE 2   
+C51 COMPILER V9.60.7.0   UART0                                                             07/22/2025 16:02:11 PAGE 2   
 
   48   1      
   49   1          // // 旧版电路板上，P11为发送引脚，P12为接收引脚
@@ -126,7 +126,7 @@ line level    source
  107   2              {
  108   3                  // 1. 如果是新的一帧数据（以格式头0xA5开始），打开定时器，为超时判
              -断做准备
-C51 COMPILER V9.60.7.0   UART0                                                             07/11/2025 11:11:27 PAGE 3   
+C51 COMPILER V9.60.7.0   UART0                                                             07/22/2025 16:02:11 PAGE 3   
 
  109   3                  // 2. 如果正在接收一帧数据，却又收到了一次格式头，舍弃之前收到的�
              -��据，重新接收这一帧
@@ -190,7 +190,7 @@ line level    source
  166   4                      //             blank_index = 0;
  167   4                      //         }
  168   4      
-C51 COMPILER V9.60.7.0   UART0                                                             07/11/2025 11:11:27 PAGE 4   
+C51 COMPILER V9.60.7.0   UART0                                                             07/22/2025 16:02:11 PAGE 4   
 
  169   4                      //         if (0 == recved_flagbuf[blank_index])
  170   4                      //         {
@@ -254,7 +254,7 @@ line level    source
              -出错，1--出错
  226   1      
  227   1      #if 1 // 接收超时处理
-C51 COMPILER V9.60.7.0   UART0                                                             07/11/2025 11:11:27 PAGE 5   
+C51 COMPILER V9.60.7.0   UART0                                                             07/22/2025 16:02:11 PAGE 5   
 
  228   1      
  229   1          if (tmr0_cnt > 10) // 一帧内，超过10ms没有收到数据
@@ -318,7 +318,7 @@ line level    source
  286   4      
  287   4                      recved_flagbuf[i] = 0;
  288   4                      recv_frame_cnt--;
-C51 COMPILER V9.60.7.0   UART0                                                             07/11/2025 11:11:27 PAGE 6   
+C51 COMPILER V9.60.7.0   UART0                                                             07/22/2025 16:02:11 PAGE 6   
 
  289   4                      memset(uart0_recv_buf[i], 0, FRAME_MAX_LEN);
  290   4      
@@ -382,7 +382,7 @@ line level    source
               void uart_clear_single_instruction(u8 index)
               {
                   flagbuf_valid_instruction[index] = 0;            // 清空缓冲区对应的元素，表示该下标�
-C51 COMPILER V9.60.7.0   UART0                                                             07/11/2025 11:11:27 PAGE 7   
+C51 COMPILER V9.60.7.0   UART0                                                             07/22/2025 16:02:11 PAGE 7   
 
              -�指令已经处理
                   uart0_recv_len[index] = 0;                       // 清除缓冲区中指令对应的长度
@@ -446,7 +446,7 @@ line level    source
                               checksum = (uart0_recv_buf[i][0] + uart0_recv_buf[i][1] + uart0_recv_buf[i][2] + uart0_rec
              -v_buf[i][3]) & 0x0F;
                               if (checksum != uart0_recv_buf[i][4])
-C51 COMPILER V9.60.7.0   UART0                                                             07/11/2025 11:11:27 PAGE 8   
+C51 COMPILER V9.60.7.0   UART0                                                             07/22/2025 16:02:11 PAGE 8   
 
                               {
                                   // 如果计算得出的校验和与数据帧中的校验和不一致
@@ -510,7 +510,7 @@ line level    source
                               // printf("recv cnt err\n");
                               __flag_is_crc_or_len_err = 1;
               #endif
-C51 COMPILER V9.60.7.0   UART0                                                             07/11/2025 11:11:27 PAGE 9   
+C51 COMPILER V9.60.7.0   UART0                                                             07/22/2025 16:02:11 PAGE 9   
 
                               // recved_flagbuf[i] = 0;
                               // recv_frame_cnt--;

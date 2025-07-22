@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.7.0   MILEAGE                                                           07/11/2025 11:11:29 PAGE 1   
+C51 COMPILER V9.60.7.0   MILEAGE                                                           07/22/2025 16:02:12 PAGE 1   
 
 
 C51 COMPILER V9.60.7.0, COMPILATION OF MODULE MILEAGE
@@ -55,14 +55,14 @@ line level    source
   40   2      
   41   2              // 限制大计里程在 1000,000km(1,000,000,000m)以内
   42   2              // if (fun_info.save_info.total_mileage < (u32)1000000000)
-  43   2              // if (fun_info.save_info.total_mileage < (u32)(0xFFFFFFFF)) 
-  44   2              if (fun_info.save_info.total_mileage < (u32)(999999 * 1000))  // 99 9999 KM
+  43   2              // if (fun_info.save_info.total_mileage < (u32)(0xFFFFFFFF))
+  44   2              if (fun_info.save_info.total_mileage < (u32)(999999 * 1000)) // 99 9999 KM
   45   2              {
   46   3                  fun_info.save_info.total_mileage++; // +1m
   47   3              }
   48   2      
   49   2              // // 限制小计里程在 1,000,000,000 mm(1000km)以内
-C51 COMPILER V9.60.7.0   MILEAGE                                                           07/11/2025 11:11:29 PAGE 2   
+C51 COMPILER V9.60.7.0   MILEAGE                                                           07/22/2025 16:02:12 PAGE 2   
 
   50   2              // if (fun_info.save_info.subtotal_mileage < (u32)1000000000 - 1001)
   51   2              // {
@@ -76,63 +76,67 @@ line level    source
              -��百米
   58   2              if (fun_info.save_info.subtotal_mileage < (u32)(9999999)) // 9999.9KM， 9999 999 m
   59   2              {
-  60   3                  fun_info.save_info.subtotal_mileage++;   // +1m
-  61   3                  fun_info.save_info.subtotal_mileage_2++; // +1m
-  62   3              }
-  63   2      
-  64   2              distance -= 1000; // 剩下的、未保存的、不满1m的数据留到下一次再保存
-  65   2          }
-  66   1      
-  67   1      #ifdef USE_INTERNATIONAL /* 公制单位 */
-  68   1                               // 如果大计里程有变化且超过了100m(不能满1000m再发送，在显�
+  60   3                  fun_info.save_info.subtotal_mileage++; // +1m
+  61   3              }
+  62   2      
+  63   2              if (fun_info.save_info.subtotal_mileage_2 < (u32)(9999999)) // 9999.9KM， 9999 999 m
+  64   2              {
+  65   3                  fun_info.save_info.subtotal_mileage_2++; // +1m
+  66   3              }
+  67   2      
+  68   2              distance -= 1000; // 剩下的、未保存的、不满1m的数据留到下一次再保存
+  69   2          }
+  70   1      
+  71   1      #ifdef USE_INTERNATIONAL /* 公制单位 */
+  72   1                               // 如果大计里程有变化且超过了100m(不能满1000m再发送，在显�
              -�上，会先更新大计里程，过几百ms才更新小计里程)
-  69   1          if ((fun_info.save_info.total_mileage - old_total_mileage) > 100)
-  70   1      #else /* USE_IMPERIAL // 英制单位 */
+  73   1          if ((fun_info.save_info.total_mileage - old_total_mileage) > 100)
+  74   1      #else /* USE_IMPERIAL // 英制单位 */
                   // 如果大计里程有变化且超过了161m(0.1英里)
                   if ((fun_info.save_info.total_mileage - old_total_mileage) > 161)
               #endif
-  74   1          {
-  75   2              old_total_mileage = fun_info.save_info.total_mileage; // 记录旧的里程
-  76   2      
-  77   2              // printf("total mileage: %lu m\n", fun_info.save_info.total_mileage);
-  78   2      
-  79   2              // 发送数据的操作，可以先置标志位
-  80   2              flag_get_total_mileage = 1;
-  81   2          }
-  82   1      
-  83   1      #ifdef USE_INTERNATIONAL /* 公制单位 */
-  84   1                               // 如果小计里程有变化且超过了100m
-  85   1          if ((fun_info.save_info.subtotal_mileage - old_subtotal_mileage) > 100)
-  86   1      #else /* USE_IMPERIAL // 英制单位 */
+  78   1          {
+  79   2              old_total_mileage = fun_info.save_info.total_mileage; // 记录旧的里程
+  80   2      
+  81   2              // printf("total mileage: %lu m\n", fun_info.save_info.total_mileage);
+  82   2      
+  83   2              // 发送数据的操作，可以先置标志位
+  84   2              flag_get_total_mileage = 1;
+  85   2          }
+  86   1      
+  87   1      #ifdef USE_INTERNATIONAL /* 公制单位 */
+  88   1                               // 如果小计里程有变化且超过了100m
+  89   1          if ((fun_info.save_info.subtotal_mileage - old_subtotal_mileage) > 100)
+  90   1      #else /* USE_IMPERIAL // 英制单位 */
                   // 如果小计里程有变化且超过了161m(0.1英里)
                   if ((fun_info.save_info.subtotal_mileage - old_subtotal_mileage) > 161)
               #endif
-  90   1          {
-  91   2              old_subtotal_mileage = fun_info.save_info.subtotal_mileage; // 记录旧的里程
-  92   2      
-  93   2              // printf("subtotal mileage: %lu m\n", fun_info.save_info.subtotal_mileage);
-  94   2      
-  95   2              // 发送数据的操作，可以先置标志位
-  96   2              flag_get_sub_total_mileage = 1;
-  97   2          }
-  98   1      
-  99   1          if (mileage_update_time_cnt >= MILEAGE_UPDATE_TIME_MS)
- 100   1          {
- 101   2              // 每隔一段时间，发送大小里程，
- 102   2              // 因为最后大计里程在999999km,小计里程在999.9km之后，就不更新了，
- 103   2              // 要在刷新一次，才会发送1000000km和1000.0km的大小里程
- 104   2              mileage_update_time_cnt = 0;
- 105   2              flag_get_total_mileage = 1; //
- 106   2              flag_get_sub_total_mileage = 1;
- 107   2              flag_get_sub_total_mileage_2 = 1;
- 108   2          }
-C51 COMPILER V9.60.7.0   MILEAGE                                                           07/11/2025 11:11:29 PAGE 3   
+  94   1          {
+  95   2              old_subtotal_mileage = fun_info.save_info.subtotal_mileage; // 记录旧的里程
+  96   2      
+  97   2              // printf("subtotal mileage: %lu m\n", fun_info.save_info.subtotal_mileage);
+  98   2      
+  99   2              // 发送数据的操作，可以先置标志位
+ 100   2              flag_get_sub_total_mileage = 1;
+ 101   2          }
+ 102   1      
+ 103   1          if (mileage_update_time_cnt >= MILEAGE_UPDATE_TIME_MS)
+ 104   1          {
+ 105   2              // 每隔一段时间，发送大小里程，
+ 106   2              // 因为最后大计里程在999999km,小计里程在999.9km之后，就不更新了，
+ 107   2              // 要在刷新一次，才会发送1000000km和1000.0km的大小里程
+ 108   2              mileage_update_time_cnt = 0;
+C51 COMPILER V9.60.7.0   MILEAGE                                                           07/22/2025 16:02:12 PAGE 3   
 
- 109   1      }
+ 109   2              flag_get_total_mileage = 1; //
+ 110   2              flag_get_sub_total_mileage = 1;
+ 111   2              flag_get_sub_total_mileage_2 = 1;
+ 112   2          }
+ 113   1      }
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    259    ----
+   CODE SIZE        =    270    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =     18    ----
    PDATA SIZE       =   ----    ----

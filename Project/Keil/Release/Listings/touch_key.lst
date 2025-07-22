@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.7.0   TOUCH_KEY                                                         07/11/2025 11:11:29 PAGE 1   
+C51 COMPILER V9.60.7.0   TOUCH_KEY                                                         07/22/2025 16:02:13 PAGE 1   
 
 
 C51 COMPILER V9.60.7.0, COMPILATION OF MODULE TOUCH_KEY
@@ -62,7 +62,7 @@ line level    source
   45              // // .press_cnt = 0, // 与long_time和hold_time对比, 判断长按事件和HOLD事件
   46              // // .click_cnt = 0,
   47              // .click_delay_time = 20, // 按键抬起后，等待连击的数量，与扫描频率有关
-C51 COMPILER V9.60.7.0   TOUCH_KEY                                                         07/11/2025 11:11:29 PAGE 2   
+C51 COMPILER V9.60.7.0   TOUCH_KEY                                                         07/22/2025 16:02:13 PAGE 2   
 
   48              // // .notify_value = 0,
   49              // .key_type = KEY_TYPE_AD, // 按键类型为ad按键
@@ -126,7 +126,7 @@ line level    source
  106   2              // return NO_KEY;
  107   2          }
  108   1      #endif
-C51 COMPILER V9.60.7.0   TOUCH_KEY                                                         07/11/2025 11:11:29 PAGE 3   
+C51 COMPILER V9.60.7.0   TOUCH_KEY                                                         07/22/2025 16:02:13 PAGE 3   
 
  109   1      
  110   1      #if 0
@@ -190,7 +190,7 @@ line level    source
  166   1      
  167   1          touch_key_event = __touch_key_get_event(touch_key_para.latest_key_val, touch_key_para.latest_key_event
              -);
-C51 COMPILER V9.60.7.0   TOUCH_KEY                                                         07/11/2025 11:11:29 PAGE 4   
+C51 COMPILER V9.60.7.0   TOUCH_KEY                                                         07/22/2025 16:02:13 PAGE 4   
 
  168   1          touch_key_para.latest_key_val = TOUCH_KEY_ID_NONE;
  169   1          touch_key_para.latest_key_event = KEY_EVENT_NONE;
@@ -254,7 +254,7 @@ line level    source
              -_DOUBLE_CLICK_INTERVAL
  227           *
  228           * @param touch_key_id_const
-C51 COMPILER V9.60.7.0   TOUCH_KEY                                                         07/11/2025 11:11:29 PAGE 5   
+C51 COMPILER V9.60.7.0   TOUCH_KEY                                                         07/22/2025 16:02:13 PAGE 5   
 
  229           * @return u8 0--没有双击同一个触摸按键，1--双击了同一个触摸按键
  230           */
@@ -318,7 +318,7 @@ line level    source
  287          //         else if (touch_key_last == touch_key)
  288          //         {
  289          //             // 如果上次检测到的按键与此次的按键相等，说明按键还未松开
-C51 COMPILER V9.60.7.0   TOUCH_KEY                                                         07/11/2025 11:11:29 PAGE 6   
+C51 COMPILER V9.60.7.0   TOUCH_KEY                                                         07/22/2025 16:02:13 PAGE 6   
 
  290          //             touch_time_cnt += (TOUCH_KEY_SCAN_CIRCLE_TIMES);
  291          
@@ -382,7 +382,7 @@ line level    source
  346          //         {
  347          //             // 如果KEY2被触摸
  348          //             flag_is_double_click = __is_double_click(touch_key_last);
-C51 COMPILER V9.60.7.0   TOUCH_KEY                                                         07/11/2025 11:11:29 PAGE 7   
+C51 COMPILER V9.60.7.0   TOUCH_KEY                                                         07/22/2025 16:02:13 PAGE 7   
 
  349          //             if (flag_is_double_click)
  350          //             {
@@ -446,7 +446,7 @@ line level    source
  406          //                 if (touch_time_cnt >= HOLD_PRESS_TIME_THRESHOLD_MS)
  407          //                 {
  408          //                     touch_time_cnt = 0;
-C51 COMPILER V9.60.7.0   TOUCH_KEY                                                         07/11/2025 11:11:29 PAGE 8   
+C51 COMPILER V9.60.7.0   TOUCH_KEY                                                         07/22/2025 16:02:13 PAGE 8   
 
  409          //                     printf("k1 continue press\n");
  410          // #if USE_MY_DEBUG
@@ -510,7 +510,7 @@ line level    source
  466          //                 {
  467          //                     printf("k1 long press loose\n");
  468          // #if USE_MY_DEBUG
-C51 COMPILER V9.60.7.0   TOUCH_KEY                                                         07/11/2025 11:11:29 PAGE 9   
+C51 COMPILER V9.60.7.0   TOUCH_KEY                                                         07/22/2025 16:02:13 PAGE 9   
 
  469          //                     printf("k1 long press loose\n");
  470          // #endif

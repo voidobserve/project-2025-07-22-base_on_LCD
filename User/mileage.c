@@ -40,8 +40,8 @@ void mileage_scan(void)
 
         // 限制大计里程在 1000,000km(1,000,000,000m)以内
         // if (fun_info.save_info.total_mileage < (u32)1000000000)
-        // if (fun_info.save_info.total_mileage < (u32)(0xFFFFFFFF)) 
-        if (fun_info.save_info.total_mileage < (u32)(999999 * 1000))  // 99 9999 KM
+        // if (fun_info.save_info.total_mileage < (u32)(0xFFFFFFFF))
+        if (fun_info.save_info.total_mileage < (u32)(999999 * 1000)) // 99 9999 KM
         {
             fun_info.save_info.total_mileage++; // +1m
         }
@@ -57,7 +57,11 @@ void mileage_scan(void)
         // if (fun_info.save_info.subtotal_mileage < (u32)65535000) // 发送出去最大是 0xFFFF，单位百米
         if (fun_info.save_info.subtotal_mileage < (u32)(9999999)) // 9999.9KM， 9999 999 m
         {
-            fun_info.save_info.subtotal_mileage++;   // +1m
+            fun_info.save_info.subtotal_mileage++; // +1m
+        }
+
+        if (fun_info.save_info.subtotal_mileage_2 < (u32)(9999999)) // 9999.9KM， 9999 999 m
+        {
             fun_info.save_info.subtotal_mileage_2++; // +1m
         }
 

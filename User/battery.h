@@ -8,7 +8,8 @@
 // 电池电量检测配置:
 // 电池电量检测的更新时间(单位：ms，每隔 xx ms更新一次)
 // 注意更新时间不能过长(不超过1min)，否则在求电池电压平均值前，会计数溢出
-#define BATTERY_SCAN_UPDATE_TIME_MS (1000)
+// #define BATTERY_SCAN_UPDATE_TIME_MS (1000)
+#define BATTERY_SCAN_UPDATE_TIME_MS (3000)
 
 // 电池满电时的电压:(例， 电池4.2V满电， MAX_VOLTAGE_OF_BATTERY == 42)
 // 目前外部使用1/10分压（使用12V的电池，有可能到15V）

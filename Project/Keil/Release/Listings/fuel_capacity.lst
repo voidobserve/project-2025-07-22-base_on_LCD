@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.7.0   FUEL_CAPACITY                                                     07/11/2025 11:11:29 PAGE 1   
+C51 COMPILER V9.60.7.0   FUEL_CAPACITY                                                     07/22/2025 16:02:13 PAGE 1   
 
 
 C51 COMPILER V9.60.7.0, COMPILATION OF MODULE FUEL_CAPACITY
@@ -62,7 +62,7 @@ line level    source
                       }
                       else if (fuel_adc_val < (FUEL_70_PERCENT_ADC_VAL - (FUEL_70_PERCENT_ADC_VAL - FUEL_80_PERCENT_ADC_
              -VAL) / 3))
-C51 COMPILER V9.60.7.0   FUEL_CAPACITY                                                     07/11/2025 11:11:29 PAGE 2   
+C51 COMPILER V9.60.7.0   FUEL_CAPACITY                                                     07/22/2025 16:02:13 PAGE 2   
 
                       {
                           fuel_percent = 70;
@@ -126,7 +126,7 @@ line level    source
              -VAL) / 3) &&
                                fuel_adc_val > FUEL_20_PERCENT_ADC_VAL - (FUEL_20_PERCENT_ADC_VAL - FUEL_30_PERCENT_ADC_V
              -AL) / 3)
-C51 COMPILER V9.60.7.0   FUEL_CAPACITY                                                     07/11/2025 11:11:29 PAGE 3   
+C51 COMPILER V9.60.7.0   FUEL_CAPACITY                                                     07/22/2025 16:02:13 PAGE 3   
 
                       {
                           // 20%油量
@@ -190,7 +190,7 @@ line level    source
                           fuel_percent = 90;
                       }
                       else if (fuel_adc_val < (FUEL_MAX_ADC_VAL + ((FUEL_90_PERCENT_ADC_VAL - FUEL_MAX_ADC_VAL) / 3)))
-C51 COMPILER V9.60.7.0   FUEL_CAPACITY                                                     07/11/2025 11:11:29 PAGE 4   
+C51 COMPILER V9.60.7.0   FUEL_CAPACITY                                                     07/22/2025 16:02:13 PAGE 4   
 
                       {
                           // 100%油量
@@ -254,7 +254,7 @@ line level    source
                   // 如果超出了 最大油量的ad值和最小油量的ad值之间的范围 ，说明没有接油量
              -检测
                   if (fuel_adc_val >= (4095 - 500) ||
-C51 COMPILER V9.60.7.0   FUEL_CAPACITY                                                     07/11/2025 11:11:29 PAGE 5   
+C51 COMPILER V9.60.7.0   FUEL_CAPACITY                                                     07/22/2025 16:02:13 PAGE 5   
 
                       fuel_adc_val <= (0 + 500))
                   {
@@ -318,7 +318,7 @@ line level    source
  264   3                  ret = ((u32)fuel_adc_val - FUEL_LEVEL_1_ADC_VAL) * 18 / ((u32)FUEL_LEVEL_0_ADC_VAL - FUEL_LEVE
              -L_1_ADC_VAL);
  265   3                  ret = 18 - ret;
-C51 COMPILER V9.60.7.0   FUEL_CAPACITY                                                     07/11/2025 11:11:29 PAGE 6   
+C51 COMPILER V9.60.7.0   FUEL_CAPACITY                                                     07/22/2025 16:02:13 PAGE 6   
 
  266   3              }
  267   2              else if (fuel_adc_val <= FUEL_LEVEL_1_ADC_VAL && fuel_adc_val > FUEL_LEVEL_2_ADC_VAL) /* 1格油�
@@ -382,7 +382,7 @@ line level    source
  315   1          // 18以下，不含18，显示1格
  316   1          // ret = 18; // 18及以上，显示2格
  317   1          // ret = 34; // 34及以上，显示3格
-C51 COMPILER V9.60.7.0   FUEL_CAPACITY                                                     07/11/2025 11:11:29 PAGE 7   
+C51 COMPILER V9.60.7.0   FUEL_CAPACITY                                                     07/22/2025 16:02:13 PAGE 7   
 
  318   1          // ret = 51; // 51及以上，显示4格
  319   1          // ret = 68; // 68及以上，显示5格
@@ -446,7 +446,7 @@ line level    source
  377   2              // 如果到了扫描更新时间
  378   2              fuel_capacity_scan_cnt = 0;
  379   2              // fuel_adc_val /= fuel_adc_scan_cnt; // 求出扫描时间内得到的ad平均值
-C51 COMPILER V9.60.7.0   FUEL_CAPACITY                                                     07/11/2025 11:11:29 PAGE 8   
+C51 COMPILER V9.60.7.0   FUEL_CAPACITY                                                     07/22/2025 16:02:13 PAGE 8   
 
  380   2              // fuel_percent = convert_fuel_adc_to_percent(fuel_adc_val);
  381   2      
@@ -462,7 +462,7 @@ line level    source
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    738    ----
+   CODE SIZE        =    753    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =     46      10
    PDATA SIZE       =   ----    ----

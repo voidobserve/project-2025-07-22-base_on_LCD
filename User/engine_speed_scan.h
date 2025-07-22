@@ -8,7 +8,11 @@
 // 检测发动机转速所需的配置：
 #define ENGINE_SPEED_SCAN_PIN P02 // 检测发动机转速的引脚
 // 检测到 多少个脉冲 表示 发动机转过一圈
-#define ENGINE_SPEED_SCAN_PULSE_PER_TURN (16)
+// #define ENGINE_SPEED_SCAN_PULSE_PER_TURN (60)
+
+// 检测到一个脉冲表示发动机转过多少圈
+#define ENGINE_SPEED_SCAN_A_PULSE_PER_TURNS (1)
+
 // // 累计检测多久的发动机转速： (单位：ms)(不能大于1min,不能大于变量类型对应的最大值)
 // #define ENGINE_SPEED_SCAN_TIME_MS (100)
 // // 重复检测多少次发动机转速，才更新：

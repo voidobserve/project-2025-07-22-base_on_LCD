@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.7.0   MAIN                                                              07/11/2025 11:11:28 PAGE 1   
+C51 COMPILER V9.60.7.0   MAIN                                                              07/22/2025 16:02:11 PAGE 1   
 
 
 C51 COMPILER V9.60.7.0, COMPILATION OF MODULE MAIN
@@ -62,7 +62,7 @@ line level    source
               //                 if (fun_info.save_info.time_hour < 23) // 最大加到23h，测试通过
               //                 {
               //                     fun_info.save_info.time_hour++;
-C51 COMPILER V9.60.7.0   MAIN                                                              07/11/2025 11:11:28 PAGE 2   
+C51 COMPILER V9.60.7.0   MAIN                                                              07/22/2025 16:02:11 PAGE 2   
 
               //                 }
               //                 else
@@ -126,7 +126,7 @@ line level    source
               //                 fun_info.brake = 0;
               //             }
               //             else
-C51 COMPILER V9.60.7.0   MAIN                                                              07/11/2025 11:11:28 PAGE 3   
+C51 COMPILER V9.60.7.0   MAIN                                                              07/22/2025 16:02:11 PAGE 3   
 
               //             {
               //                 fun_info.brake = 1;
@@ -190,7 +190,7 @@ line level    source
               //             }
               //             else
               //             {
-C51 COMPILER V9.60.7.0   MAIN                                                              07/11/2025 11:11:28 PAGE 4   
+C51 COMPILER V9.60.7.0   MAIN                                                              07/22/2025 16:02:11 PAGE 4   
 
               //                 fun_info.speed = 0;
               //             }
@@ -254,7 +254,7 @@ line level    source
               //             }
               //             else
               //             {
-C51 COMPILER V9.60.7.0   MAIN                                                              07/11/2025 11:11:28 PAGE 5   
+C51 COMPILER V9.60.7.0   MAIN                                                              07/22/2025 16:02:11 PAGE 5   
 
               //                 fun_info.save_info.total_mileage = 0xFFFF0000;
               //             }
@@ -318,7 +318,7 @@ line level    source
  299          {
  300   1      
  301   1      #if USE_MY_DEBUG
-C51 COMPILER V9.60.7.0   MAIN                                                              07/11/2025 11:11:28 PAGE 6   
+C51 COMPILER V9.60.7.0   MAIN                                                              07/22/2025 16:02:11 PAGE 6   
 
               
                   uart1_config();
@@ -382,7 +382,7 @@ line level    source
  358   1          // P2_MD0 &= ~GPIO_P20_MODE_SEL(0x3); // 清空对应的配置
  359   1          // P2_MD0 |= GPIO_P20_MODE_SEL(0x1);  // 输出模式
  360   1          // FOUT_S20 |= GPIO_FOUT_AF_FUNC;
-C51 COMPILER V9.60.7.0   MAIN                                                              07/11/2025 11:11:28 PAGE 7   
+C51 COMPILER V9.60.7.0   MAIN                                                              07/22/2025 16:02:11 PAGE 7   
 
  361   1          // P20 = 0;
  362   1      
@@ -446,7 +446,7 @@ line level    source
  418   1          /* 系统主循环 */
  419   1          while (1)
  420   1          {
-C51 COMPILER V9.60.7.0   MAIN                                                              07/11/2025 11:11:28 PAGE 8   
+C51 COMPILER V9.60.7.0   MAIN                                                              07/22/2025 16:02:11 PAGE 8   
 
  421   2              // printf("main circle\n");
  422   2      
@@ -510,7 +510,7 @@ line level    source
  478   2              //     }
  479   2              // }
  480   2      
-C51 COMPILER V9.60.7.0   MAIN                                                              07/11/2025 11:11:28 PAGE 9   
+C51 COMPILER V9.60.7.0   MAIN                                                              07/22/2025 16:02:11 PAGE 9   
 
  481   2              // AIP1302_CE_PIN = 1;
  482   2              // delay_ms(500);

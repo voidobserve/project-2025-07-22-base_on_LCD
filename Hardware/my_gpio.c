@@ -154,8 +154,7 @@ void p22_input_config(void)
 {
     // 配置为输入模式
     P2_MD0 &= ~(GPIO_P22_MODE_SEL(0x3));
-    // 配置为上拉
-    P2_PU |= (GPIO_P22_PULL_UP(0x1));
+    P2_PU |= (GPIO_P22_PULL_UP(0x1)); // 上拉
 }
 
 // p23配置成输入上拉模式

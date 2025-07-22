@@ -1,6 +1,5 @@
 #include "engine_speed_scan.h"
 
-
 #if 0
 // 发动机每转一圈，能检测到的脉冲个数
 #ifndef ENGINE_SPEED_SCAN_PULSE_PER_TURN
@@ -115,7 +114,7 @@ void engine_speed_scan(void)
 #endif
 
 volatile u32 engine_speed_scan_cnt = 0; // 检测到的脉冲个数，在定时器中断累加
-volatile u32 engine_speed_scan_ms = 0; // 在定时器中断累加
+volatile u32 engine_speed_scan_ms = 0;  // 在定时器中断累加
 
 static volatile u32 cur_engine_speed_scan_cnt = 0;
 static volatile u32 cur_engine_speed_scan_ms = 0;
@@ -154,12 +153,17 @@ void engine_speed_scan(void)
                 1min转过的圈数 == 扫描时间内采集到的脉冲个数 * 1min / 发动机转过一圈对应的脉冲个数 / 扫描时间
                 1min转过的圈数 == 扫描时间内采集到的脉冲个数 * 1min / 扫描时间 / 发动机转过一圈对应的脉冲个数
             */
-            rpm = (u32)cur_engine_speed_scan_cnt * ((u32)CONVER_ONE_MINUTE_TO_MS / ENGINE_SPEED_SCAN_PULSE_PER_TURN) / cur_engine_speed_scan_ms;
+            // rpm = (u32)cur_engine_speed_scan_cnt * ((u32)CONVER_ONE_MINUTE_TO_MS / ENGINE_SPEED_SCAN_PULSE_PER_TURN) / cur_engine_speed_scan_ms;
+
+            /*
+                扫描时间内转过的圈数 == 一个脉冲对应转过的圈数 *　扫描时间内采集到的脉冲个数
+                1min转过的圈数　== 扫描时间内转过的圈数 / 扫描时间 * 1min
+            */
+            rpm = (u32)cur_engine_speed_scan_cnt * ENGINE_SPEED_SCAN_A_PULSE_PER_TURNS * CONVER_ONE_MINUTE_TO_MS / cur_engine_speed_scan_ms;
         }
 
         // printf("cur engine speed pulse cnt:%lu\n",cur_engine_speed_scan_cnt);
 
-        
         cur_engine_speed_scan_cnt = 0;
         cur_engine_speed_scan_ms = 0;
         flag_is_engine_speed_scan_over_time = 0;

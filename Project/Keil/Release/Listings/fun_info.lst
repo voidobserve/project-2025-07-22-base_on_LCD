@@ -1,0 +1,45 @@
+C51 COMPILER V9.60.7.0   FUN_INFO                                                          07/11/2025 11:11:28 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE FUN_INFO
+OBJECT MODULE PLACED IN .\Release\Objects\fun_info.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE ..\..\User\fun_info.c LARGE OPTIMIZE(9,SIZE) BROWSE ORDER INTVECTOR(0X00
+                    -0C) INCDIR(..\..\Libraries\Include;..\..\User;..\..\User\lib;..\..\Hardware) INTERVAL(3) DEBUG OBJECTEXTEND PRINT(.\Rele
+                    -ase\Listings\fun_info.lst) OBJECT(.\Release\Objects\fun_info.obj)
+
+line level    source
+
+   1          #include "fun_info.h"
+   2          #include <string.h> // memset()
+   3          
+   4          volatile fun_info_t fun_info = {0}; // 存放所有功能状态的结构体变量
+   5          
+   6          // 初始化存放所有信息的结构体变量
+   7          void fun_info_init(void)
+   8          {
+   9   1          memset(&fun_info, 0, sizeof(fun_info));
+  10   1          flash_read(0x00, (u8 *)&fun_info.save_info, sizeof(fun_info.save_info));
+  11   1      }
+  12          
+  13          // 保存 存放了所有信息的结构体变量，写入flash中
+  14          void fun_info_save(void)
+  15          {
+  16   1          flash_erase_sector(0x00);
+  17   1          flash_write(0x00, (u8 *)&fun_info.save_info, sizeof(fun_info.save_info));
+  18   1      }
+  19          
+  20          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     50    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =     39    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

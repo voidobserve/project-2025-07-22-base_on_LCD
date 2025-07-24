@@ -295,6 +295,9 @@
 // }
 #endif
 
+// DEBUG
+// volatile bit flag_is_debug_update = 0; // 测试时使用
+
 void user_init(void)
 {
 
@@ -455,6 +458,101 @@ void main(void)
         fuel_capacity_scan(); // 油量检测
 
         battery_scan(); // 电池电量检测
+
+#if 0
+        // DEBUG
+        if (flag_is_debug_update)
+        {
+            flag_is_debug_update = 0;
+
+            // fun_info.fuel++;
+            // if (fun_info.fuel > 100)
+            // {
+            //     fun_info.fuel = 0;
+            // }
+
+            // {
+            //     static u16 cnt = 0;
+            //     if (cnt < 4095 - 100)
+            //     {
+            //         cnt += 100;
+            //         fuel_adc_val = cnt;
+            //     }
+            //     else
+            //     {
+            //         cnt = 0;
+            //         fuel_adc_val = cnt;
+            //     }
+
+            //     // flag_get_fuel = 1;
+            // }
+
+            fun_info.save_info.total_mileage += 1000;
+            flag_get_total_mileage = 1;
+
+            fun_info.save_info.subtotal_mileage += 1000;
+            flag_get_sub_total_mileage = 1;
+
+            fun_info.save_info.subtotal_mileage_2 += 1000;
+            flag_get_sub_total_mileage_2 = 1;
+
+            fun_info.engine_speeed += 100;
+            flag_get_engine_speed = 1;
+
+            {
+                static u8 cnt = 0;
+
+                fun_info.speed = cnt;
+                cnt++;
+                if (cnt >= 255)
+                {
+                    cnt = 0;
+                }
+
+                flag_get_speed = 1;
+            } 
+
+            {
+                static u8 fuel_percent = 0;
+
+                /*
+                    记录上一次采集到的油量挡位
+                    用于控制每隔 40s 更新一次油量的格数，0~6格油量
+                */
+                static u8 fuel_gear = 0;
+
+                if (fuel_capacity_scan_cnt >= 40000)
+                // if (fuel_capacity_scan_cnt >= 4000)
+                {
+                    u8 cur_fuel_gear = 0;
+                    u8 i;
+                    // 如果到了扫描更新时间
+                    fuel_capacity_scan_cnt = 0;
+
+                    fuel_gear++;
+                    if (fuel_gear > 6)
+                    {
+                        fuel_gear = 0;
+                    }
+
+                    for (i = 0; i < 255; i++)
+                    {
+                        extern u8 convert_fuel_percent_to_gear(u8 fuel_percent); 
+                        u8 tmp = convert_fuel_percent_to_gear(i);
+                        if (tmp == fuel_gear)
+                        {
+                            fuel_percent = i; // 得到变化一个挡位后对应的油量百分比
+                            break;
+                        }
+                    }
+
+                } //  if (fuel_capacity_scan_cnt >= FUEL_UPDATE_TIME)
+
+                fun_info.fuel = fuel_percent;
+                flag_get_fuel = 1; // 发送油量百分比数据
+            }
+        }
+#endif
 
         uart0_scan_handle();  // 检查串口接收缓冲区的数据是否符合协议,如果有正确的指令，会存到另一个缓冲区中（接下来让instruction_scan()函数来处理）
         instruction_scan();   // 扫描是否有合法的指令

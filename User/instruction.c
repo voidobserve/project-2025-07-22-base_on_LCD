@@ -414,7 +414,7 @@ void instruction_handle(void)
 
 #if USE_MY_DEBUG
         // printf(" flag_get_fuel \n");
-#endif
+#endif 
 
         send_data(SEND_FUEL, fun_info.fuel);
     }

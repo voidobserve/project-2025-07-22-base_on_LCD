@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.7.0   ENGINE_SPEED_SCAN                                                 07/22/2025 16:02:12 PAGE 1   
+C51 COMPILER V9.60.7.0   ENGINE_SPEED_SCAN                                                 07/24/2025 15:43:42 PAGE 1   
 
 
 C51 COMPILER V9.60.7.0, COMPILATION OF MODULE ENGINE_SPEED_SCAN
@@ -62,7 +62,7 @@ line level    source
                           (1min / 1min转过的圈数) == (扫描时间 / 扫描时间内的转过的圈数)
                           1min转过的圈数 == 1min * 扫描时间内转过的圈数 / 扫描时间
                           1min转过的圈数 == 1min * (扫描时间内采集到的脉冲个数 / 发动机转过一圈
-C51 COMPILER V9.60.7.0   ENGINE_SPEED_SCAN                                                 07/22/2025 16:02:12 PAGE 2   
+C51 COMPILER V9.60.7.0   ENGINE_SPEED_SCAN                                                 07/24/2025 15:43:42 PAGE 2   
 
              -对应的脉冲个数) / 扫描时间
                           转换成单片机能计算的形式：
@@ -126,7 +126,7 @@ line level    source
                           cur_rpm_average = 0;
               
                           flag_get_engine_speed = 1; // 发送发动机转速
-C51 COMPILER V9.60.7.0   ENGINE_SPEED_SCAN                                                 07/22/2025 16:02:12 PAGE 3   
+C51 COMPILER V9.60.7.0   ENGINE_SPEED_SCAN                                                 07/24/2025 15:43:42 PAGE 3   
 
                       }
                   }
@@ -190,7 +190,7 @@ line level    source
  163   3              }
  164   2      
  165   2              // printf("cur engine speed pulse cnt:%lu\n",cur_engine_speed_scan_cnt);
-C51 COMPILER V9.60.7.0   ENGINE_SPEED_SCAN                                                 07/22/2025 16:02:12 PAGE 4   
+C51 COMPILER V9.60.7.0   ENGINE_SPEED_SCAN                                                 07/24/2025 15:43:42 PAGE 4   
 
  166   2      
  167   2              cur_engine_speed_scan_cnt = 0;

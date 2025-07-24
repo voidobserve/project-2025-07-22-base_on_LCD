@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.7.0   MAIN                                                              07/22/2025 16:02:11 PAGE 1   
+C51 COMPILER V9.60.7.0   MAIN                                                              07/24/2025 15:43:41 PAGE 1   
 
 
 C51 COMPILER V9.60.7.0, COMPILATION OF MODULE MAIN
@@ -62,7 +62,7 @@ line level    source
               //                 if (fun_info.save_info.time_hour < 23) // 最大加到23h，测试通过
               //                 {
               //                     fun_info.save_info.time_hour++;
-C51 COMPILER V9.60.7.0   MAIN                                                              07/22/2025 16:02:11 PAGE 2   
+C51 COMPILER V9.60.7.0   MAIN                                                              07/24/2025 15:43:41 PAGE 2   
 
               //                 }
               //                 else
@@ -126,7 +126,7 @@ line level    source
               //                 fun_info.brake = 0;
               //             }
               //             else
-C51 COMPILER V9.60.7.0   MAIN                                                              07/22/2025 16:02:11 PAGE 3   
+C51 COMPILER V9.60.7.0   MAIN                                                              07/24/2025 15:43:41 PAGE 3   
 
               //             {
               //                 fun_info.brake = 1;
@@ -190,7 +190,7 @@ line level    source
               //             }
               //             else
               //             {
-C51 COMPILER V9.60.7.0   MAIN                                                              07/22/2025 16:02:11 PAGE 4   
+C51 COMPILER V9.60.7.0   MAIN                                                              07/24/2025 15:43:41 PAGE 4   
 
               //                 fun_info.speed = 0;
               //             }
@@ -254,7 +254,7 @@ line level    source
               //             }
               //             else
               //             {
-C51 COMPILER V9.60.7.0   MAIN                                                              07/22/2025 16:02:11 PAGE 5   
+C51 COMPILER V9.60.7.0   MAIN                                                              07/24/2025 15:43:41 PAGE 5   
 
               //                 fun_info.save_info.total_mileage = 0xFFFF0000;
               //             }
@@ -314,108 +314,111 @@ line level    source
               // }
               #endif
  297          
- 298          void user_init(void)
- 299          {
- 300   1      
- 301   1      #if USE_MY_DEBUG
-C51 COMPILER V9.60.7.0   MAIN                                                              07/22/2025 16:02:11 PAGE 6   
+ 298          // DEBUG
+ 299          // volatile bit flag_is_debug_update = 0; // 测试时使用
+ 300          
+ 301          void user_init(void)
+C51 COMPILER V9.60.7.0   MAIN                                                              07/24/2025 15:43:41 PAGE 6   
 
+ 302          {
+ 303   1      
+ 304   1      #if USE_MY_DEBUG
               
                   uart1_config();
               
               #endif
- 306   1      
- 307   1          // 控制上电指示灯的引脚：
- 308   1          P2_MD0 &= ~(GPIO_P23_MODE_SEL(0x03)); // 清空寄存器配置
- 309   1          P2_MD0 |= GPIO_P23_MODE_SEL(0x01);    // 输出模式
- 310   1          FOUT_S23 |= GPIO_FOUT_AF_FUNC;
- 311   1      
- 312   1          fun_info_init(); // 初始化用于存放信息的变量
- 313   1      
- 314   1          tmr0_config();           // 串口检测数据超时需要使用到的定时器
- 315   1          uart0_config();          // 发送和接收指令使用到的串口
- 316   1          pin_level_scan_config(); // 刹车、转向灯、挡位的检测引脚配置
- 317   1      
- 318   1          tmr1_config(); // 检测一段时间内的脉冲个数所需的定时器(用于计时)
- 319   1      
- 320   1          speed_scan_config();        // 时速扫描的配置
- 321   1          engine_speed_scan_config(); // 发动机转速扫描的配置
+ 309   1      
+ 310   1          // 控制上电指示灯的引脚：
+ 311   1          P2_MD0 &= ~(GPIO_P23_MODE_SEL(0x03)); // 清空寄存器配置
+ 312   1          P2_MD0 |= GPIO_P23_MODE_SEL(0x01);    // 输出模式
+ 313   1          FOUT_S23 |= GPIO_FOUT_AF_FUNC;
+ 314   1      
+ 315   1          fun_info_init(); // 初始化用于存放信息的变量
+ 316   1      
+ 317   1          tmr0_config();           // 串口检测数据超时需要使用到的定时器
+ 318   1          uart0_config();          // 发送和接收指令使用到的串口
+ 319   1          pin_level_scan_config(); // 刹车、转向灯、挡位的检测引脚配置
+ 320   1      
+ 321   1          tmr1_config(); // 检测一段时间内的脉冲个数所需的定时器(用于计时)
  322   1      
- 323   1          adc_config();
- 324   1      
- 325   1          tk_param_init();  // 触摸按键模块初始化
- 326   1          aip1302_config(); // 初始化时钟ic，函数内部会读取时间信息，并存放到全局变量�
+ 323   1          speed_scan_config();        // 时速扫描的配置
+ 324   1          engine_speed_scan_config(); // 发动机转速扫描的配置
+ 325   1      
+ 326   1          adc_config();
+ 327   1      
+ 328   1          tk_param_init();  // 触摸按键模块初始化
+ 329   1          aip1302_config(); // 初始化时钟ic，函数内部会读取时间信息，并存放到全局变量�
              -��
- 327   1          tmr2_config();    // 扫描脉冲(电平变化)的定时器
- 328   1      
- 329   1          tmr1_enable(); // 打开 检测引脚电平、检测时速、发动机转速、更新里程、定时�
-             -�测油量 使用的定时器
- 330   1          tmr2_enable(); // 打开定时检测脉冲的定时器
+ 330   1          tmr2_config();    // 扫描脉冲(电平变化)的定时器
  331   1      
- 332   1          // delay_ms(10); // 等待系统稳定
- 333   1          // tk_param_init();  // 触摸按键模块初始化
- 334   1          delay_ms(1); // 等待系统稳定
- 335   1          // delay_ms(2000); // 等待系统稳定
- 336   1      }
- 337          
- 338          void main(void)
- 339          {
- 340   1          // 看门狗默认打开, 复位时间2s
- 341   1          system_init();
- 342   1      
- 343   1          // WDT_KEY = WDT_KEY_VAL(0xDD); //  关闭看门狗
- 344   1      
- 345   1          // 关闭HCK和HDA的调试功能
- 346   1          WDT_KEY = 0x55;  // 解除写保护
- 347   1          IO_MAP &= ~0x01; // 清除这个寄存器的值，实现关闭HCK和HDA引脚的调试功能（解除�
+ 332   1          tmr1_enable(); // 打开 检测引脚电平、检测时速、发动机转速、更新里程、定时�
+             -�测油量 使用的定时器
+ 333   1          tmr2_enable(); // 打开定时检测脉冲的定时器
+ 334   1      
+ 335   1          // delay_ms(10); // 等待系统稳定
+ 336   1          // tk_param_init();  // 触摸按键模块初始化
+ 337   1          delay_ms(1); // 等待系统稳定
+ 338   1          // delay_ms(2000); // 等待系统稳定
+ 339   1      }
+ 340          
+ 341          void main(void)
+ 342          {
+ 343   1          // 看门狗默认打开, 复位时间2s
+ 344   1          system_init();
+ 345   1      
+ 346   1          // WDT_KEY = WDT_KEY_VAL(0xDD); //  关闭看门狗
+ 347   1      
+ 348   1          // 关闭HCK和HDA的调试功能
+ 349   1          WDT_KEY = 0x55;  // 解除写保护
+ 350   1          IO_MAP &= ~0x01; // 清除这个寄存器的值，实现关闭HCK和HDA引脚的调试功能（解除�
              -��射）
- 348   1          WDT_KEY = 0xBB;
- 349   1      
- 350   1          /* 用户代码初始化接口 */
- 351   1          user_init();
+ 351   1          WDT_KEY = 0xBB;
  352   1      
- 353   1          // 测试用到的配置：
- 354   1          // P1_MD0 &= (~GPIO_P11_MODE_SEL(0x3));
- 355   1          // P1_MD0 |= GPIO_P11_MODE_SEL(0x1); // 输出模式
- 356   1          // FOUT_S11 |= GPIO_FOUT_AF_FUNC;
- 357   1          // P11 = 0;
- 358   1          // P2_MD0 &= ~GPIO_P20_MODE_SEL(0x3); // 清空对应的配置
- 359   1          // P2_MD0 |= GPIO_P20_MODE_SEL(0x1);  // 输出模式
- 360   1          // FOUT_S20 |= GPIO_FOUT_AF_FUNC;
-C51 COMPILER V9.60.7.0   MAIN                                                              07/22/2025 16:02:11 PAGE 7   
+ 353   1          /* 用户代码初始化接口 */
+ 354   1          user_init();
+ 355   1      
+ 356   1          // 测试用到的配置：
+ 357   1          // P1_MD0 &= (~GPIO_P11_MODE_SEL(0x3));
+ 358   1          // P1_MD0 |= GPIO_P11_MODE_SEL(0x1); // 输出模式
+ 359   1          // FOUT_S11 |= GPIO_FOUT_AF_FUNC;
+ 360   1          // P11 = 0;
+C51 COMPILER V9.60.7.0   MAIN                                                              07/24/2025 15:43:41 PAGE 7   
 
- 361   1          // P20 = 0;
- 362   1      
- 363   1          // printf("sys reset\n");
- 364   1      
- 365   1          // 上电后，需要点亮一下所有的指示灯，再关闭:
- 366   1          P23 = 1;
- 367   1          delay_ms(1000);
- 368   1          P23 = 0;
- 369   1      
- 370   1          // printf("scan_times %bu\n", ad_key_para.scan_times);
- 371   1          // printf("cur_scan_times %bu\n", ad_key_para.cur_scan_times);
- 372   1          // printf("last_key %bu\n", ad_key_para.last_key);
- 373   1          // printf("filter_value %bu\n", ad_key_para.filter_value);
- 374   1          // printf("filter_cnt %bu\n", ad_key_para.filter_cnt);
- 375   1          // printf("filter_time %bu\n", ad_key_para.filter_time);
- 376   1          // printf("long_time %bu\n", ad_key_para.long_time);
- 377   1          // printf("hold_time %bu\n", ad_key_para.hold_time);
- 378   1          // printf("press_cnt %bu\n", ad_key_para.press_cnt);
- 379   1      
- 380   1          // printf("click_cnt %bu\n", ad_key_para.click_cnt);
- 381   1          // printf("click_delay_cnt %bu\n", ad_key_para.click_delay_cnt);
- 382   1          // printf("click_delay_time %bu\n", ad_key_para.click_delay_time);
- 383   1          // printf("notify_value %bu\n", ad_key_para.notify_value);
- 384   1          // printf("key_type %bu\n", ad_key_para.key_type);
- 385   1      
- 386   1          // printf("latest_key_val %bu\n", ad_key_para.latest_key_val);
- 387   1          // printf("latest_key_event %bu\n", ad_key_para.latest_key_event);
+ 361   1          // P2_MD0 &= ~GPIO_P20_MODE_SEL(0x3); // 清空对应的配置
+ 362   1          // P2_MD0 |= GPIO_P20_MODE_SEL(0x1);  // 输出模式
+ 363   1          // FOUT_S20 |= GPIO_FOUT_AF_FUNC;
+ 364   1          // P20 = 0;
+ 365   1      
+ 366   1          // printf("sys reset\n");
+ 367   1      
+ 368   1          // 上电后，需要点亮一下所有的指示灯，再关闭:
+ 369   1          P23 = 1;
+ 370   1          delay_ms(1000);
+ 371   1          P23 = 0;
+ 372   1      
+ 373   1          // printf("scan_times %bu\n", ad_key_para.scan_times);
+ 374   1          // printf("cur_scan_times %bu\n", ad_key_para.cur_scan_times);
+ 375   1          // printf("last_key %bu\n", ad_key_para.last_key);
+ 376   1          // printf("filter_value %bu\n", ad_key_para.filter_value);
+ 377   1          // printf("filter_cnt %bu\n", ad_key_para.filter_cnt);
+ 378   1          // printf("filter_time %bu\n", ad_key_para.filter_time);
+ 379   1          // printf("long_time %bu\n", ad_key_para.long_time);
+ 380   1          // printf("hold_time %bu\n", ad_key_para.hold_time);
+ 381   1          // printf("press_cnt %bu\n", ad_key_para.press_cnt);
+ 382   1      
+ 383   1          // printf("click_cnt %bu\n", ad_key_para.click_cnt);
+ 384   1          // printf("click_delay_cnt %bu\n", ad_key_para.click_delay_cnt);
+ 385   1          // printf("click_delay_time %bu\n", ad_key_para.click_delay_time);
+ 386   1          // printf("notify_value %bu\n", ad_key_para.notify_value);
+ 387   1          // printf("key_type %bu\n", ad_key_para.key_type);
  388   1      
- 389   1          // printf("size %bu\n", (u8)sizeof(struct key_driver_para_t *));
- 390   1          // printf("addr %p\n", (void *)&ad_key_para);
+ 389   1          // printf("latest_key_val %bu\n", ad_key_para.latest_key_val);
+ 390   1          // printf("latest_key_event %bu\n", ad_key_para.latest_key_event);
  391   1      
- 392   1      #if 0  // 测试发送日期和时间
+ 392   1          // printf("size %bu\n", (u8)sizeof(struct key_driver_para_t *));
+ 393   1          // printf("addr %p\n", (void *)&ad_key_para);
+ 394   1      
+ 395   1      #if 0  // 测试发送日期和时间
                   // 当前日期
                   fun_info.aip1302_saveinfo.year = 2024;
                   fun_info.aip1302_saveinfo.month = 12;
@@ -433,24 +436,24 @@ line level    source
                   printf("hour %bu min %bu sec %bu \n", fun_info.aip1302_saveinfo.time_hour, fun_info.aip1302_saveinfo.t
              -ime_min, fun_info.aip1302_saveinfo.time_sec);
               #endif // 测试发送日期和时间
- 408   1      
- 409   1          // printf("sys reset\n");
- 410   1      
- 411   1          // 测试程序：
- 412   1          // fun_info.save_info.total_mileage = (u32)999970 * 1000;
- 413   1          // // fun_info.save_info.subtotal_mileage = (u32)999970 * 100;
- 414   1          // fun_info.save_info.subtotal_mileage = (u32)99997 * 100;
- 415   1          // // fun_info.save_info.subtotal_mileage = (u32)10051 * 100;
- 416   1          // fun_info.save_info.subtotal_mileage_2 = (u32)999970 * 100;
- 417   1      
- 418   1          /* 系统主循环 */
- 419   1          while (1)
- 420   1          {
-C51 COMPILER V9.60.7.0   MAIN                                                              07/22/2025 16:02:11 PAGE 8   
+ 411   1      
+ 412   1          // printf("sys reset\n");
+ 413   1      
+ 414   1          // 测试程序：
+ 415   1          // fun_info.save_info.total_mileage = (u32)999970 * 1000;
+ 416   1          // // fun_info.save_info.subtotal_mileage = (u32)999970 * 100;
+ 417   1          // fun_info.save_info.subtotal_mileage = (u32)99997 * 100;
+ 418   1          // // fun_info.save_info.subtotal_mileage = (u32)10051 * 100;
+ 419   1          // fun_info.save_info.subtotal_mileage_2 = (u32)999970 * 100;
+ 420   1      
+C51 COMPILER V9.60.7.0   MAIN                                                              07/24/2025 15:43:41 PAGE 8   
 
- 421   2              // printf("main circle\n");
- 422   2      
- 423   2      #if USE_MY_DEBUG
+ 421   1          /* 系统主循环 */
+ 422   1          while (1)
+ 423   1          {
+ 424   2              // printf("main circle\n");
+ 425   2      
+ 426   2      #if USE_MY_DEBUG
               
                       // if (flag_is_printf_time)
                       // {
@@ -465,69 +468,166 @@ line level    source
                       // }
               
               #endif
- 438   2      
- 439   2      #if 1
- 440   2              WDT_KEY = WDT_KEY_VAL(0xAA); // 喂狗并清除 wdt_pending
- 441   2              /* 按键扫描函数 */
- 442   2              __tk_scan();                 // 使用了库里面的接口（闭源库）
+ 441   2      
+ 442   2      #if 1
  443   2              WDT_KEY = WDT_KEY_VAL(0xAA); // 喂狗并清除 wdt_pending
- 444   2      
- 445   2              key_driver_scan(&ad_key_para);
- 446   2              ad_key_handle(); // ad按键处理函数
+ 444   2              /* 按键扫描函数 */
+ 445   2              __tk_scan();                 // 使用了库里面的接口（闭源库）
+ 446   2              WDT_KEY = WDT_KEY_VAL(0xAA); // 喂狗并清除 wdt_pending
  447   2      
- 448   2              key_driver_scan(&touch_key_para);
- 449   2              touch_key_handle(); // 触摸按键处理函数
+ 448   2              key_driver_scan(&ad_key_para);
+ 449   2              ad_key_handle(); // ad按键处理函数
  450   2      
- 451   2              speed_scan();   // 检测时速
- 452   2              mileage_scan(); // 检测大计里程和小计里程
+ 451   2              key_driver_scan(&touch_key_para);
+ 452   2              touch_key_handle(); // 触摸按键处理函数
  453   2      
- 454   2              engine_speed_scan();  // 检测发动机转速
- 455   2              fuel_capacity_scan(); // 油量检测
+ 454   2              speed_scan();   // 检测时速
+ 455   2              mileage_scan(); // 检测大计里程和小计里程
  456   2      
- 457   2              battery_scan(); // 电池电量检测
- 458   2      
- 459   2              uart0_scan_handle();  // 检查串口接收缓冲区的数据是否符合协议,如果有正确的
-             -指令，会存到另一个缓冲区中（接下来让instruction_scan()函数来处理）
- 460   2              instruction_scan();   // 扫描是否有合法的指令
- 461   2              instruction_handle(); // 扫描是否有对应的获取/状态更新操作(最占用时间,因为�
-             -��等待串口的数据发送完成)
- 462   2      
- 463   2      #endif //
- 464   2      
- 465   2              // aip1302_test();
- 466   2              // {
- 467   2              //     u8 ret = 0;
- 468   2              //     ret = aip1302_is_running();
- 469   2              //     if (ret)
- 470   2              //     {
- 471   2              //         // 如果时钟芯片aip1302的晶振正在运行
- 472   2              //         printf("aip1302 is running\n");
- 473   2              //     }
- 474   2              //     else
- 475   2              //     {
- 476   2              //         // 如果时钟芯片aip1302的晶振不在运行
- 477   2              //         printf("aip1302 is sleep\n");
- 478   2              //     }
- 479   2              // }
- 480   2      
-C51 COMPILER V9.60.7.0   MAIN                                                              07/22/2025 16:02:11 PAGE 9   
+ 457   2              engine_speed_scan();  // 检测发动机转速
+ 458   2              fuel_capacity_scan(); // 油量检测
+ 459   2      
+ 460   2              battery_scan(); // 电池电量检测
+ 461   2      
+ 462   2      #if 0
+                      // DEBUG
+                      if (flag_is_debug_update)
+                      {
+                          flag_is_debug_update = 0;
+              
+                          // fun_info.fuel++;
+                          // if (fun_info.fuel > 100)
+                          // {
+                          //     fun_info.fuel = 0;
+                          // }
+              
+                          // {
+                          //     static u16 cnt = 0;
+                          //     if (cnt < 4095 - 100)
+                          //     {
+                          //         cnt += 100;
+                          //         fuel_adc_val = cnt;
+                          //     }
+                          //     else
+                          //     {
+C51 COMPILER V9.60.7.0   MAIN                                                              07/24/2025 15:43:41 PAGE 9   
 
- 481   2              // AIP1302_CE_PIN = 1;
- 482   2              // delay_ms(500);
- 483   2              // AIP1302_CE_PIN = 0;
- 484   2              // delay_ms(500);
- 485   2      
- 486   2              heart_beat_handle(); //
- 487   2      
- 488   2              WDT_KEY = WDT_KEY_VAL(0xAA); // 喂狗并清除 wdt_pending
- 489   2          }
- 490   1      }
- 491          
- 492          /**
- 493           * @}
- 494           */
- 495          
- 496          /*************************** (C) COPYRIGHT 2022 HUGE-IC ***** END OF FILE *****/
+                          //         cnt = 0;
+                          //         fuel_adc_val = cnt;
+                          //     }
+              
+                          //     // flag_get_fuel = 1;
+                          // }
+              
+                          fun_info.save_info.total_mileage += 1000;
+                          flag_get_total_mileage = 1;
+              
+                          fun_info.save_info.subtotal_mileage += 1000;
+                          flag_get_sub_total_mileage = 1;
+              
+                          fun_info.save_info.subtotal_mileage_2 += 1000;
+                          flag_get_sub_total_mileage_2 = 1;
+              
+                          fun_info.engine_speeed += 100;
+                          flag_get_engine_speed = 1;
+              
+                          {
+                              static u8 cnt = 0;
+              
+                              fun_info.speed = cnt;
+                              cnt++;
+                              if (cnt >= 255)
+                              {
+                                  cnt = 0;
+                              }
+              
+                              flag_get_speed = 1;
+                          } 
+              
+                          {
+                              static u8 fuel_percent = 0;
+              
+                              /*
+                                  记录上一次采集到的油量挡位
+                                  用于控制每隔 40s 更新一次油量的格数，0~6格油量
+                              */
+                              static u8 fuel_gear = 0;
+              
+                              if (fuel_capacity_scan_cnt >= 40000)
+                              // if (fuel_capacity_scan_cnt >= 4000)
+                              {
+                                  u8 cur_fuel_gear = 0;
+                                  u8 i;
+                                  // 如果到了扫描更新时间
+                                  fuel_capacity_scan_cnt = 0;
+              
+                                  fuel_gear++;
+                                  if (fuel_gear > 6)
+                                  {
+                                      fuel_gear = 0;
+                                  }
+              
+                                  for (i = 0; i < 255; i++)
+                                  {
+                                      extern u8 convert_fuel_percent_to_gear(u8 fuel_percent); 
+                                      u8 tmp = convert_fuel_percent_to_gear(i);
+                                      if (tmp == fuel_gear)
+                                      {
+                                          fuel_percent = i; // 得到变化一个挡位后对应的油量百分比
+C51 COMPILER V9.60.7.0   MAIN                                                              07/24/2025 15:43:41 PAGE 10  
+
+                                          break;
+                                      }
+                                  }
+              
+                              } //  if (fuel_capacity_scan_cnt >= FUEL_UPDATE_TIME)
+              
+                              fun_info.fuel = fuel_percent;
+                              flag_get_fuel = 1; // 发送油量百分比数据
+                          }
+                      }
+              #endif
+ 556   2      
+ 557   2              uart0_scan_handle();  // 检查串口接收缓冲区的数据是否符合协议,如果有正确的
+             -指令，会存到另一个缓冲区中（接下来让instruction_scan()函数来处理）
+ 558   2              instruction_scan();   // 扫描是否有合法的指令
+ 559   2              instruction_handle(); // 扫描是否有对应的获取/状态更新操作(最占用时间,因为�
+             -��等待串口的数据发送完成)
+ 560   2      
+ 561   2      #endif //
+ 562   2      
+ 563   2              // aip1302_test();
+ 564   2              // {
+ 565   2              //     u8 ret = 0;
+ 566   2              //     ret = aip1302_is_running();
+ 567   2              //     if (ret)
+ 568   2              //     {
+ 569   2              //         // 如果时钟芯片aip1302的晶振正在运行
+ 570   2              //         printf("aip1302 is running\n");
+ 571   2              //     }
+ 572   2              //     else
+ 573   2              //     {
+ 574   2              //         // 如果时钟芯片aip1302的晶振不在运行
+ 575   2              //         printf("aip1302 is sleep\n");
+ 576   2              //     }
+ 577   2              // }
+ 578   2      
+ 579   2              // AIP1302_CE_PIN = 1;
+ 580   2              // delay_ms(500);
+ 581   2              // AIP1302_CE_PIN = 0;
+ 582   2              // delay_ms(500);
+ 583   2      
+ 584   2              heart_beat_handle(); //
+ 585   2      
+ 586   2              WDT_KEY = WDT_KEY_VAL(0xAA); // 喂狗并清除 wdt_pending
+ 587   2          }
+ 588   1      }
+ 589          
+ 590          /**
+ 591           * @}
+ 592           */
+ 593          
+ 594          /*************************** (C) COPYRIGHT 2022 HUGE-IC ***** END OF FILE *****/
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
@@ -538,6 +638,8 @@ MODULE INFORMATION:   STATIC OVERLAYABLE
    DATA SIZE        =   ----    ----
    IDATA SIZE       =   ----    ----
    BIT SIZE         =   ----    ----
+C51 COMPILER V9.60.7.0   MAIN                                                              07/24/2025 15:43:41 PAGE 11  
+
 END OF MODULE INFORMATION.
 
 

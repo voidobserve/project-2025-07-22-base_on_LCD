@@ -34,7 +34,7 @@ enum
     FUEL_LEVEL_1_ADC_VAL = (u16)((u32)1650 * 4096 / 2 / 1000),  /* 油量为一格 */
     FUEL_LEVEL_2_ADC_VAL = (u16)((u32)1590 * 4096 / 2 / 1000),  /* 油量为两格 */
     FUEL_LEVEL_3_ADC_VAL = (u16)((u32)1400 * 4096 / 2 / 1000),  /* 油量为三格 */
-    FUEL_LEVEL_4_ADC_VAL = (u16)((u32)1200 * 4096 / 2 / 10000), /* 油量为四格 单片机引脚测得0.9924 V */
+    FUEL_LEVEL_4_ADC_VAL = (u16)((u32)1200 * 4096 / 2 / 1000), /* 油量为四格 单片机引脚测得0.9924 V */
     FUEL_LEVEL_5_ADC_VAL = (u16)((u32)950 * 4096 / 2 / 1000),   /* 油量为五格 单片机引脚测得0.888 V */
     /* 大于五格，油量为6格 */
     FUEL_LEVEL_6_ADC_VAL = (u16)((u32)800 * 4096 / 2 / 1000), /* 假设 单片机引脚测得0.800 V是对应6格100%油量 */
@@ -51,10 +51,33 @@ enum
 // 更新油量的时间，单位：ms
 #define FUEL_UPDATE_TIME ((u16)1000)
 
+// 如果当前油量百分比与上一次油量百分比不在同一个挡位，要更新这个挡位所需的时间，单位：ms
+#define FUEL_UPDATE_LAST_FUEL_PERCENTAGE_TIME ((u16)40000)
+
+
 // 油量检测配置
 // ======================================================
 
 extern u32 fuel_capacity_scan_cnt; // 扫描时间计数，在1ms定时器中断中累加
+
+/*
+    标志位，（如果当前油量百分比与上一次的油量百分比不在同一个油量格数下）
+    是否要更新上一次的油量百分比
+    由定时器置一，软件清零
+*/
+extern volatile bit flag_update_fuel_gear;
+/*
+    标志位，是否让定时器累计累计要更新上一次油量百分比的时间
+    如果当前油量百分比与上一次的油量百分比不在同一个挡位，由软件置一，定时器开始累计时间（flag_timer_scan_update_fuel_gear_cnt）
+*/
+extern volatile bit flag_timer_scan_update_fuel_gear;
+/*
+    定时器扫描计数，累计要更新上一次油量百分比的时间
+    由定时器累加
+*/
+extern volatile u16 timer_scan_update_fuel_gear_cnt;
+
+// extern volatile u16 fuel_adc_val; // DEBUG 测试用
 
 void fuel_capacity_scan(void);
 

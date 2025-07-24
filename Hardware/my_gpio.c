@@ -64,13 +64,13 @@
 /**
  * @brief P03配置为输出模式
  */
-void p03_output_config(void)
-{
-    P0_MD0 &= ~(GPIO_P03_MODE_SEL(0x1)); // 对应的寄存器先清零
-    P0_MD0 |= GPIO_P03_MODE_SEL(0x1);    // 配置为输出模式
+// void p03_output_config(void)
+// {
+//     P0_MD0 &= ~(GPIO_P03_MODE_SEL(0x1)); // 对应的寄存器先清零
+//     P0_MD0 |= GPIO_P03_MODE_SEL(0x1);    // 配置为输出模式
 
-    FOUT_S03 = GPIO_FOUT_AF_FUNC; // 选择AF功能输出
-}
+//     FOUT_S03 = GPIO_FOUT_AF_FUNC; // 选择AF功能输出
+// }
 
 /**
  * @brief P26配置为输出模式
@@ -158,13 +158,13 @@ void p22_input_config(void)
 }
 
 // p23配置成输入上拉模式
-void p23_input_config(void)
-{
-    // 配置为输入模式
-    P2_MD0 &= ~(GPIO_P23_MODE_SEL(0x3));
-    // 配置为上拉
-    P2_PU |= (GPIO_P23_PULL_UP(0x1));
-}
+// void p23_input_config(void)
+// {
+//     // 配置为输入模式
+//     P2_MD0 &= ~(GPIO_P23_MODE_SEL(0x3));
+//     // 配置为上拉
+//     P2_PU |= (GPIO_P23_PULL_UP(0x1));
+// }
 
 // p25配置成输入上拉模式
 void p25_input_config(void)

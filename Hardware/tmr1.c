@@ -268,6 +268,39 @@ void TIMR1_IRQHandler(void) interrupt TMR1_IRQn
             // }
 
 #endif
+
+            if (flag_timer_scan_update_fuel_gear)
+            {
+                if (timer_scan_update_fuel_gear_cnt < 65535)
+                {
+                    timer_scan_update_fuel_gear_cnt++;
+                    if (timer_scan_update_fuel_gear_cnt >= FUEL_UPDATE_LAST_FUEL_PERCENTAGE_TIME)
+                    // if (timer_scan_update_fuel_gear_cnt >= 5000) // DEBUG 测试用
+                    {
+                        timer_scan_update_fuel_gear_cnt = 0;
+                        flag_update_fuel_gear = 1; // 更新油量挡位
+                    }
+                }
+            }
+            else
+            {
+                timer_scan_update_fuel_gear_cnt = 0;
+                flag_update_fuel_gear = 0;
+            }
+
+#if 0 // DEBUG 只在测试时使用
+
+            {
+                static u16 cnt;
+                cnt++;
+                if (cnt >= 1000)
+                {
+                    cnt = 0;
+                    flag_is_debug_update = 1;
+                }
+            }
+
+#endif // // DEBUG 只在测试时使用
         }
     }
 

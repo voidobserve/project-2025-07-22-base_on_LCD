@@ -204,7 +204,7 @@ void uart0_sendbyte(u8 senddata)
         ;
 }
 
-#if 1 // void uart0_send_buff(u8 *buf, u8 len)
+#if 0 // void uart0_send_buff(u8 *buf, u8 len)
 // 通过uart0发送若干数据
 void uart0_send_buff(u8 *buf, u8 len)
 {

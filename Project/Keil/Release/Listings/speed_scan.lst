@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.7.0   SPEED_SCAN                                                        07/22/2025 16:02:12 PAGE 1   
+C51 COMPILER V9.60.7.0   SPEED_SCAN                                                        07/24/2025 15:43:42 PAGE 1   
 
 
 C51 COMPILER V9.60.7.0, COMPILATION OF MODULE SPEED_SCAN
@@ -62,7 +62,7 @@ line level    source
                           xx ms内走过了多少毫米 == 当前扫描时间内检测到的脉冲个数 / 车轮一圈�
              -��应多少个脉冲 * 一圈对应 xx 毫米
                           换成单片机可以计算的形式：
-C51 COMPILER V9.60.7.0   SPEED_SCAN                                                        07/22/2025 16:02:12 PAGE 2   
+C51 COMPILER V9.60.7.0   SPEED_SCAN                                                        07/24/2025 15:43:42 PAGE 2   
 
                           xx ms内走过了多少毫米 == 当前扫描时间内检测到的脉冲个数 * 一圈对应 
              -xx 毫米 / 车轮一圈对应多少个脉冲
@@ -126,7 +126,7 @@ line level    source
               
               #endif
               
-C51 COMPILER V9.60.7.0   SPEED_SCAN                                                        07/22/2025 16:02:12 PAGE 3   
+C51 COMPILER V9.60.7.0   SPEED_SCAN                                                        07/24/2025 15:43:42 PAGE 3   
 
                           // 限制要发送的时速:
                           if (fun_info.speed > 999)
@@ -190,7 +190,7 @@ line level    source
                               时速的计算公式:
                               扫描时间内走过的距离 / 1000 * (1 / 扫描时间对1s的占比) * 3.6
                                   扫描时间内走过的距离 / 1000，转换成 m/扫描时间 的单位
-C51 COMPILER V9.60.7.0   SPEED_SCAN                                                        07/22/2025 16:02:12 PAGE 4   
+C51 COMPILER V9.60.7.0   SPEED_SCAN                                                        07/24/2025 15:43:42 PAGE 4   
 
                                   * (1 / 扫描时间对1s的占比)，转换成以s为单位的速度
                                   * 3.6，因为 1m/s == 3.6km/h，最后转换成 以km/h的单位
@@ -254,7 +254,7 @@ line level    source
  221   2              /*
  222   2                  采集到的脉冲个数 / 一圈对应的脉冲个数 * 车轮一圈对应走过的距离（�
              -��位：mm），
-C51 COMPILER V9.60.7.0   SPEED_SCAN                                                        07/22/2025 16:02:12 PAGE 5   
+C51 COMPILER V9.60.7.0   SPEED_SCAN                                                        07/24/2025 15:43:42 PAGE 5   
 
  223   2                  计算得到 采集的脉冲个数对应走过的距离（单位：mm）
  224   2              */
@@ -318,7 +318,7 @@ MODULE INFORMATION:   STATIC OVERLAYABLE
    CODE SIZE        =    290    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =     16       8
-C51 COMPILER V9.60.7.0   SPEED_SCAN                                                        07/22/2025 16:02:12 PAGE 6   
+C51 COMPILER V9.60.7.0   SPEED_SCAN                                                        07/24/2025 15:43:42 PAGE 6   
 
    PDATA SIZE       =   ----    ----
    DATA SIZE        =   ----    ----

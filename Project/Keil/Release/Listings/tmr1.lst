@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.7.0   TMR1                                                              07/22/2025 16:02:10 PAGE 1   
+C51 COMPILER V9.60.7.0   TMR1                                                              07/24/2025 15:43:40 PAGE 1   
 
 
 C51 COMPILER V9.60.7.0, COMPILATION OF MODULE TMR1
@@ -62,7 +62,7 @@ line level    source
   50   1          // 重新给TMR1配置时钟
   51   1          TMR1_CONL &= ~(TMR_SOURCE_SEL(0x07)); // 清除定时器的时钟源配置寄存器
   52   1          TMR1_CONL |= TMR_SOURCE_SEL(0x06);    // 配置定时器的时钟源，使用系统时钟
-C51 COMPILER V9.60.7.0   TMR1                                                              07/22/2025 16:02:10 PAGE 2   
+C51 COMPILER V9.60.7.0   TMR1                                                              07/24/2025 15:43:40 PAGE 2   
 
   53   1      
   54   1          __EnableIRQ(TMR1_IRQn); // 使能中断
@@ -126,7 +126,7 @@ line level    source
               
                   // if (speed_scan_time_cnt < 65535 - diff_ms_cnt) // 防止计数溢出
                   // {
-C51 COMPILER V9.60.7.0   TMR1                                                              07/22/2025 16:02:10 PAGE 3   
+C51 COMPILER V9.60.7.0   TMR1                                                              07/24/2025 15:43:40 PAGE 3   
 
                   //     // speed_scan_time_cnt++;
                   //     speed_scan_time_cnt += diff_ms_cnt;
@@ -190,7 +190,7 @@ line level    source
  166   1          if (update_time_status == UPDATE_STATUS_HANDLING)
  167   1          {
  168   2              // 如果更新时间进入冷却状态，进行冷却计时
-C51 COMPILER V9.60.7.0   TMR1                                                              07/22/2025 16:02:10 PAGE 4   
+C51 COMPILER V9.60.7.0   TMR1                                                              07/24/2025 15:43:40 PAGE 4   
 
  169   2              // update_time_cooling_cnt++;
  170   2              update_time_cooling_cnt += diff_ms_cnt;
@@ -254,7 +254,7 @@ line level    source
  227   3                  // if (cnt >= TOUCH_KEY_SCAN_CIRCLE_TIMES) // xx ms
  228   3                  // {
  229   3                  //     cnt = 0;
-C51 COMPILER V9.60.7.0   TMR1                                                              07/22/2025 16:02:10 PAGE 5   
+C51 COMPILER V9.60.7.0   TMR1                                                              07/24/2025 15:43:40 PAGE 5   
 
  230   3                  //     // flag_is_touch_key_scan_circle_arrived = 1; // 表示扫描周期到来，执行一�
              -�按键扫描
@@ -298,17 +298,52 @@ line level    source
                           // }
               
               #endif
- 271   3              }
- 272   2          }
- 273   1      
- 274   1          // P20 = 0;// 测试中断持续时间
- 275   1          // 退出中断设置IP，不可删除
- 276   1          __IRQnIPnPop(TMR1_IRQn);
- 277   1      }
+ 271   3      
+ 272   3                  if (flag_timer_scan_update_fuel_gear)
+ 273   3                  {
+ 274   4                      if (timer_scan_update_fuel_gear_cnt < 65535)
+ 275   4                      {
+ 276   5                          timer_scan_update_fuel_gear_cnt++;
+ 277   5                          if (timer_scan_update_fuel_gear_cnt >= FUEL_UPDATE_LAST_FUEL_PERCENTAGE_TIME)
+ 278   5                          // if (timer_scan_update_fuel_gear_cnt >= 5000) // DEBUG 测试用
+ 279   5                          {
+ 280   6                              timer_scan_update_fuel_gear_cnt = 0;
+ 281   6                              flag_update_fuel_gear = 1; // 更新油量挡位
+ 282   6                          }
+ 283   5                      }
+ 284   4                  }
+ 285   3                  else
+ 286   3                  {
+ 287   4                      timer_scan_update_fuel_gear_cnt = 0;
+ 288   4                      flag_update_fuel_gear = 0;
+ 289   4                  }
+ 290   3      
+C51 COMPILER V9.60.7.0   TMR1                                                              07/24/2025 15:43:40 PAGE 6   
+
+ 291   3      #if 0 // DEBUG 只在测试时使用
+              
+                          {
+                              static u16 cnt;
+                              cnt++;
+                              if (cnt >= 1000)
+                              {
+                                  cnt = 0;
+                                  flag_is_debug_update = 1;
+                              }
+                          }
+              
+              #endif // // DEBUG 只在测试时使用
+ 304   3              }
+ 305   2          }
+ 306   1      
+ 307   1          // P20 = 0;// 测试中断持续时间
+ 308   1          // 退出中断设置IP，不可删除
+ 309   1          __IRQnIPnPop(TMR1_IRQn);
+ 310   1      }
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    572    ----
+   CODE SIZE        =    625    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =      8       8
    PDATA SIZE       =   ----    ----

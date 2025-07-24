@@ -9,6 +9,10 @@
 
 #define USE_MY_DEBUG 0
 
+// DEBUG
+// extern volatile bit flag_is_debug_update ; // 测试时使用 
+
+
 #define TOUCH_KEY_ENABLE 1 // 是否使能触摸按键检测功能
 #define AD_KEY_ENABLE 1  // 是否使能ad按键检测功能
 

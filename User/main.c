@@ -451,6 +451,7 @@ void main(void)
         key_driver_scan(&touch_key_para);
         touch_key_handle(); // 触摸按键处理函数
 
+        pin_level_scan();
         speed_scan();   // 检测时速
         mileage_scan(); // 检测大计里程和小计里程
 

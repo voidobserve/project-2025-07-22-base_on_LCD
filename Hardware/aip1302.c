@@ -457,7 +457,7 @@ void aip1302_test(void)
 }
 #endif
 
-#if 1
+#if 0
 // 向aip1302更新所有关于时间的数据
 void aip1302_update_all_data(aip1302_saveinfo_t aip1302_saveinfo)
 {

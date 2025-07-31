@@ -16,6 +16,8 @@
 #define TOUCH_KEY_ENABLE 1 // 是否使能触摸按键检测功能
 #define AD_KEY_ENABLE 1  // 是否使能ad按键检测功能
 
+#define TEMP_OF_WATER_SCAN_ENABLE 0 // 是否使能水温检测
+
 #define KEY_UP_VOL_UP ((u16)209)
 #define KEY_DOWN_VOL_DOWN ((u16)210)
 #define KEY_LEFT_PRE ((u16)207)
@@ -47,7 +49,7 @@
 // ======================================================
 
 // 里程的配置:
-// 大小里程的更新时间(单位:ms,使用的是 ONE_CYCLE_TIME_MS 作为时基,可以不准时):
+// 大小里程的更新时间(单位:ms):
 #define MILEAGE_UPDATE_TIME_MS (5000)
 
 // 主函数完成一次循环所需的时间，单位：ms (0--说明每次调用该函数的时间很短，可以忽略不计)(注意不能大于变量类型的大小)

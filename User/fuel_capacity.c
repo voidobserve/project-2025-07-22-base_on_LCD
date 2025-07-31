@@ -189,11 +189,6 @@ void fuel_capacity_scan(void)
     */
     static u8 fuel_gear = 0;
 
-    // adc_sel_pin(ADC_PIN_FUEL); // 内部至少占用1ms
-    // adc_val = adc_getval();    //
-    // fuel_adc_val = get_filtered_adc(adc_val);
- 
-
     // printf("fuel_adc_val: %u\n", fuel_adc_val);
 
     /*
@@ -206,17 +201,17 @@ void fuel_capacity_scan(void)
             if (fuel_capacity_scan_cnt >= FUEL_UPDATE_TIME_WHEN_POWER_ON)
             {
                 fuel_capacity_scan_cnt = 0;
-                // fuel_adc_val /= fuel_adc_scan_cnt; // 求出扫描时间内得到的ad平均值
-                adc_val = adc_getval(); //
-                samples_init(adc_val);
+                adc_sel_pin(ADC_PIN_FUEL); // 内部至少占用1ms
+                adc_val = adc_getval();    //
+                samples_init(adc_val); // 滑动平均滤波初始化
                 fuel_adc_val = adc_val;
 
                 fuel_percent = convert_fuel_adc_to_percent(fuel_adc_val);
 
-                fuel_gear = convert_fuel_percent_to_gear(fuel_percent); 
+                fuel_gear = convert_fuel_percent_to_gear(fuel_percent);
 
                 // printf("power on, fuel_percent:%bu\n", fuel_percent);
-                fun_info.fuel = fuel_percent; 
+                fun_info.fuel = fuel_percent;
                 fuel_adc_val = 0;
                 flag_get_fuel = 1;
 
@@ -225,11 +220,15 @@ void fuel_capacity_scan(void)
         }
     }
 
+    adc_sel_pin(ADC_PIN_FUEL); // 内部至少占用1ms
+    adc_val = adc_getval();    //
+    fuel_adc_val = get_filtered_adc(adc_val);
+
     if (fuel_capacity_scan_cnt >= FUEL_UPDATE_TIME)
     {
         u8 cur_fuel_gear = 0;
         // 如果到了扫描更新时间
-        fuel_capacity_scan_cnt = 0; 
+        fuel_capacity_scan_cnt = 0;
 
         fuel_percent = convert_fuel_adc_to_percent(fuel_adc_val);
         cur_fuel_gear = convert_fuel_percent_to_gear(fuel_percent);
@@ -241,17 +240,16 @@ void fuel_capacity_scan(void)
         else
         {
             // 如果当前油量挡位与上一次的油量挡位相同
-            flag_timer_scan_update_fuel_gear = 0; 
+            flag_timer_scan_update_fuel_gear = 0;
 
             fun_info.fuel = fuel_percent;
             flag_get_fuel = 1; // 发送油量百分比数据
         }
- 
 
         // 如果更新油量的时间到来，也发送一次油量百分比数据，更新 last_fuel_percent
         if (flag_update_fuel_gear)
         {
-            flag_update_fuel_gear = 0; 
+            flag_update_fuel_gear = 0;
 
 #if 1
             // 每次更新油量百分比，只变化一个挡位；
@@ -292,7 +290,7 @@ void fuel_capacity_scan(void)
         }
 
         // printf("fuel_percent:%bu\n", fuel_percent);
-        // fun_info.fuel = fuel_percent; 
+        // fun_info.fuel = fuel_percent;
         // fuel_adc_val = 0;
         // flag_get_fuel = 1;
     } //  if (fuel_capacity_scan_cnt >= FUEL_UPDATE_TIME)

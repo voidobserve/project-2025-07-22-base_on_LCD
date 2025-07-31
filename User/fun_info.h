@@ -1,7 +1,7 @@
 #ifndef __FUN_INFO_H
 #define __FUN_INFO_H
 
-#include "include.h" // 使用芯片官方提供的头文件
+#include "include.h"   // 使用芯片官方提供的头文件
 #include "my_config.h" // 包含自定义的头文件
 #include "typedef_struct.h"
 
@@ -21,7 +21,7 @@ enum
 enum
 {
     OFF = 0x00,
-    ON = 0x01,    
+    ON = 0x01,
 };
 
 // 定义存储在flash中的数据
@@ -34,18 +34,6 @@ typedef struct
     // （小计里程，范围：0~999.9 KM）
     u32 subtotal_mileage;
     u32 subtotal_mileage_2; // 小计里程2
-
-    // 日期 4byte 年 月 日
-    // u16 year; // 年份
-    // u8 month; // 月份
-    // u8 day;   // 日期
-
-    // u8 weekday; // 存放星期几?
-
-    // // 时间 3byte 时 分 秒，24H制存放
-    // u8 time_hour;
-    // u8 time_min;
-    // u8 time_sec;
 } save_info_t;
 
 // 定义，存储所有功能的状态的结构体
@@ -72,7 +60,7 @@ typedef struct
 
     u8 flag_is_in_water_temp_warning; // 标志位，是否处于水温报警（1--水温报警，0--解除水温报警）
     u8 flag_is_detect_malfunction;    // 标志位，是否检测到了故障
-    u8 flag_is_detect_abs; // 标志位，是否检测到了ABS，0--否，1--检测到了ABS故障
+    u8 flag_is_detect_abs;            // 标志位，是否检测到了ABS，0--否，1--检测到了ABS故障
 
     // 在结构体中使用一位的数据：(调用时，占用的程序空间会比单独用u8类型的还要大)
     // u8 bit0 : 1;

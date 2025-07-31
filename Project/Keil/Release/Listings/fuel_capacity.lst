@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.7.0   FUEL_CAPACITY                                                     07/24/2025 15:43:42 PAGE 1   
+C51 COMPILER V9.60.7.0   FUEL_CAPACITY                                                     07/31/2025 17:40:06 PAGE 1   
 
 
 C51 COMPILER V9.60.7.0, COMPILATION OF MODULE FUEL_CAPACITY
@@ -62,7 +62,7 @@ line level    source
   49          
   50          // 将油量检测对应的ad值转换成百分比值
   51          u8 convert_fuel_adc_to_percent(u16 fuel_adc_val)
-C51 COMPILER V9.60.7.0   FUEL_CAPACITY                                                     07/24/2025 15:43:42 PAGE 2   
+C51 COMPILER V9.60.7.0   FUEL_CAPACITY                                                     07/31/2025 17:40:06 PAGE 2   
 
   52          {
   53   1      
@@ -126,7 +126,7 @@ line level    source
  101   3                  ret = ((u32)fuel_adc_val - FUEL_LEVEL_4_ADC_VAL) * 68 / ((u32)FUEL_LEVEL_3_ADC_VAL - FUEL_LEVE
              -L_4_ADC_VAL);
  102   3                  ret = 68 - ret;
-C51 COMPILER V9.60.7.0   FUEL_CAPACITY                                                     07/24/2025 15:43:42 PAGE 3   
+C51 COMPILER V9.60.7.0   FUEL_CAPACITY                                                     07/31/2025 17:40:06 PAGE 3   
 
  103   3                  if (ret < 51)
  104   3                  {
@@ -190,7 +190,7 @@ line level    source
  158   1          {
  159   2              fuel_gear = 4;
  160   2          }
-C51 COMPILER V9.60.7.0   FUEL_CAPACITY                                                     07/24/2025 15:43:42 PAGE 4   
+C51 COMPILER V9.60.7.0   FUEL_CAPACITY                                                     07/31/2025 17:40:06 PAGE 4   
 
  161   1          else if (fuel_percent >= 68 && fuel_percent <= 83)
  162   1          {
@@ -223,124 +223,122 @@ line level    source
  189   1          */
  190   1          static u8 fuel_gear = 0;
  191   1      
- 192   1          // adc_sel_pin(ADC_PIN_FUEL); // 内部至少占用1ms
- 193   1          // adc_val = adc_getval();    //
- 194   1          // fuel_adc_val = get_filtered_adc(adc_val);
- 195   1       
- 196   1      
- 197   1          // printf("fuel_adc_val: %u\n", fuel_adc_val);
- 198   1      
- 199   1          /*
- 200   1              刚上电直接获取一次，作为油量的状态
- 201   1          */
- 202   1          {
- 203   2              static u8 status = STATUS_JUST_POWER_ON;
- 204   2              if (STATUS_JUST_POWER_ON == status) // 如果是第一次上电
- 205   2              {
- 206   3                  if (fuel_capacity_scan_cnt >= FUEL_UPDATE_TIME_WHEN_POWER_ON)
- 207   3                  {
- 208   4                      fuel_capacity_scan_cnt = 0;
- 209   4                      // fuel_adc_val /= fuel_adc_scan_cnt; // 求出扫描时间内得到的ad平均值
- 210   4                      adc_val = adc_getval(); //
- 211   4                      samples_init(adc_val);
- 212   4                      fuel_adc_val = adc_val;
- 213   4      
- 214   4                      fuel_percent = convert_fuel_adc_to_percent(fuel_adc_val);
- 215   4      
- 216   4                      fuel_gear = convert_fuel_percent_to_gear(fuel_percent); 
+ 192   1          // printf("fuel_adc_val: %u\n", fuel_adc_val);
+ 193   1      
+ 194   1          /*
+ 195   1              刚上电直接获取一次，作为油量的状态
+ 196   1          */
+ 197   1          {
+ 198   2              static u8 status = STATUS_JUST_POWER_ON;
+ 199   2              if (STATUS_JUST_POWER_ON == status) // 如果是第一次上电
+ 200   2              {
+ 201   3                  if (fuel_capacity_scan_cnt >= FUEL_UPDATE_TIME_WHEN_POWER_ON)
+ 202   3                  {
+ 203   4                      fuel_capacity_scan_cnt = 0;
+ 204   4                      adc_sel_pin(ADC_PIN_FUEL); // 内部至少占用1ms
+ 205   4                      adc_val = adc_getval();    //
+ 206   4                      samples_init(adc_val); // 滑动平均滤波初始化
+ 207   4                      fuel_adc_val = adc_val;
+ 208   4      
+ 209   4                      fuel_percent = convert_fuel_adc_to_percent(fuel_adc_val);
+ 210   4      
+ 211   4                      fuel_gear = convert_fuel_percent_to_gear(fuel_percent);
+ 212   4      
+ 213   4                      // printf("power on, fuel_percent:%bu\n", fuel_percent);
+ 214   4                      fun_info.fuel = fuel_percent;
+ 215   4                      fuel_adc_val = 0;
+ 216   4                      flag_get_fuel = 1;
  217   4      
- 218   4                      // printf("power on, fuel_percent:%bu\n", fuel_percent);
- 219   4                      fun_info.fuel = fuel_percent; 
- 220   4                      fuel_adc_val = 0;
- 221   4                      flag_get_fuel = 1;
- 222   4      
-C51 COMPILER V9.60.7.0   FUEL_CAPACITY                                                     07/24/2025 15:43:42 PAGE 5   
+ 218   4                      status = STATUS_IN_SERVICE;
+ 219   4                  }
+ 220   3              }
+ 221   2          }
+ 222   1      
+C51 COMPILER V9.60.7.0   FUEL_CAPACITY                                                     07/31/2025 17:40:06 PAGE 5   
 
- 223   4                      status = STATUS_IN_SERVICE;
- 224   4                  }
- 225   3              }
- 226   2          }
- 227   1      
- 228   1          if (fuel_capacity_scan_cnt >= FUEL_UPDATE_TIME)
- 229   1          {
- 230   2              u8 cur_fuel_gear = 0;
- 231   2              // 如果到了扫描更新时间
- 232   2              fuel_capacity_scan_cnt = 0; 
- 233   2      
- 234   2              fuel_percent = convert_fuel_adc_to_percent(fuel_adc_val);
- 235   2              cur_fuel_gear = convert_fuel_percent_to_gear(fuel_percent);
- 236   2      
- 237   2              if (cur_fuel_gear != fuel_gear)
- 238   2              {
- 239   3                  flag_timer_scan_update_fuel_gear = 1;
- 240   3              }
- 241   2              else
- 242   2              {
- 243   3                  // 如果当前油量挡位与上一次的油量挡位相同
- 244   3                  flag_timer_scan_update_fuel_gear = 0; 
- 245   3      
- 246   3                  fun_info.fuel = fuel_percent;
- 247   3                  flag_get_fuel = 1; // 发送油量百分比数据
- 248   3              }
- 249   2       
- 250   2      
- 251   2              // 如果更新油量的时间到来，也发送一次油量百分比数据，更新 last_fuel_per
+ 223   1          adc_sel_pin(ADC_PIN_FUEL); // 内部至少占用1ms
+ 224   1          adc_val = adc_getval();    //
+ 225   1          fuel_adc_val = get_filtered_adc(adc_val);
+ 226   1      
+ 227   1          if (fuel_capacity_scan_cnt >= FUEL_UPDATE_TIME)
+ 228   1          {
+ 229   2              u8 cur_fuel_gear = 0;
+ 230   2              // 如果到了扫描更新时间
+ 231   2              fuel_capacity_scan_cnt = 0;
+ 232   2      
+ 233   2              fuel_percent = convert_fuel_adc_to_percent(fuel_adc_val);
+ 234   2              cur_fuel_gear = convert_fuel_percent_to_gear(fuel_percent);
+ 235   2      
+ 236   2              if (cur_fuel_gear != fuel_gear)
+ 237   2              {
+ 238   3                  flag_timer_scan_update_fuel_gear = 1;
+ 239   3              }
+ 240   2              else
+ 241   2              {
+ 242   3                  // 如果当前油量挡位与上一次的油量挡位相同
+ 243   3                  flag_timer_scan_update_fuel_gear = 0;
+ 244   3      
+ 245   3                  fun_info.fuel = fuel_percent;
+ 246   3                  flag_get_fuel = 1; // 发送油量百分比数据
+ 247   3              }
+ 248   2      
+ 249   2              // 如果更新油量的时间到来，也发送一次油量百分比数据，更新 last_fuel_per
              -cent
- 252   2              if (flag_update_fuel_gear)
- 253   2              {
- 254   3                  flag_update_fuel_gear = 0; 
- 255   3      
- 256   3      #if 1
- 257   3                  // 每次更新油量百分比，只变化一个挡位；
- 258   3                  // 只有当前油量百分比与上一次记录的油量百分比不同，且更新油量挡�
+ 250   2              if (flag_update_fuel_gear)
+ 251   2              {
+ 252   3                  flag_update_fuel_gear = 0;
+ 253   3      
+ 254   3      #if 1
+ 255   3                  // 每次更新油量百分比，只变化一个挡位；
+ 256   3                  // 只有当前油量百分比与上一次记录的油量百分比不同，且更新油量挡�
              -��的时间到来，才会进入
- 259   3                  if (cur_fuel_gear != fuel_gear)
- 260   3                  {
- 261   4                      u8 i;
- 262   4      
- 263   4                      if (fuel_gear > cur_fuel_gear)
- 264   4                      {
- 265   5                          if (fuel_gear > 0)
- 266   5                          {
- 267   6                              fuel_gear--;
- 268   6                          }
- 269   5                      }
- 270   4                      else
- 271   4                      {
- 272   5                          if (fuel_gear < 6)
- 273   5                          {
- 274   6                              fuel_gear++;
- 275   6                          }
- 276   5                      }
- 277   4      
- 278   4                      for (i = 0; i < 255; i++)
- 279   4                      {
- 280   5                          u8 tmp = convert_fuel_percent_to_gear(i);
- 281   5                          if (tmp == fuel_gear)
- 282   5                          {
-C51 COMPILER V9.60.7.0   FUEL_CAPACITY                                                     07/24/2025 15:43:42 PAGE 6   
+ 257   3                  if (cur_fuel_gear != fuel_gear)
+ 258   3                  {
+ 259   4                      u8 i;
+ 260   4      
+ 261   4                      if (fuel_gear > cur_fuel_gear)
+ 262   4                      {
+ 263   5                          if (fuel_gear > 0)
+ 264   5                          {
+ 265   6                              fuel_gear--;
+ 266   6                          }
+ 267   5                      }
+ 268   4                      else
+ 269   4                      {
+ 270   5                          if (fuel_gear < 6)
+ 271   5                          {
+ 272   6                              fuel_gear++;
+ 273   6                          }
+ 274   5                      }
+ 275   4      
+ 276   4                      for (i = 0; i < 255; i++)
+ 277   4                      {
+ 278   5                          u8 tmp = convert_fuel_percent_to_gear(i);
+ 279   5                          if (tmp == fuel_gear)
+ 280   5                          {
+ 281   6                              fuel_percent = i; // 得到变化一个挡位后对应的油量百分比
+ 282   6                              break;
+C51 COMPILER V9.60.7.0   FUEL_CAPACITY                                                     07/31/2025 17:40:06 PAGE 6   
 
- 283   6                              fuel_percent = i; // 得到变化一个挡位后对应的油量百分比
- 284   6                              break;
- 285   6                          }
- 286   5                      }
- 287   4                  }
- 288   3      #endif
- 289   3      
- 290   3                  fun_info.fuel = fuel_percent;
- 291   3                  flag_get_fuel = 1; // 发送油量百分比数据
- 292   3              }
- 293   2      
- 294   2              // printf("fuel_percent:%bu\n", fuel_percent);
- 295   2              // fun_info.fuel = fuel_percent; 
- 296   2              // fuel_adc_val = 0;
- 297   2              // flag_get_fuel = 1;
- 298   2          } //  if (fuel_capacity_scan_cnt >= FUEL_UPDATE_TIME)
- 299   1      }
+ 283   6                          }
+ 284   5                      }
+ 285   4                  }
+ 286   3      #endif
+ 287   3      
+ 288   3                  fun_info.fuel = fuel_percent;
+ 289   3                  flag_get_fuel = 1; // 发送油量百分比数据
+ 290   3              }
+ 291   2      
+ 292   2              // printf("fuel_percent:%bu\n", fuel_percent);
+ 293   2              // fun_info.fuel = fuel_percent;
+ 294   2              // fuel_adc_val = 0;
+ 295   2              // flag_get_fuel = 1;
+ 296   2          } //  if (fuel_capacity_scan_cnt >= FUEL_UPDATE_TIME)
+ 297   1      }
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    954    ----
+   CODE SIZE        =    977    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =     49      13
    PDATA SIZE       =   ----    ----

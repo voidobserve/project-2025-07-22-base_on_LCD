@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.7.0   INSTRUCTION                                                       07/24/2025 15:43:42 PAGE 1   
+C51 COMPILER V9.60.7.0   INSTRUCTION                                                       07/31/2025 17:40:05 PAGE 1   
 
 
 C51 COMPILER V9.60.7.0, COMPILATION OF MODULE INSTRUCTION
@@ -62,7 +62,7 @@ line level    source
   46          // // 存放接收到的设置水温报警的指令中，对应的操作，默认为无操作
   47          // volatile u8 operation_set_temp_of_water_warning = OPERATION_SET_TEMP_OF_WATER_WARNING_NONE;
   48          
-C51 COMPILER V9.60.7.0   INSTRUCTION                                                       07/24/2025 15:43:42 PAGE 2   
+C51 COMPILER V9.60.7.0   INSTRUCTION                                                       07/31/2025 17:40:05 PAGE 2   
 
   49          // 检查接收是否正确的函数，如果接收正确，
   50          // 根据接收到的数据中的指令，给对应的指令的标志位置一
@@ -126,7 +126,7 @@ line level    source
               
               
                               // case INSTRUCTION_GET_TOUCH_KEY_STATUS: // 获取触摸按键的状态
-C51 COMPILER V9.60.7.0   INSTRUCTION                                                       07/24/2025 15:43:42 PAGE 3   
+C51 COMPILER V9.60.7.0   INSTRUCTION                                                       07/31/2025 17:40:05 PAGE 3   
 
                               //     flag_get_touch_key_status = 1;
                               //     break;
@@ -190,7 +190,7 @@ line level    source
  170   5      
  171   5                      case INSTRUCTION_ALTER_TIME: // 修改时间
  172   5                          flag_alter_time = 1;
-C51 COMPILER V9.60.7.0   INSTRUCTION                                                       07/24/2025 15:43:42 PAGE 4   
+C51 COMPILER V9.60.7.0   INSTRUCTION                                                       07/31/2025 17:40:05 PAGE 4   
 
  173   5      
  174   5                          fun_info.aip1302_saveinfo.year = (u16)uart0_recv_buf[i][3] +
@@ -254,14 +254,14 @@ line level    source
  230   2          }
  231   1      }
  232          
-C51 COMPILER V9.60.7.0   INSTRUCTION                                                       07/24/2025 15:43:42 PAGE 5   
+C51 COMPILER V9.60.7.0   INSTRUCTION                                                       07/31/2025 17:40:05 PAGE 5   
 
  233          void instruction_handle(void)
  234          {
  235   1          if (flag_get_all_status)
  236   1          {
  237   2              // 如果要获取所有功能的状态
- 238   2              u32 temp_val = 0;        // 临时变量(在发送日期和时间使用到)
+ 238   2              // u32 temp_val = 0;        // 临时变量(在发送日期和时间使用到)
  239   2              flag_get_all_status = 0; // 清除标志位
  240   2      
  241   2      #if USE_MY_DEBUG
@@ -318,7 +318,7 @@ line level    source
  284   3                  // 15. 发送当前时间
  285   3                  //     temp_val = ((u32)fun_info.aip1302_saveinfo.time_hour << 16) |
  286   3                  //                ((u32)fun_info.aip1302_saveinfo.time_min << 8) |
-C51 COMPILER V9.60.7.0   INSTRUCTION                                                       07/24/2025 15:43:42 PAGE 6   
+C51 COMPILER V9.60.7.0   INSTRUCTION                                                       07/31/2025 17:40:05 PAGE 6   
 
  287   3                  //                fun_info.aip1302_saveinfo.time_sec;
  288   3                  //     send_data(SEND_TIME, temp_val);
@@ -382,7 +382,7 @@ line level    source
               #endif // 发送刹车的状态
  345   1      
  346   1          if (flag_get_left_turn) // 如果要获取左转向灯的状态
-C51 COMPILER V9.60.7.0   INSTRUCTION                                                       07/24/2025 15:43:42 PAGE 7   
+C51 COMPILER V9.60.7.0   INSTRUCTION                                                       07/31/2025 17:40:05 PAGE 7   
 
  347   1          {
  348   2              flag_get_left_turn = 0;
@@ -446,7 +446,7 @@ line level    source
               
               #endif
  408   2          }
-C51 COMPILER V9.60.7.0   INSTRUCTION                                                       07/24/2025 15:43:42 PAGE 8   
+C51 COMPILER V9.60.7.0   INSTRUCTION                                                       07/31/2025 17:40:05 PAGE 8   
 
  409   1      
  410   1          if (flag_get_fuel)
@@ -510,7 +510,7 @@ line level    source
               #endif // USE_IMPERIAL 英制单位
  468   2          } // if (flag_get_total_mileage) // 如果要获取大计里程 / 得到了大计里程新的数据
  469   1      
-C51 COMPILER V9.60.7.0   INSTRUCTION                                                       07/24/2025 15:43:42 PAGE 9   
+C51 COMPILER V9.60.7.0   INSTRUCTION                                                       07/31/2025 17:40:05 PAGE 9   
 
  470   1          if (flag_get_sub_total_mileage) // 如果要获取小计里程 / 得到了小计里程新的数据
  471   1          {
@@ -574,7 +574,7 @@ line level    source
                   }
               #endif // 修改日期
  527   1      
-C51 COMPILER V9.60.7.0   INSTRUCTION                                                       07/24/2025 15:43:42 PAGE 10  
+C51 COMPILER V9.60.7.0   INSTRUCTION                                                       07/31/2025 17:40:05 PAGE 10  
 
  528   1          if (flag_alter_time)
  529   1          {
@@ -638,7 +638,7 @@ line level    source
  586   2              fun_info.save_info.subtotal_mileage = 0;
  587   2              distance = 0;
  588   2              fun_info_save(); // 将信息写回flash
-C51 COMPILER V9.60.7.0   INSTRUCTION                                                       07/24/2025 15:43:42 PAGE 11  
+C51 COMPILER V9.60.7.0   INSTRUCTION                                                       07/31/2025 17:40:05 PAGE 11  
 
  589   2      #if USE_MY_DEBUG
                       // printf(" flag_clear_sub_total_mileage \n");
@@ -656,9 +656,9 @@ line level    source
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    989    ----
+   CODE SIZE        =    979    ----
    CONSTANT SIZE    =   ----    ----
-   XDATA SIZE       =      9       5
+   XDATA SIZE       =      9       1
    PDATA SIZE       =   ----    ----
    DATA SIZE        =   ----    ----
    IDATA SIZE       =   ----    ----

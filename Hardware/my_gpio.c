@@ -92,7 +92,7 @@ void p06_input_config(void)
     // 配置为输入模式
     P0_MD1 &= ~(GPIO_P06_MODE_SEL(0x3));
     // 配置为上拉
-    P0_PU |= (GPIO_P06_PULL_UP(0x1));
+    // P0_PU |= (GPIO_P06_PULL_UP(0x1));
 }
 
 // p07配置成输入上拉模式
@@ -101,7 +101,7 @@ void p07_input_config(void)
     // 配置为输入模式
     P0_MD1 &= ~(GPIO_P07_MODE_SEL(0x3));
     // 配置为上拉
-    P0_PU |= (GPIO_P07_PULL_UP(0x1));
+    // P0_PU |= (GPIO_P07_PULL_UP(0x1));
 }
 
 // p10配置成输入上拉模式
@@ -110,7 +110,7 @@ void p10_input_config(void)
     // 配置为输入模式
     P1_MD0 &= ~(GPIO_P10_MODE_SEL(0x3));
     // 配置为上拉
-    P1_PU |= (GPIO_P10_PULL_UP(0x1));
+    // P1_PU |= (GPIO_P10_PULL_UP(0x1));
 }
 
 // p13配置成输入上拉模式
@@ -119,7 +119,7 @@ void p13_input_config(void)
     // 配置为输入模式
     P1_MD0 &= ~(GPIO_P13_MODE_SEL(0x3));
     // 配置为上拉
-    P1_PU |= (GPIO_P13_PULL_UP(0x1));
+    // P1_PU |= (GPIO_P13_PULL_UP(0x1));
 }
 
 // p14配置成输入上拉模式
@@ -128,7 +128,7 @@ void p14_input_config(void)
     // 配置为输入模式
     P1_MD1 &= ~(GPIO_P14_MODE_SEL(0x3));
     // 配置为上拉
-    P1_PU |= (GPIO_P14_PULL_UP(0x1));
+    // P1_PU |= (GPIO_P14_PULL_UP(0x1));
 }
 
 // // p17配置成输入上拉模式
@@ -181,7 +181,7 @@ void p27_input_config(void)
     // 配置为输入模式
     P2_MD1 &= ~(GPIO_P27_MODE_SEL(0x3));
     // 配置为上拉
-    P2_PU |= (GPIO_P27_PULL_UP(0x1));
+    // P2_PU |= (GPIO_P27_PULL_UP(0x1));
 }
 
 // P30配置成输入上拉模式
@@ -190,7 +190,7 @@ void p30_input_config(void)
     // 配置为输入模式
     P3_MD0 &= ~(GPIO_P30_MODE_SEL(0x3));
     // 配置为上拉
-    P3_PU |= (GPIO_P30_PULL_UP(0x1));
+    // P3_PU |= (GPIO_P30_PULL_UP(0x1));
 }
 
 // // P31配置成输入上拉模式

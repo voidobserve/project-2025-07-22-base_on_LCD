@@ -80,12 +80,6 @@ void heart_beat_handle(void)
     diff_ms_cnt = cur_time_ms_cnt - old_time_ms_cnt; // 计算时间差
     old_time_ms_cnt = 0;
 
-    if (pin_level_scan_time_cnt < 65535) // 防止计数溢出
-    {
-        // pin_level_scan_time_cnt++;
-        pin_level_scan_time_cnt += diff_ms_cnt;
-    }
-
 #if 0
 
     // if (engine_scan_time_cnt < 65535 - diff_ms_cnt) // 防止计数溢出
@@ -254,6 +248,11 @@ void TIMR1_IRQHandler(void) interrupt TMR1_IRQn
                 touch_key_para.cur_scan_times++;
             }
 #endif // TOUCH_KEY_ENABLE
+
+            if (pin_level_scan_time_cnt < 65535) // 防止计数溢出
+            {
+                pin_level_scan_time_cnt++;
+            }
 
 #if USE_MY_DEBUG
 

@@ -24,15 +24,22 @@ u16 conver_adc_val_to_voltage(u16 arg_adc_val)
 
 // 将电池电压转换为对应的百分比
 // voltage： 0~255 ， 对应0~25.5V
+// 例如 voltage == 140，对应14.0V 
 u8 conver_voltage_of_battery_to_percentage(u8 voltage)
 {
-    // 用电池电压voltage除以MAX_VOLTAGE_OF_BATTERY，得到占比，再乘以100，得到百分比
-    u8 tmp = (u16)voltage * 100 / MAX_VOLTAGE_OF_BATTERY;
-    // if (tmp >= 98)
-    // {
-    //     // 如果电量百分比大于 98%，当作100%电量处理
-    //     tmp = 100;
-    // }
+    u8 tmp;
+
+    // 客户要求，如果检测到大于15V，就认为满电
+    if (voltage >= 150)
+    {
+        tmp = 100;
+    }
+    else
+    {
+        // 如果电压小于15V，根据公式来得到百分比
+        // 用电池电压voltage除以MAX_VOLTAGE_OF_BATTERY，得到占比，再乘以100，得到百分比
+        tmp = (u16)voltage * 100 / MAX_VOLTAGE_OF_BATTERY;
+    }
 
     return tmp;
 }

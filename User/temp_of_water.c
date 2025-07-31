@@ -4,6 +4,7 @@
 
 // 实物是检测NTC热敏电阻的分压
 
+#if TEMP_OF_WATER_SCAN_ENABLE
 // 水温检测函数，如果水温过高，会发送水温报警，水温恢复正常时，才发送解除水温报警
 void temp_of_water_scan(void)
 {
@@ -12,7 +13,7 @@ void temp_of_water_scan(void)
     static u32 temp_of_water_update_time_cnt = 0;
 
     adc_sel_pin(ADC_PIN_TEMP_OF_WATER);
-    adc_val = adc_getval();                     //
+    adc_val = adc_getval(); //
     temp_of_water_update_time_cnt += ONE_CYCLE_TIME_MS;
 
     // 如果处于水温报警
@@ -63,8 +64,10 @@ void temp_of_water_scan(void)
     {
         // 如果到了发送水温报警/发送解除水温报警的时间，发送一次当前的状态
         temp_of_water_update_time_cnt = 0;
-        flag_set_temp_of_water_warning = 1; // 
+        flag_set_temp_of_water_warning = 1; //
 
         // P20 = ~P20; // 测试发现,TEMP_OF_WATER_UPDATE_TIME_MS == 1000时，每2.28s发送一次状态
     }
 }
+
+#endif

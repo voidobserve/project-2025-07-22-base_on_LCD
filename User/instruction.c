@@ -235,7 +235,7 @@ void instruction_handle(void)
     if (flag_get_all_status)
     {
         // 如果要获取所有功能的状态
-        u32 temp_val = 0;        // 临时变量(在发送日期和时间使用到)
+        // u32 temp_val = 0;        // 临时变量(在发送日期和时间使用到)
         flag_get_all_status = 0; // 清除标志位
 
 #if USE_MY_DEBUG

@@ -14,8 +14,9 @@ volatile bit flag_get_high_beam = 0;    // 获取远光灯的状态 / 得到了�
 volatile bit flag_get_engine_speed = 0; // 获取发动机的转速 / 得到了发动机的转速
 volatile bit flag_get_speed = 0;        // 获取时速 / 得到了时速
 volatile bit flag_get_fuel = 0;         // 获取油量 / 得到了油量（单位：百分比）
+#if TEMP_OF_WATER_SCAN_ENABLE
 // volatile bit flag_get_temp_of_water = 0; // 获取水温 / 得到了水温
-
+#endif
 volatile bit flag_update_malfunction_status; // 标志位，更新故障状态
 volatile bit flag_update_abs_status;         // 标志位，更新abs的状态
 
@@ -28,7 +29,10 @@ volatile bit flag_get_sub_total_mileage_2 = 0; // 获取小计里程2 / 得到�
 volatile bit flag_alter_time = 0; // 修改时间
 
 volatile bit flag_get_voltage_of_battery = 0;    // 获取电池电压
+
+#if TEMP_OF_WATER_SCAN_ENABLE
 volatile bit flag_set_temp_of_water_warning = 0; // 设置水温报警
+#endif
 
 volatile bit flag_clear_total_mileage = 0;       // 清除大计里程
 volatile bit flag_clear_sub_total_mileage = 0;   // 清除小计里程
@@ -38,10 +42,10 @@ volatile u8 synchronous_request_status = 0;    // 同步请求状态机
 volatile u16 synchronous_request_time_cnt = 0; // 同步请求时间计时
 
 volatile u8 update_time_status = 0; // 更新时间的状态机
-volatile u8 update_date_status = 0; // 更新日期的状态机
+// volatile u8 update_date_status = 0; // 更新日期的状态机
 
 volatile u16 update_time_cooling_cnt = 0; // 更新时间的冷却计数
-volatile u16 update_date_cooling_cnt = 0; // 更新日期的冷却计数
+// volatile u16 update_date_cooling_cnt = 0; // 更新日期的冷却计数
 
 // // 存放接收到的设置水温报警的指令中，对应的操作，默认为无操作
 // volatile u8 operation_set_temp_of_water_warning = OPERATION_SET_TEMP_OF_WATER_WARNING_NONE;
@@ -289,8 +293,11 @@ void instruction_handle(void)
             send_data(SEND_TIME, 0); // 第二个参数无效
             // 16. 发送当前的电池电压
             send_data(SEND_VOLTAGE_OF_BATTERY, fun_info.voltage_of_battery);
+
+#if TEMP_OF_WATER_SCAN_ENABLE
             // 17. 发送当前的水温报警状态
             send_data(SEND_TEMP_OF_WATER_ALERT, fun_info.flag_is_in_water_temp_warning);
+#endif
 
 #ifdef USE_INTERNATIONAL // 公制单位
 
@@ -556,6 +563,7 @@ void instruction_handle(void)
         send_data(SEND_VOLTAGE_OF_BATTERY, fun_info.voltage_of_battery);
     }
 
+#if TEMP_OF_WATER_SCAN_ENABLE
     if (flag_set_temp_of_water_warning)
     {
         // 如果要设置水温报警
@@ -566,6 +574,7 @@ void instruction_handle(void)
         //  发送当前水温报警的状态
         send_data(SEND_TEMP_OF_WATER_ALERT, fun_info.flag_is_in_water_temp_warning);
     }
+#endif
 
     if (flag_clear_total_mileage)
     {

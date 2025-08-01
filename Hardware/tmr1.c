@@ -144,6 +144,7 @@ void heart_beat_handle(void)
         }
     }
 
+    #if 0 // 日期和时间合到了一起，就不用这部分程序
     if (update_date_status == UPDATE_STATUS_HANDLING)
     {
         // 如果更新日期进入冷却状态，进行冷却计时
@@ -156,6 +157,7 @@ void heart_beat_handle(void)
             update_date_status = UPDATE_STATUS_NONE;
         }
     }
+    #endif
 
     if (update_time_status == UPDATE_STATUS_HANDLING)
     {
@@ -286,6 +288,18 @@ void TIMR1_IRQHandler(void) interrupt TMR1_IRQn
                 timer_scan_update_fuel_gear_cnt = 0;
                 flag_update_fuel_gear = 0;
             }
+
+            {
+                static cnt = 0;
+                cnt++;
+                if (cnt >= SPEED_SCAN_BUFF_UPDATE_TIME)
+                {
+                    cnt = 0;
+                    flag_is_send_speed_time_come = 1;
+                }
+            }
+
+
 
 #if 0 // DEBUG 只在测试时使用
 

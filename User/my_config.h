@@ -12,9 +12,8 @@
 // DEBUG
 // extern volatile bit flag_is_debug_update ; // 测试时使用 
 
-
 #define TOUCH_KEY_ENABLE 1 // 是否使能触摸按键检测功能
-#define AD_KEY_ENABLE 1  // 是否使能ad按键检测功能
+#define AD_KEY_ENABLE 0  // 是否使能ad按键检测功能
 
 #define TEMP_OF_WATER_SCAN_ENABLE 0 // 是否使能水温检测
 
@@ -33,6 +32,7 @@
   
 // ======================================================
 // 水温检测配置:
+#if TEMP_OF_WATER_SCAN_ENABLE
 // 发送水温报警/解除水温报警的时间:(单位：ms，每隔xxms发送一次当前水温报警的状态)
 #define TEMP_OF_WATER_UPDATE_TIME_MS (1000)
 
@@ -44,6 +44,7 @@
 #define TEMP_OF_WATER_CANCEL_WARNING_AD_VAL (2048)
 
 // 注意:水温报警和解除报警对应的ad值不能一致，差值也不能过小
+#endif
 
 // 水温检测配置
 // ======================================================

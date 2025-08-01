@@ -8,12 +8,18 @@ void adc_config(void)
 {
     // P04--测量电池电压的引脚
     P0_MD1 |= GPIO_P04_MODE_SEL(0x3); // 模拟模式
-    // P05--测量触摸IC传过来的电压的引脚
+
+#if AD_KEY_ENABLE
+    // P05-- ad按键检测
     P0_MD1 |= GPIO_P05_MODE_SEL(0x3); // 模拟模式
+#endif
     // 检测油量的引脚：
     P0_MD0 |= GPIO_P01_MODE_SEL(0x3); // 模拟模式
-    // 检测水温的引脚:
-    // P0_MD0 |= GPIO_P00_MODE_SEL(0x3); // 模拟模式
+
+#if TEMP_OF_WATER_SCAN_ENABLE
+// 检测水温的引脚:
+// P0_MD0 |= GPIO_P00_MODE_SEL(0x3); // 模拟模式
+#endif // TEMP_OF_WATER_SCAN_ENABLE
 
     ADC_CFG1 |= (0x0F << 3); // ADC时钟分频为16分频，为系统时钟/16
     ADC_CFG2 = 0xFF;         // 通道0采样时间配置为256个采样时钟周期
@@ -47,6 +53,7 @@ void adc_sel_pin(u8 adc_pin)
         ADC_CHS0 |= ADC_ANALOG_CHAN(0x04);                    // P04通路
         break;
 
+#if AD_KEY_ENABLE
     // case ADC_PIN_TOUCH:                    // 检测触摸IC传过来的电压
     case ADC_PIN_KEY:                                            // 检测ad按键
         ADC_ACON1 &= ~((0x01 << 6) | (0x01 << 5) | (0x07 << 0)); // 关闭ADC中内部参考能使信号，关闭ADC外部参考选择信号，清空ADC内部参考电压的选择配置
@@ -54,6 +61,7 @@ void adc_sel_pin(u8 adc_pin)
         ADC_CHS0 |= ADC_ANALOG_CHAN(0x05);                       // P05通路
 
         break;
+#endif
 
     case ADC_PIN_FUEL: // 检测油量
 
@@ -65,11 +73,13 @@ void adc_sel_pin(u8 adc_pin)
         ADC_CHS0 |= ADC_ANALOG_CHAN(0x01);                    // P01通路
         break;
 
+#if TEMP_OF_WATER_SCAN_ENABLE
     case ADC_PIN_TEMP_OF_WATER: // 检测水温的引脚
         // ADC_ACON1 &= ~((0x01 << 6) | (0x01 << 5) | (0x07 << 0)); // 关闭ADC中内部参考能使信号，关闭ADC外部参考选择信号，清空ADC内部参考电压的选择配置
         // ADC_ACON1 |= (0x03 << 3) | (0x06 << 0);                  // 关闭测试信号，选择内部VCCA作为参考电压（使用VCCA作为参考电压，需要关闭内部使能参考和外部使能参考）
         // ADC_CHS0 = ADC_ANALOG_CHAN(0x00);                        // P00通路
         break;
+#endif
     }
 
     ADC_CFG0 |= ADC_CHAN0_EN(0x1) | // 使能通道0转换
@@ -77,6 +87,7 @@ void adc_sel_pin(u8 adc_pin)
 
     delay_ms(1); // 等待ADC模块配置稳定，需要等待20us以上
 }
+
 
 // 获取adc值，存放到变量adc_val中(adc单次转换)
 u16 adc_single_convert(void)

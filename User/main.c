@@ -445,17 +445,26 @@ void main(void)
         __tk_scan();                 // 使用了库里面的接口（闭源库）
         WDT_KEY = WDT_KEY_VAL(0xAA); // 喂狗并清除 wdt_pending
 
+#if AD_KEY_ENABLE
         key_driver_scan(&ad_key_para);
         ad_key_handle(); // ad按键处理函数
+#endif                   //  #if AD_KEY_ENABLE
 
         key_driver_scan(&touch_key_para);
         touch_key_handle(); // 触摸按键处理函数
 
         pin_level_scan();
         speed_scan();   // 检测时速
-        mileage_scan(); // 检测大计里程和小计里程
+        // fun_info.speed = 140;
+        // flag_get_speed = 1;
+        speed_send_data(); // 发送时速数据，需要时间到来才会执行
 
         engine_speed_scan();  // 检测发动机转速
+        engine_speed_send_data(); // 发动发动机转速数据，需要时间到来才会执行
+
+        mileage_scan(); // 检测大计里程和小计里程
+
+        
         fuel_capacity_scan(); // 油量检测
 
         battery_scan(); // 电池电量检测

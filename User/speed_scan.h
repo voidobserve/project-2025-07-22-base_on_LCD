@@ -52,6 +52,9 @@
 #define SPEED_SCAN_UPDATE_TIME (700) // 至少要大于500ms，防止滤掉1Hz信号
 // #define SPEED_SCAN_UPDATE_TIME (300) // 时间太短，时速会经常跳动（提供1Hz信号，会在0km/h、3km/h这两个值来回切换）
 
+#define SPEED_SCAN_BUFF_SIZE (7) // 存放速度值的缓冲区大小，通过它来实现更平滑的时速变化
+#define SPEED_SCAN_BUFF_UPDATE_TIME (SPEED_SCAN_UPDATE_TIME / SPEED_SCAN_BUFF_SIZE) // 时速更新发送时间 （要小于一轮时速的扫描检测时间）
+
 // 检测时速所需的配置
 // ======================================================
 
@@ -64,7 +67,12 @@ extern volatile bit flag_is_speed_scan_over_time;
 extern volatile u32 speed_pulse_cnt;
 extern volatile u32 speed_scan_time_ms;
 
+extern volatile bit flag_is_send_speed_time_come ; // 标志位，发送速度的时间到来
+
 void speed_scan_config(void);
 void speed_scan(void);
+
+void speed_buff_update(u8 speed);
+void speed_send_data(void);
 
 #endif

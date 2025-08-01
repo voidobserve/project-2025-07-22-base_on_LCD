@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.7.0   TMR1                                                              07/31/2025 17:40:03 PAGE 1   
+C51 COMPILER V9.60.7.0   TMR1                                                              08/01/2025 15:47:46 PAGE 1   
 
 
 C51 COMPILER V9.60.7.0, COMPILATION OF MODULE TMR1
@@ -62,7 +62,7 @@ line level    source
   50   1          // 重新给TMR1配置时钟
   51   1          TMR1_CONL &= ~(TMR_SOURCE_SEL(0x07)); // 清除定时器的时钟源配置寄存器
   52   1          TMR1_CONL |= TMR_SOURCE_SEL(0x06);    // 配置定时器的时钟源，使用系统时钟
-C51 COMPILER V9.60.7.0   TMR1                                                              07/31/2025 17:40:03 PAGE 2   
+C51 COMPILER V9.60.7.0   TMR1                                                              08/01/2025 15:47:46 PAGE 2   
 
   53   1      
   54   1          __EnableIRQ(TMR1_IRQn); // 使能中断
@@ -126,7 +126,7 @@ line level    source
                   //     {
                   //         speed_actual_scan_time_cnt = speed_scan_time_cnt; // 更新实际的扫描检测时间
                   //         speed_scan_time_cnt = 0;
-C51 COMPILER V9.60.7.0   TMR1                                                              07/31/2025 17:40:03 PAGE 3   
+C51 COMPILER V9.60.7.0   TMR1                                                              08/01/2025 15:47:46 PAGE 3   
 
                   //         // detect_speed_pulse_cnt[1] += detect_speed_pulse_cnt[0]; // 将另一个定时器中断�
              -�描到的脉冲更新到[1]
@@ -168,123 +168,125 @@ line level    source
  144   3              }
  145   2          }
  146   1      
- 147   1          if (update_date_status == UPDATE_STATUS_HANDLING)
- 148   1          {
- 149   2              // 如果更新日期进入冷却状态，进行冷却计时
- 150   2              // update_date_cooling_cnt++;
- 151   2              update_date_cooling_cnt += diff_ms_cnt;
- 152   2              if (update_date_cooling_cnt >= 100) // xx ms
- 153   2              {
- 154   3                  // 过了冷却时间，退出冷却状态
- 155   3                  update_date_cooling_cnt = 0;
- 156   3                  update_date_status = UPDATE_STATUS_NONE;
- 157   3              }
- 158   2          }
- 159   1      
- 160   1          if (update_time_status == UPDATE_STATUS_HANDLING)
- 161   1          {
- 162   2              // 如果更新时间进入冷却状态，进行冷却计时
- 163   2              // update_time_cooling_cnt++;
- 164   2              update_time_cooling_cnt += diff_ms_cnt;
- 165   2              if (update_time_cooling_cnt >= 100) // xx ms
- 166   2              {
- 167   3                  // 过了冷却时间，退出冷却状态
- 168   3                  update_time_cooling_cnt = 0;
-C51 COMPILER V9.60.7.0   TMR1                                                              07/31/2025 17:40:03 PAGE 4   
+ 147   1          #if 0 // 日期和时间合到了一起，就不用这部分程序
+                  if (update_date_status == UPDATE_STATUS_HANDLING)
+                  {
+                      // 如果更新日期进入冷却状态，进行冷却计时
+                      // update_date_cooling_cnt++;
+                      update_date_cooling_cnt += diff_ms_cnt;
+                      if (update_date_cooling_cnt >= 100) // xx ms
+                      {
+                          // 过了冷却时间，退出冷却状态
+                          update_date_cooling_cnt = 0;
+                          update_date_status = UPDATE_STATUS_NONE;
+                      }
+                  }
+                  #endif
+ 161   1      
+ 162   1          if (update_time_status == UPDATE_STATUS_HANDLING)
+ 163   1          {
+ 164   2              // 如果更新时间进入冷却状态，进行冷却计时
+ 165   2              // update_time_cooling_cnt++;
+ 166   2              update_time_cooling_cnt += diff_ms_cnt;
+ 167   2              if (update_time_cooling_cnt >= 100) // xx ms
+ 168   2              {
+C51 COMPILER V9.60.7.0   TMR1                                                              08/01/2025 15:47:46 PAGE 4   
 
- 169   3                  update_time_status = UPDATE_STATUS_NONE;
- 170   3              }
- 171   2          }
- 172   1      
- 173   1          if (mileage_update_time_cnt < 65535)
- 174   1          {
- 175   2              mileage_update_time_cnt++;
- 176   2          }
- 177   1      
- 178   1          if (battery_scan_time_cnt < 4294967295)
- 179   1          {
- 180   2              battery_scan_time_cnt++;
- 181   2          }
- 182   1      }
- 183          
- 184          // TMR1中断服务函数
- 185          void TIMR1_IRQHandler(void) interrupt TMR1_IRQn
- 186          {
- 187   1          // 进入中断设置IP，不可删除
- 188   1          __IRQnIPnPush(TMR1_IRQn);
- 189   1      
- 190   1          /*
- 191   1              测试中断持续时间
- 192   1              内部未调用函数，约           74.5us,
- 193   1              调用engine_speed_scan()时约 200us,
- 194   1              调用speed_scan()时约        271us,
- 195   1              两个一起调用，约             426us,
- 196   1      
- 197   1              将 engine_speed_scan()和speed_scan()放到主函数来计算，
- 198   1              最短用时约 43us，
- 199   1              相继执行了engine_speed_scan和speed_scan对应的条件，进行更新时，约 75us
- 200   1      
- 201   1              将 对其他功能的时间进行计数的操作全部转移到外部函数,只在该中断对 tm
+ 169   3                  // 过了冷却时间，退出冷却状态
+ 170   3                  update_time_cooling_cnt = 0;
+ 171   3                  update_time_status = UPDATE_STATUS_NONE;
+ 172   3              }
+ 173   2          }
+ 174   1      
+ 175   1          if (mileage_update_time_cnt < 65535)
+ 176   1          {
+ 177   2              mileage_update_time_cnt++;
+ 178   2          }
+ 179   1      
+ 180   1          if (battery_scan_time_cnt < 4294967295)
+ 181   1          {
+ 182   2              battery_scan_time_cnt++;
+ 183   2          }
+ 184   1      }
+ 185          
+ 186          // TMR1中断服务函数
+ 187          void TIMR1_IRQHandler(void) interrupt TMR1_IRQn
+ 188          {
+ 189   1          // 进入中断设置IP，不可删除
+ 190   1          __IRQnIPnPush(TMR1_IRQn);
+ 191   1      
+ 192   1          /*
+ 193   1              测试中断持续时间
+ 194   1              内部未调用函数，约           74.5us,
+ 195   1              调用engine_speed_scan()时约 200us,
+ 196   1              调用speed_scan()时约        271us,
+ 197   1              两个一起调用，约             426us,
+ 198   1      
+ 199   1              将 engine_speed_scan()和speed_scan()放到主函数来计算，
+ 200   1              最短用时约 43us，
+ 201   1              相继执行了engine_speed_scan和speed_scan对应的条件，进行更新时，约 75us
+ 202   1      
+ 203   1              将 对其他功能的时间进行计数的操作全部转移到外部函数,只在该中断对 tm
              -r1_cnt 加一,
- 202   1              约 5us
- 203   1          */
- 204   1          // P20 = 1;
- 205   1      
- 206   1          // ---------------- 用户函数处理 -------------------
+ 204   1              约 5us
+ 205   1          */
+ 206   1          // P20 = 1;
  207   1      
- 208   1          // 周期中断
- 209   1          if (TMR1_CONH & TMR_PRD_PND(0x1))
- 210   1          {
- 211   2              TMR1_CONH |= TMR_PRD_PND(0x1); // 清除pending
- 212   2      
- 213   2              if (tmr1_cnt < 4294967295)
- 214   2              {
- 215   3                  tmr1_cnt++;
- 216   3              }
- 217   2      
- 218   2              {
- 219   3                  // static u8 cnt = 0;
- 220   3                  // cnt++;
- 221   3                  // if (cnt >= TOUCH_KEY_SCAN_CIRCLE_TIMES) // xx ms
- 222   3                  // {
- 223   3                  //     cnt = 0;
- 224   3                  //     // flag_is_touch_key_scan_circle_arrived = 1; // 表示扫描周期到来，执行一�
+ 208   1          // ---------------- 用户函数处理 -------------------
+ 209   1      
+ 210   1          // 周期中断
+ 211   1          if (TMR1_CONH & TMR_PRD_PND(0x1))
+ 212   1          {
+ 213   2              TMR1_CONH |= TMR_PRD_PND(0x1); // 清除pending
+ 214   2      
+ 215   2              if (tmr1_cnt < 4294967295)
+ 216   2              {
+ 217   3                  tmr1_cnt++;
+ 218   3              }
+ 219   2      
+ 220   2              {
+ 221   3                  // static u8 cnt = 0;
+ 222   3                  // cnt++;
+ 223   3                  // if (cnt >= TOUCH_KEY_SCAN_CIRCLE_TIMES) // xx ms
+ 224   3                  // {
+ 225   3                  //     cnt = 0;
+ 226   3                  //     // flag_is_touch_key_scan_circle_arrived = 1; // 表示扫描周期到来，执行一�
              -�按键扫描
- 225   3      
- 226   3                  //     // {
- 227   3                  //     //     static u8 send_cnt = 0;
- 228   3                  //     //     send_cnt++;
-C51 COMPILER V9.60.7.0   TMR1                                                              07/31/2025 17:40:03 PAGE 5   
+ 227   3      
+ 228   3                  //     // {
+C51 COMPILER V9.60.7.0   TMR1                                                              08/01/2025 15:47:46 PAGE 5   
 
- 229   3                  //     //     if (send_cnt >= 100)
- 230   3                  //     //     {
- 231   3                  //     //         send_cnt = 0;
- 232   3                  //     //         printf("touch key scan\n");
- 233   3                  //     //     }
- 234   3                  //     // }
- 235   3                  // }
- 236   3      
- 237   3      #if AD_KEY_ENABLE
- 238   3                  // 在定时器注册按键扫描：
- 239   3                  if (ad_key_para.cur_scan_times < 255)
- 240   3                  {
- 241   4                      ad_key_para.cur_scan_times++;
- 242   4                  }
- 243   3      #endif // AD_KEY_ENABLE
- 244   3      
- 245   3      #if TOUCH_KEY_ENABLE
- 246   3                  if (touch_key_para.cur_scan_times < 255)
- 247   3                  {
- 248   4                      touch_key_para.cur_scan_times++;
- 249   4                  }
- 250   3      #endif // TOUCH_KEY_ENABLE
- 251   3      
- 252   3                  if (pin_level_scan_time_cnt < 65535) // 防止计数溢出
- 253   3                  {
- 254   4                      pin_level_scan_time_cnt++;
- 255   4                  }
- 256   3      
- 257   3      #if USE_MY_DEBUG
+ 229   3                  //     //     static u8 send_cnt = 0;
+ 230   3                  //     //     send_cnt++;
+ 231   3                  //     //     if (send_cnt >= 100)
+ 232   3                  //     //     {
+ 233   3                  //     //         send_cnt = 0;
+ 234   3                  //     //         printf("touch key scan\n");
+ 235   3                  //     //     }
+ 236   3                  //     // }
+ 237   3                  // }
+ 238   3      
+ 239   3      #if AD_KEY_ENABLE
+                          // 在定时器注册按键扫描：
+                          if (ad_key_para.cur_scan_times < 255)
+                          {
+                              ad_key_para.cur_scan_times++;
+                          }
+              #endif // AD_KEY_ENABLE
+ 246   3      
+ 247   3      #if TOUCH_KEY_ENABLE
+ 248   3                  if (touch_key_para.cur_scan_times < 255)
+ 249   3                  {
+ 250   4                      touch_key_para.cur_scan_times++;
+ 251   4                  }
+ 252   3      #endif // TOUCH_KEY_ENABLE
+ 253   3      
+ 254   3                  if (pin_level_scan_time_cnt < 65535) // 防止计数溢出
+ 255   3                  {
+ 256   4                      pin_level_scan_time_cnt++;
+ 257   4                  }
+ 258   3      
+ 259   3      #if USE_MY_DEBUG
               
                           // {
                           //     static u16 cnt;
@@ -297,29 +299,41 @@ line level    source
                           // }
               
               #endif
- 270   3      
- 271   3                  if (flag_timer_scan_update_fuel_gear)
- 272   3                  {
- 273   4                      if (timer_scan_update_fuel_gear_cnt < 65535)
- 274   4                      {
- 275   5                          timer_scan_update_fuel_gear_cnt++;
- 276   5                          if (timer_scan_update_fuel_gear_cnt >= FUEL_UPDATE_LAST_FUEL_PERCENTAGE_TIME)
- 277   5                          // if (timer_scan_update_fuel_gear_cnt >= 5000) // DEBUG 测试用
- 278   5                          {
- 279   6                              timer_scan_update_fuel_gear_cnt = 0;
- 280   6                              flag_update_fuel_gear = 1; // 更新油量挡位
- 281   6                          }
- 282   5                      }
- 283   4                  }
- 284   3                  else
- 285   3                  {
- 286   4                      timer_scan_update_fuel_gear_cnt = 0;
- 287   4                      flag_update_fuel_gear = 0;
- 288   4                  }
- 289   3      
- 290   3      #if 0 // DEBUG 只在测试时使用
-C51 COMPILER V9.60.7.0   TMR1                                                              07/31/2025 17:40:03 PAGE 6   
+ 272   3      
+ 273   3                  if (flag_timer_scan_update_fuel_gear)
+ 274   3                  {
+ 275   4                      if (timer_scan_update_fuel_gear_cnt < 65535)
+ 276   4                      {
+ 277   5                          timer_scan_update_fuel_gear_cnt++;
+ 278   5                          if (timer_scan_update_fuel_gear_cnt >= FUEL_UPDATE_LAST_FUEL_PERCENTAGE_TIME)
+ 279   5                          // if (timer_scan_update_fuel_gear_cnt >= 5000) // DEBUG 测试用
+ 280   5                          {
+ 281   6                              timer_scan_update_fuel_gear_cnt = 0;
+ 282   6                              flag_update_fuel_gear = 1; // 更新油量挡位
+ 283   6                          }
+ 284   5                      }
+ 285   4                  }
+ 286   3                  else
+ 287   3                  {
+ 288   4                      timer_scan_update_fuel_gear_cnt = 0;
+ 289   4                      flag_update_fuel_gear = 0;
+ 290   4                  }
+C51 COMPILER V9.60.7.0   TMR1                                                              08/01/2025 15:47:46 PAGE 6   
 
+ 291   3      
+ 292   3                  {
+ 293   4                      static cnt = 0;
+ 294   4                      cnt++;
+ 295   4                      if (cnt >= SPEED_SCAN_BUFF_UPDATE_TIME)
+ 296   4                      {
+ 297   5                          cnt = 0;
+ 298   5                          flag_is_send_speed_time_come = 1;
+ 299   5                      }
+ 300   4                  }
+ 301   3      
+ 302   3      
+ 303   3      
+ 304   3      #if 0 // DEBUG 只在测试时使用
               
                           {
                               static u16 cnt;
@@ -332,19 +346,19 @@ line level    source
                           }
               
               #endif // // DEBUG 只在测试时使用
- 303   3              }
- 304   2          }
- 305   1      
- 306   1          // P20 = 0;// 测试中断持续时间
- 307   1          // 退出中断设置IP，不可删除
- 308   1          __IRQnIPnPop(TMR1_IRQn);
- 309   1      }
+ 317   3              }
+ 318   2          }
+ 319   1      
+ 320   1          // P20 = 0;// 测试中断持续时间
+ 321   1          // 退出中断设置IP，不可删除
+ 322   1          __IRQnIPnPop(TMR1_IRQn);
+ 323   1      }
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    620    ----
+   CODE SIZE        =    602    ----
    CONSTANT SIZE    =   ----    ----
-   XDATA SIZE       =      8       8
+   XDATA SIZE       =     10       8
    PDATA SIZE       =   ----    ----
    DATA SIZE        =   ----    ----
    IDATA SIZE       =   ----    ----

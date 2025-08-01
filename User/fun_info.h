@@ -51,16 +51,21 @@ typedef struct
     u8 brake;   // 刹车的状态
 
     u8 fuel; // 油量(单位：百分比)
+
+#if TEMP_OF_WATER_SCAN_ENABLE
     // u8 temp_of_water; // 水温
+#endif
 
     // 用ON 或 OFF表示开和关:
     u8 left_turn;  // 左转向灯的状态
     u8 right_turn; // 右转向灯的状态
     u8 high_beam;  // 远光灯的状态
 
+#if TEMP_OF_WATER_SCAN_ENABLE
     u8 flag_is_in_water_temp_warning; // 标志位，是否处于水温报警（1--水温报警，0--解除水温报警）
-    u8 flag_is_detect_malfunction;    // 标志位，是否检测到了故障
-    u8 flag_is_detect_abs;            // 标志位，是否检测到了ABS，0--否，1--检测到了ABS故障
+#endif
+    u8 flag_is_detect_malfunction; // 标志位，是否检测到了故障
+    u8 flag_is_detect_abs;         // 标志位，是否检测到了ABS，0--否，1--检测到了ABS故障
 
     // 在结构体中使用一位的数据：(调用时，占用的程序空间会比单独用u8类型的还要大)
     // u8 bit0 : 1;

@@ -25,6 +25,7 @@
         "STDIO.H": "cpp",
         "uart0.h": "c",
         "engine_speed_scan.h": "c",
-        "tmr2.h": "c"
+        "tmr2.h": "c",
+        "tmr1.h": "c"
     },
 }

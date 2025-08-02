@@ -16,11 +16,14 @@ void p13_input_config(void); // p13配置成输入上拉模式
 void p14_input_config(void); // p14配置成输入上拉模式
 // void p17_input_config(void); // p17配置成输入上拉模式
 
+#if 0
 void p21_input_config(void); // p21配置成输入上拉模式
 void p22_input_config(void); // p22配置成输入上拉模式
 // void p23_input_config(void); // p23配置成输入上拉模式
 
 void p25_input_config(void);// p25配置成输入上拉模式
+#endif
+
 
 void p27_input_config(void); // p27配置成输入上拉模式
 

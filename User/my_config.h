@@ -10,10 +10,19 @@
 #define USE_MY_DEBUG 0
 
 // DEBUG
-// extern volatile bit flag_is_debug_update ; // 测试时使用 
+// extern volatile bit flag_is_debug_update ; // 测试时使用
+extern volatile bit flag_debug_is_send_time; // 测试时使用
 
-#define TOUCH_KEY_ENABLE 1 // 是否使能触摸按键检测功能
-#define AD_KEY_ENABLE 0  // 是否使能ad按键检测功能
+#define TOUCH_KEY_ENABLE 1          // 是否使能触摸按键检测功能
+#define AD_KEY_ENABLE 1             // 是否使能ad按键检测功能
+#define SPEED_SCAN_ENABLE 1         // 是否使能速度检测功能
+#define ENGINE_SPEED_SCAN_ENABLE 1  // 是否使能发动机转速检测功能
+#define BATTERY_SCAN_ENABLE 1       // 是否使能电池检测功能
+#define FUEL_CAPACITY_SCAN_ENABLE 1 // 是否使能油量检测功能
+
+#define PIN_LEVEL_SCAN_ENABLE 1 // 是否使能引脚电平检测功能
+
+#define IC_1302_ENABLE 1 // 是否使能时钟IC 1302
 
 #define TEMP_OF_WATER_SCAN_ENABLE 0 // 是否使能水温检测
 
@@ -29,7 +38,7 @@
 // USE_INTERNATIONAL -- 国际通用单位
 // USE_IMPERIAL -- 英制单位
 #define USE_INTERNATIONAL
-  
+
 // ======================================================
 // 水温检测配置:
 #if TEMP_OF_WATER_SCAN_ENABLE
@@ -64,7 +73,6 @@
 #include "key_driver.h"
 
 #include "uart0.h"             // 接收 / 发送 指令 使用的串口(使能USE_MY_DEBUG宏时，printf()也是使用该串口)
-#include "uart1.h"             // printf()调试使用到的串口
 #include "tmr0.h"              // 串口检测数据超时需要使用到的定时器
 #include "tmr1.h"              // 用于 扫描发动机转速、扫描时速、定时将里程写入flash 的定时器
 #include "tmr2.h"              // 用于定时扫描脉冲个数(时速、发动机转速)

@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.7.0   MILEAGE                                                           08/01/2025 15:47:48 PAGE 1   
+C51 COMPILER V9.60.7.0   MILEAGE                                                           08/02/2025 16:49:15 PAGE 1   
 
 
 C51 COMPILER V9.60.7.0, COMPILATION OF MODULE MILEAGE
@@ -62,7 +62,7 @@ line level    source
   47   1          if (distance >= 1000) // 1000mm -- 1m
   48   1          {
   49   2              // 如果走过的距离超过了1m，再进行保存（保存到变量）
-C51 COMPILER V9.60.7.0   MILEAGE                                                           08/01/2025 15:47:48 PAGE 2   
+C51 COMPILER V9.60.7.0   MILEAGE                                                           08/02/2025 16:49:15 PAGE 2   
 
   50   2      
   51   2              // // 限制大计里程在 1000000000000 mm(1000,000km)以内
@@ -126,7 +126,7 @@ line level    source
  105   1                               // 如果小计里程有变化且超过了100m
  106   1          if ((fun_info.save_info.subtotal_mileage - old_subtotal_mileage) > 100)
  107   1      #else /* USE_IMPERIAL // 英制单位 */
-C51 COMPILER V9.60.7.0   MILEAGE                                                           08/01/2025 15:47:48 PAGE 3   
+C51 COMPILER V9.60.7.0   MILEAGE                                                           08/02/2025 16:49:15 PAGE 3   
 
                   // 如果小计里程有变化且超过了161m(0.1英里)
                   if ((fun_info.save_info.subtotal_mileage - old_subtotal_mileage) > 161)

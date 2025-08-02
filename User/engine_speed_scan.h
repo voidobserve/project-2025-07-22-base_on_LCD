@@ -4,6 +4,8 @@
 #include "include.h"   // 使用芯片官方提供的头文件
 #include "my_config.h" // 包含自定义的头文件
 
+#if ENGINE_SPEED_SCAN_ENABLE
+
 // ======================================================
 // 检测发动机转速所需的配置：
 #define ENGINE_SPEED_SCAN_PIN P02 // 检测发动机转速的引脚
@@ -48,5 +50,7 @@ extern void engine_speed_scan(void);        // 发动机转速扫描
 
 extern void engine_speed_buff_update(u32 engine_speed);
 extern void engine_speed_send_data(void);
+
+#endif // #if ENGINE_SPEED_SCAN_ENABLE
 
 #endif

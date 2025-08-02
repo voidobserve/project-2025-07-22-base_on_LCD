@@ -5,6 +5,8 @@
 #include "my_config.h" // 包含自定义的头文件
 #include "typedef_struct.h"
 
+#if IC_1302_ENABLE
+
 #define AIP1302_CE_PIN P17
 #define AIP1302_SCLK_PIN P16
 #define AIP1302_DATA_PIN P24
@@ -40,6 +42,8 @@ void aip1302_read_all(void); // 从aip1302中读出所有有关时间的数据
 #if 1
 void aip1302_test(void);
 void aip1302_update_all_data(aip1302_saveinfo_t aip1302_saveinfo); // 从aip1302中读出所有有关时间的数据,存放到全局变量中
+#endif
+
 #endif
 
 #endif

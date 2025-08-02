@@ -1,5 +1,7 @@
 #include "key_driver.h"
 
+#if (TOUCH_KEY_ENABLE || AD_KEY_ENABLE)
+
 enum
 {
     KEY_SCAN_STATUS_NONE = 0,       // 无特殊状态
@@ -266,3 +268,5 @@ _scan_end:
     return;
 #endif
 }
+
+#endif // #if (TOUCH_KEY_ENABLE  || AD_KEY_ENABLE)

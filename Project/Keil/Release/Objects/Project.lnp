@@ -10,7 +10,6 @@
 ".\Release\Objects\adc.obj",
 ".\Release\Objects\flash.obj",
 ".\Release\Objects\aip1302.obj",
-".\Release\Objects\uart1.obj",
 ".\Release\Objects\key_driver.obj",
 ".\Release\Objects\main.obj",
 ".\Release\Objects\fun_info.obj",

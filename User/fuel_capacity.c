@@ -1,5 +1,7 @@
 #include "fuel_capacity.h"
 
+#if FUEL_CAPACITY_SCAN_ENABLE
+
 volatile u32 fuel_capacity_scan_cnt = 0; // 扫描时间计数，在1ms定时器中断中累加
 
 /*
@@ -295,3 +297,5 @@ void fuel_capacity_scan(void)
         // flag_get_fuel = 1;
     } //  if (fuel_capacity_scan_cnt >= FUEL_UPDATE_TIME)
 }
+
+#endif // FUEL_CAPACITY_SCAN_ENABLE

@@ -1,5 +1,7 @@
 #include "battery.h"
 
+#if BATTERY_SCAN_ENABLE
+
 volatile u32 battery_scan_time_cnt = 0; // 电池扫描时间计时（在定时器中累加）
 
 /**
@@ -132,3 +134,5 @@ void battery_scan(void)
     }
 #endif
 }
+
+#endif // BATTERY_SCAN_ENABLE

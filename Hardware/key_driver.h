@@ -3,19 +3,21 @@
 
 #include "my_config.h"
 
+#if (TOUCH_KEY_ENABLE || AD_KEY_ENABLE)
+
 #define NO_KEY (255) // 无效按键的键值
 
 enum KEY_EVENT
 {
     KEY_EVENT_NONE = 0,
-    KEY_EVENT_CLICK = 1,        // 单击
+    KEY_EVENT_CLICK = 1,    // 单击
     KEY_EVENT_DOUBLE_CLICK, // 双击
     // KEY_EVENT_TRIPLE_CLICK, // 三击
     // KEY_EVENT_FOURTH_CLICK, // 四击
     // KEY_EVENT_FIRTH_CLICK,  // 五击
-    KEY_EVENT_LONG,         // 长按
-    KEY_EVENT_HOLD,         // 持续按下
-    KEY_EVENT_UP,           // 长按/持续按下后，松开了按键
+    KEY_EVENT_LONG, // 长按
+    KEY_EVENT_HOLD, // 持续按下
+    KEY_EVENT_UP,   // 长按/持续按下后，松开了按键
 };
 
 enum KEY_TYPE
@@ -56,5 +58,7 @@ typedef struct key_driver_para
 
 extern void key_driver_scan(void *_scan_para);
 // extern struct key_driver_para key_driver_scan(struct key_driver_para scan_para);
+
+#endif // #if (TOUCH_KEY_ENABLE  || AD_KEY_ENABLE)
 
 #endif

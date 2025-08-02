@@ -1,5 +1,7 @@
 #include "engine_speed_scan.h"
 
+#if ENGINE_SPEED_SCAN_ENABLE
+
 #if 0
 // 发动机每转一圈，能检测到的脉冲个数
 #ifndef ENGINE_SPEED_SCAN_PULSE_PER_TURN
@@ -219,6 +221,12 @@ void engine_speed_buff_update(u32 engine_speed)
         {
             engine_speed_buff[i] = engine_speed;
         }
+
+        // // 没有差值，直接更新（修复没有差值且数值为0时，没有发送数据的问题）
+        // fun_info.engine_speeed = engine_speed;
+        // flag_get_engine_speed = 1;
+
+        cur_send_engine_speed_buff_index = 0; // 游标复位
         return;
     }
 
@@ -235,6 +243,9 @@ void engine_speed_buff_update(u32 engine_speed)
         // 如果发动机转速在变小，数组从 [0] ~ [ENGINE_SPEED_SCAN_BUFF_SIZE - 1] 数值越来越小
         for (i = 0; i < ENGINE_SPEED_SCAN_BUFF_SIZE; i++)
         {
+            // 这一句会导致最后不能显示 数值为0 ：
+            // engine_speed_buff[ENGINE_SPEED_SCAN_BUFF_SIZE - 1 - i] = last_engine_speed - (u32)engine_speed_difference * (ENGINE_SPEED_SCAN_BUFF_SIZE - i - 1) / ENGINE_SPEED_SCAN_BUFF_SIZE;
+
             engine_speed_buff[ENGINE_SPEED_SCAN_BUFF_SIZE - 1 - i] = last_engine_speed - (u32)engine_speed_difference * (ENGINE_SPEED_SCAN_BUFF_SIZE - i - 1) / ENGINE_SPEED_SCAN_BUFF_SIZE;
         }
     }
@@ -258,6 +269,9 @@ void engine_speed_send_data(void)
         fun_info.engine_speeed = engine_speed_buff[cur_send_engine_speed_buff_index];
         cur_send_engine_speed_buff_index++;
 
+        // printf("fun_info.engine_speed = %lu\n", fun_info.engine_speeed);
         flag_get_engine_speed = 1;
     }
 }
+
+#endif // #if ENGINE_SPEED_SCAN_ENABLE

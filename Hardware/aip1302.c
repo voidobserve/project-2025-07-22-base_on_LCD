@@ -1,5 +1,7 @@
 #include "aip1302.h"
 
+#if IC_1302_ENABLE
+
 static u8 aip1302_is_running(void); // 函数声明
 
 // aip1302时钟ic初始化
@@ -45,10 +47,10 @@ void aip1302_config(void)
         // 如果是第一次上电
         // printf("1302 is first power on\n");
         // aip1302上电复位后，默认不跑时钟，这里要配置它开始跑时钟
-        aip1302_write_byte(AIP1302_YEAR_REG_ADDR, 0);    // 0年
+        aip1302_write_byte(AIP1302_YEAR_REG_ADDR, 10);    // 2010年
         aip1302_write_byte(AIP1302_MONTH_REG_ADDR, 1);   // 1月
         aip1302_write_byte(AIP1302_DATE_REG_ADDR, 1);    // 1日
-        aip1302_write_byte(AIP1302_WEEKDAY_REG_ADDR, 1); // 星期1
+        // aip1302_write_byte(AIP1302_WEEKDAY_REG_ADDR, 1); // 星期1
         aip1302_write_byte(AIP1302_MIN_REG_ADDR, 0);     // 0分
         aip1302_write_byte(AIP1302_HOUR_REG_ADDR, 0);    // 最高位清零,对应24小时制
         aip1302_write_byte(AIP1302_SEC_REG_ADDR, 0);     // 函数内部也会把最高位清零，秒寄存器最高位清零后，时钟ic开始振荡，跑时间
@@ -64,10 +66,11 @@ void aip1302_config(void)
 #endif
 
     // 从aip1302中读出所有有关时间的数据,存放到全局变量中
-    // aip1302_read_all();
+    aip1302_read_all();
 
 #if 0
     /* 测试程序 */
+    printf("power on, get aip1302 data: \n");
     printf("year %u \n", fun_info.aip1302_saveinfo.year);
     printf("month %bu \n", fun_info.aip1302_saveinfo.month);
     printf("day %bu \n", fun_info.aip1302_saveinfo.day);
@@ -330,7 +333,9 @@ u8 aip1302_is_running(void)
         fun_info.aip1302_saveinfo.day > 31 || fun_info.aip1302_saveinfo.day < 1 ||
         fun_info.aip1302_saveinfo.time_hour > 24 ||
         fun_info.aip1302_saveinfo.time_min > 60 ||
-        fun_info.aip1302_saveinfo.time_sec > 60)
+        fun_info.aip1302_saveinfo.time_sec > 60 || 
+        fun_info.aip1302_saveinfo.year == 2000 /* 2000年，也认为是第一次上电 */
+    )
     {
         return 0; // 第一次上电
     }
@@ -552,3 +557,5 @@ void aip1302_read_all(void)
 }
 
 #endif // 测试程序
+
+#endif // IC_1302_ENABLE

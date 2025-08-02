@@ -1,5 +1,7 @@
 #include "speed_scan.h"
 
+#if SPEED_SCAN_ENABLE
+
 #if 0
 // 标志位，是否由更新计数,由定时器来置位
 // 0--未更新脉冲计数，1--有新的脉冲计数
@@ -288,7 +290,6 @@ void speed_scan(void)
     } // if (cur_speed_scan_time >= 500 || flag_is_speed_scan_over_time)
 }
 
-
 void speed_buff_update(u8 speed)
 {
     static u8 last_speed = 0;    // 存放上一次采集到的速度
@@ -314,6 +315,12 @@ void speed_buff_update(u8 speed)
         {
             speed_buff[i] = speed;
         }
+
+        // // 没有差值，直接更新（修复没有差值且数值为0时，没有发送数据的问题）
+        // fun_info.speed = speed;
+        // flag_get_engine_speed = 1;
+
+        cur_send_speed_buff_index = 0; // 游标复位
         return;
     }
 
@@ -353,6 +360,9 @@ void speed_send_data(void)
         fun_info.speed = speed_buff[cur_send_speed_buff_index];
         cur_send_speed_buff_index++;
 
+        // printf("fun_info.speed = %lu\n", fun_info.speed);
         flag_get_speed = 1;
     }
 }
+
+#endif // SPEED_SCAN_ENABLE

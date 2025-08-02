@@ -4,6 +4,8 @@
 #include "include.h"   // 使用芯片官方提供的头文件
 #include "my_config.h" // 包含自定义的头文件
 
+#if BATTERY_SCAN_ENABLE
+
 // ======================================================
 // 电池电量检测配置:
 // 电池电量检测的更新时间(单位：ms，每隔 xx ms更新一次)
@@ -26,4 +28,5 @@ extern volatile u32 battery_scan_time_cnt; // 电池扫描时间计时
 
 void battery_scan(void);
 
+#endif // BATTERY_SCAN_ENABLE
 #endif

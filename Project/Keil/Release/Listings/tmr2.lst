@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.7.0   TMR2                                                              08/01/2025 15:47:46 PAGE 1   
+C51 COMPILER V9.60.7.0   TMR2                                                              08/02/2025 16:49:13 PAGE 1   
 
 
 C51 COMPILER V9.60.7.0, COMPILATION OF MODULE TMR2
@@ -62,7 +62,7 @@ line level    source
   49   1      }
   50          
   51          #if 0  // void tmr2_disable(void)
-C51 COMPILER V9.60.7.0   TMR2                                                              08/01/2025 15:47:46 PAGE 2   
+C51 COMPILER V9.60.7.0   TMR2                                                              08/02/2025 16:49:13 PAGE 2   
 
               /**
                * @brief 关闭定时器，清空计数值
@@ -80,91 +80,107 @@ line level    source
               #endif // void tmr2_disable(void)
   66          
   67          extern void update_engine_speed_scan_data(void); // 更新检测发动机转速的数据
-  68          extern void update_speed_scan_data(void);
-  69          // TMR2中断服务函数
-  70          void TIMR2_IRQHandler(void) interrupt TMR2_IRQn
-  71          {
-  72   1          // 上升沿检测
-  73   1          static volatile bit last_engine_speed_scan_level = 0; // 记录上一次检测到的引脚电平（发
+  68          #if SPEED_SCAN_ENABLE
+  69          extern void update_speed_scan_data(void);
+  70          #endif // #if SPEED_SCAN_ENABLE
+  71          // TMR2中断服务函数
+  72          void TIMR2_IRQHandler(void) interrupt TMR2_IRQn
+  73          {
+  74   1      // 上升沿检测
+  75   1      #if ENGINE_SPEED_SCAN_ENABLE
+  76   1      
+  77   1          static volatile bit last_engine_speed_scan_level = 0; // 记录上一次检测到的引脚电平（发
              -送机转速检测脚）
-  74   1          static volatile bit last_speed_scan_level = 0;        // 记录上一次检测到的引脚电平（时
-             -速检测脚）
-  75   1      
-  76   1          // 进入中断设置IP，不可删除
-  77   1          __IRQnIPnPush(TMR2_IRQn);
-  78   1          // P20 = 1; // 测试中断持续时间(约3us)
-  79   1      
-  80   1          // ---------------- 用户函数处理 -------------------
-  81   1          // 周期中断
-  82   1          if (TMR2_CONH & TMR_PRD_PND(0x1))
-  83   1          {
-  84   2              TMR2_CONH |= TMR_PRD_PND(0x1); // 清除pending
-  85   2      
-  86   2              { // 记录发动机转速扫描的时间
-  87   3                  static u8 cnt = 0;
-  88   3                  cnt++;
-  89   3                  if (cnt >= 20) // 每1ms进入一次
-  90   3                  {
-  91   4                      cnt = 0;
-  92   4                      engine_speed_scan_ms++;
-  93   4                      
-  94   4                      if (engine_speed_scan_ms >= ENGINE_SPEED_SCAN_OVER_TIME &&
-  95   4                          flag_is_engine_speed_scan_over_time == 0)
-  96   4                      {
-  97   5                          engine_speed_scan_ms = 0;
-  98   5                          flag_is_engine_speed_scan_over_time = 1; // 说明超时，脉冲计数一直没有加
-             -一
-  99   5                      }
- 100   4                  }
- 101   3              }
- 102   2      
- 103   2              if (ENGINE_SPEED_SCAN_PIN) // 检测发动机转速的引脚
- 104   2              {
- 105   3                  if (0 == last_engine_speed_scan_level)
- 106   3                  {
- 107   4                      // 如果之前检测到低电平，现在检测到高电平，说明有上升沿，对脉
-             -冲计数加一
- 108   4                      // if (detect_engine_pulse_cnt[0] < 4294967295) // 防止计数溢出
- 109   4                      // {
-C51 COMPILER V9.60.7.0   TMR2                                                              08/01/2025 15:47:46 PAGE 3   
+  78   1      
+  79   1      #endif // #if ENGINE_SPEED_SCAN_ENABLE
+  80   1      
+  81   1      #if SPEED_SCAN_ENABLE
+  82   1      
+  83   1          static volatile bit last_speed_scan_level = 0; // 记录上一次检测到的引脚电平（时速检�
+             -��脚）
+  84   1      
+  85   1      #endif // #if SPEED_SCAN_ENABLE
+  86   1      
+  87   1          // 进入中断设置IP，不可删除
+  88   1          __IRQnIPnPush(TMR2_IRQn);
+  89   1          // P20 = 1; // 测试中断持续时间(约3us)
+  90   1      
+  91   1          // ---------------- 用户函数处理 -------------------
+  92   1          // 周期中断
+  93   1          if (TMR2_CONH & TMR_PRD_PND(0x1))
+  94   1          {
+  95   2              TMR2_CONH |= TMR_PRD_PND(0x1); // 清除pending
+  96   2      
+  97   2      #if ENGINE_SPEED_SCAN_ENABLE
+  98   2      
+  99   2              { // 记录发动机转速扫描的时间
+ 100   3                  static u8 cnt = 0;
+ 101   3                  cnt++;
+ 102   3                  if (cnt >= 20) // 每1ms进入一次
+ 103   3                  {
+ 104   4                      cnt = 0;
+ 105   4                      engine_speed_scan_ms++;
+ 106   4      
+ 107   4                      if (engine_speed_scan_ms >= ENGINE_SPEED_SCAN_OVER_TIME &&
+ 108   4                          flag_is_engine_speed_scan_over_time == 0)
+ 109   4                      {
+ 110   5                          engine_speed_scan_ms = 0;
+ 111   5                          flag_is_engine_speed_scan_over_time = 1; // 说明超时，脉冲计数一直没有加
+C51 COMPILER V9.60.7.0   TMR2                                                              08/02/2025 16:49:13 PAGE 3   
 
- 110   4                      //     detect_engine_pulse_cnt[0]++;
- 111   4                      // }
- 112   4                      engine_speed_scan_cnt++;
- 113   4                      update_engine_speed_scan_data();
- 114   4                  }
- 115   3      
- 116   3                  last_engine_speed_scan_level = 1;
- 117   3              }
- 118   2              else
- 119   2              {
- 120   3                  // 如果现在检测到低电平
- 121   3                  last_engine_speed_scan_level = 0;
- 122   3              }
- 123   2      
- 124   2              { // 记录时速扫描的时间
- 125   3                  static u16 cnt = 0;
- 126   3                  cnt++;
- 127   3                  if (cnt >= 20) // 每1ms进入一次
- 128   3                  {
- 129   4                      cnt = 0;
- 130   4                      speed_scan_time_ms++; // 每1ms加一
- 131   4      
- 132   4                      // 600ms，为了滤掉1Hz的脉冲，认为 1Hz==0km/h 
- 133   4                      if (speed_scan_time_ms >= SPEED_SCAN_OVER_TIME &&
- 134   4                          flag_is_speed_scan_over_time == 0)
- 135   4                      {
- 136   5                          speed_scan_time_ms = 0;
- 137   5                          flag_is_speed_scan_over_time = 1; // 说明超时，脉冲计数一直没有加一
- 138   5                      }
- 139   4                  }
- 140   3              } // 记录时速扫描的时间
- 141   2      
- 142   2              if (SPEED_SCAN_PIN) // 检测时速的引脚
- 143   2              {
- 144   3                  if (0 == last_speed_scan_level)
- 145   3                  {
- 146   4      #if 0  // 定时扫描脉冲个数来计算时速的方式
+             -一
+ 112   5                      }
+ 113   4                  }
+ 114   3              }
+ 115   2      
+ 116   2              if (ENGINE_SPEED_SCAN_PIN) // 检测发动机转速的引脚
+ 117   2              {
+ 118   3                  if (0 == last_engine_speed_scan_level)
+ 119   3                  {
+ 120   4                      // 如果之前检测到低电平，现在检测到高电平，说明有上升沿，对脉
+             -冲计数加一
+ 121   4                      // if (detect_engine_pulse_cnt[0] < 4294967295) // 防止计数溢出
+ 122   4                      // {
+ 123   4                      //     detect_engine_pulse_cnt[0]++;
+ 124   4                      // }
+ 125   4                      engine_speed_scan_cnt++;
+ 126   4                      update_engine_speed_scan_data();
+ 127   4                  }
+ 128   3      
+ 129   3                  last_engine_speed_scan_level = 1;
+ 130   3              }
+ 131   2              else
+ 132   2              {
+ 133   3                  // 如果现在检测到低电平
+ 134   3                  last_engine_speed_scan_level = 0;
+ 135   3              }
+ 136   2      
+ 137   2      #endif // #if ENGINE_SPEED_SCAN_ENABLE
+ 138   2      
+ 139   2      #if SPEED_SCAN_ENABLE
+ 140   2              { // 记录时速扫描的时间
+ 141   3                  static u16 cnt = 0;
+ 142   3                  cnt++;
+ 143   3                  if (cnt >= 20) // 每1ms进入一次
+ 144   3                  {
+ 145   4                      cnt = 0;
+ 146   4                      speed_scan_time_ms++; // 每1ms加一
+ 147   4      
+ 148   4                      // 600ms，为了滤掉1Hz的脉冲，认为 1Hz==0km/h
+ 149   4                      if (speed_scan_time_ms >= SPEED_SCAN_OVER_TIME &&
+ 150   4                          flag_is_speed_scan_over_time == 0)
+ 151   4                      {
+ 152   5                          speed_scan_time_ms = 0;
+ 153   5                          flag_is_speed_scan_over_time = 1; // 说明超时，脉冲计数一直没有加一
+ 154   5                      }
+ 155   4                  }
+ 156   3              } // 记录时速扫描的时间
+ 157   2      
+ 158   2              if (SPEED_SCAN_PIN) // 检测时速的引脚
+ 159   2              {
+ 160   3                  if (0 == last_speed_scan_level)
+ 161   3                  {
+ 162   4      #if 0  // 定时扫描脉冲个数来计算时速的方式
                      // 如果之前检测到低电平，现在检测到高电平，说明有上升沿，对脉冲计数
              -加一
                               if (detect_speed_pulse_cnt[0] < 4294967295) // 防止计数溢出
@@ -172,26 +188,27 @@ line level    source
                                   detect_speed_pulse_cnt[0]++;
                               }
               #endif // 定时扫描脉冲个数来计算时速的方式
- 153   4      
- 154   4                      speed_pulse_cnt++;
- 155   4                      update_speed_scan_data();
- 156   4                  }
- 157   3      
- 158   3                  last_speed_scan_level = 1;
- 159   3              }
- 160   2              else
- 161   2              {
- 162   3                  // 如果现在检测到低电平
- 163   3                  last_speed_scan_level = 0;
- 164   3              }
- 165   2          }
- 166   1      
- 167   1          // P20 = 0; // 测试中断持续时间
- 168   1          // 退出中断设置IP，不可删除
- 169   1          __IRQnIPnPop(TMR2_IRQn);
- 170   1      }
-C51 COMPILER V9.60.7.0   TMR2                                                              08/01/2025 15:47:46 PAGE 4   
+ 169   4      
+ 170   4                      speed_pulse_cnt++;
+C51 COMPILER V9.60.7.0   TMR2                                                              08/02/2025 16:49:13 PAGE 4   
 
+ 171   4                      update_speed_scan_data();
+ 172   4                  }
+ 173   3      
+ 174   3                  last_speed_scan_level = 1;
+ 175   3              }
+ 176   2              else
+ 177   2              {
+ 178   3                  // 如果现在检测到低电平
+ 179   3                  last_speed_scan_level = 0;
+ 180   3              }
+ 181   2      #endif
+ 182   2          }
+ 183   1      
+ 184   1          // P20 = 0; // 测试中断持续时间
+ 185   1          // 退出中断设置IP，不可删除
+ 186   1          __IRQnIPnPop(TMR2_IRQn);
+ 187   1      }
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE

@@ -28,7 +28,7 @@ volatile bit flag_get_sub_total_mileage_2 = 0; // 获取小计里程2 / 得到�
 // volatile bit flag_alter_date = 0; // 修改日期
 volatile bit flag_alter_time = 0; // 修改时间
 
-volatile bit flag_get_voltage_of_battery = 0;    // 获取电池电压
+volatile bit flag_get_voltage_of_battery = 0; // 获取电池电压
 
 #if TEMP_OF_WATER_SCAN_ENABLE
 volatile bit flag_set_temp_of_water_warning = 0; // 设置水温报警
@@ -175,7 +175,7 @@ void instruction_scan(void)
                 case INSTRUCTION_ALTER_TIME: // 修改时间
                     flag_alter_time = 1;
 
-                    fun_info.aip1302_saveinfo.year = (u16)uart0_recv_buf[i][3] +
+                    fun_info.aip1302_saveinfo.year = (u16)((u32)uart0_recv_buf[i][3] << 8) +
                                                      (u16)uart0_recv_buf[i][4];
                     fun_info.aip1302_saveinfo.month = uart0_recv_buf[i][5];
                     fun_info.aip1302_saveinfo.day = uart0_recv_buf[i][6];
@@ -279,6 +279,8 @@ void instruction_handle(void)
 
             // 13. 发送触摸按键的状态
             // send_data(SEND_TOUCH_KEY_STATUS, fun_info.touch_key_val);
+
+#if IC_1302_ENABLE
             aip1302_read_all(); // 先从aip1302时钟ic获取所有关于时间的信息，再发送
             // 14. 发送当前日期
             //     temp_val = ((u32)fun_info.aip1302_saveinfo.year << 16) |
@@ -291,7 +293,9 @@ void instruction_handle(void)
             //                fun_info.aip1302_saveinfo.time_sec;
             //     send_data(SEND_TIME, temp_val);
             send_data(SEND_TIME, 0); // 第二个参数无效
-            // 16. 发送当前的电池电压
+#endif                               // #if IC_1302_ENABLE
+                                     // printf("time send\n");
+                                     // 16. 发送当前的电池电压
             send_data(SEND_VOLTAGE_OF_BATTERY, fun_info.voltage_of_battery);
 
 #if TEMP_OF_WATER_SCAN_ENABLE
@@ -394,7 +398,7 @@ void instruction_handle(void)
 
     if (flag_get_speed)
     {
-        // 如果要获取时速
+        // 如果要获取时速 （速度）
         flag_get_speed = 0;
 #if USE_MY_DEBUG
         // printf(" flag_get_speed \n");
@@ -421,7 +425,7 @@ void instruction_handle(void)
 
 #if USE_MY_DEBUG
         // printf(" flag_get_fuel \n");
-#endif 
+#endif
 
         send_data(SEND_FUEL, fun_info.fuel);
     }
@@ -492,7 +496,7 @@ void instruction_handle(void)
 #ifdef USE_IMPERIAL // 英制单位
 
 #if USE_MY_DEBUG
-        printf("sub total mileage: %lu * 0.1 mile \n", fun_info.save_info.subtotal_mileage / 161);
+        // printf("sub total mileage: %lu * 0.1 mile \n", fun_info.save_info.subtotal_mileage / 161);
 #endif // USE_MY_DEBUG
        // 只发送0.1英里及以上的数据
        // 变量中存放的是以m为单位的数据，需要做转换再发送
@@ -532,13 +536,20 @@ void instruction_handle(void)
     }
 #endif // 修改日期
 
+#if IC_1302_ENABLE
     if (flag_alter_time)
     {
         // 如果要修改时间
         flag_alter_time = 0;
 
+        // printf("get update time cmd\n");
+
 #if USE_MY_DEBUG
         // printf(" flag_alter_time \n");
+        // printf("==================================\n");
+        // printf("year %u \n", fun_info.aip1302_saveinfo.year);
+        // printf("month %bu \n", fun_info.aip1302_saveinfo.month);
+        // printf("day %bu \n", fun_info.aip1302_saveinfo.day);
         // printf("hour %bu min %bu sec %bu \n", fun_info.aip1302_saveinfo.time_hour, fun_info.aip1302_saveinfo.time_min, fun_info.aip1302_saveinfo.time_sec);
 #endif
 
@@ -549,8 +560,10 @@ void instruction_handle(void)
             // 切换状态，让定时器进行冷却计时
             aip1302_update_time(fun_info.aip1302_saveinfo); // 将时间更新到时钟ic
             update_time_status = UPDATE_STATUS_HANDLING;
+            // printf("time updated\n");
         }
     }
+#endif // #if IC_1302_ENABLE
 
     if (flag_get_voltage_of_battery)
     {

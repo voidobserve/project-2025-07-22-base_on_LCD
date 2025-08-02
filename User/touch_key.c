@@ -233,3 +233,5 @@ void touch_key_handle(void)
         break;
     }
 }
+
+#endif // (TOUCH_KEY_ENABLE)

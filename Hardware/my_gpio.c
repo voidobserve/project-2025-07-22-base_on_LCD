@@ -140,6 +140,7 @@ void p14_input_config(void)
 //     P1_PU |= (GPIO_P17_PULL_UP(0x1));
 // }
 
+#if 0
 // p21配置成输入上拉模式
 void p21_input_config(void)
 {
@@ -174,6 +175,7 @@ void p25_input_config(void)
     // 配置为上拉
     P2_PU |= (GPIO_P25_PULL_UP(0x1));
 }
+#endif
 
 // p27配置成输入上拉模式
 void p27_input_config(void)

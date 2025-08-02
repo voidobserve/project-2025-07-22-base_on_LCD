@@ -9,12 +9,6 @@
 // volatile bit tmr1_flag = 0; // TMR1中断服务函数中会置位的标志位
 volatile u32 tmr1_cnt = 0; // 定时器TMR1的计数值（每次在中断服务函数中会加一）
 
-#if USE_MY_DEBUG
-
-// volatile bit flag_is_printf_time = 0;
-
-#endif
-
 /**
  * @brief 配置定时器TMR1，配置完成后，定时器默认关闭
  */
@@ -38,10 +32,18 @@ void tmr1_config(void)
     TMR1_PRH = TMR_PERIOD_VAL_H((TMR1_PERIOD >> 8) & 0xFF); // 周期值
     TMR1_PRL = TMR_PERIOD_VAL_L((TMR1_PERIOD >> 0) & 0xFF);
 
-    TMR1_CONL &= ~(TMR_SOURCE_SEL(0x07)); // 清除TMR1的时钟源配置寄存器
-    TMR1_CONL |= TMR_SOURCE_SEL(0x05);    // 配置TMR1的时钟源，不用任何时钟
+    // TMR1_CONL &= ~(TMR_SOURCE_SEL(0x07)); // 清除TMR1的时钟源配置寄存器
+    // TMR1_CONL |= TMR_SOURCE_SEL(0x05);    // 配置TMR1的时钟源，不用任何时钟
+
+    // 重新给TMR1配置时钟
+    TMR1_CONL &= ~(TMR_SOURCE_SEL(0x07)); // 清除定时器的时钟源配置寄存器
+    TMR1_CONL |= TMR_SOURCE_SEL(0x06);    // 配置定时器的时钟源，使用系统时钟
+
+    __EnableIRQ(TMR1_IRQn); // 使能中断
+    IE_EA = 1;              // 打开总中断
 }
 
+#if 0
 /**
  * @brief 开启定时器TMR1，开始计时
  */
@@ -54,6 +56,7 @@ void tmr1_enable(void)
     __EnableIRQ(TMR1_IRQn); // 使能中断
     IE_EA = 1;              // 打开总中断
 }
+#endif
 
 #if 0  // void tmr1_disable(void)
 /**
@@ -71,6 +74,7 @@ void tmr1_disable(void)
 }
 #endif // void tmr1_disable(void)
 
+#if 0
 void heart_beat_handle(void)
 {
     static volatile u32 old_time_ms_cnt = 0; //
@@ -120,23 +124,23 @@ void heart_beat_handle(void)
 
 #endif
 
-    if (mileage_save_time_cnt < 4294967295 - diff_ms_cnt) // 防止计数溢出
+    // if (mileage_save_time_cnt < 4294967295 - diff_ms_cnt) // 防止计数溢出
     {
         // mileage_save_time_cnt++;
         mileage_save_time_cnt += diff_ms_cnt;
     }
 
-    if (fuel_capacity_scan_cnt < 4294967295 - diff_ms_cnt) // 防止计数溢出
+    // if (fuel_capacity_scan_cnt < 4294967295 - diff_ms_cnt) // 防止计数溢出
     {
         // fuel_capacity_scan_cnt++;
         fuel_capacity_scan_cnt += diff_ms_cnt;
     }
 
-    if (synchronous_request_status == SYN_REQUEST_STATUS_HANDLING)
+    // if (synchronous_request_status == SYN_REQUEST_STATUS_HANDLING)
     {
         // synchronous_request_time_cnt++; // 同步请求的冷却计时
         synchronous_request_time_cnt += diff_ms_cnt; // 同步请求的冷却计时
-        if (synchronous_request_time_cnt >= 2500)
+        if (synchronous_request_time_cnt >= 2000)
         {
             // 如果接收同步请求已经过了 xx s，清除冷却状态
             synchronous_request_time_cnt = 0;
@@ -144,7 +148,7 @@ void heart_beat_handle(void)
         }
     }
 
-    #if 0 // 日期和时间合到了一起，就不用这部分程序
+#if 0 // 日期和时间合到了一起，就不用这部分程序
     if (update_date_status == UPDATE_STATUS_HANDLING)
     {
         // 如果更新日期进入冷却状态，进行冷却计时
@@ -157,9 +161,9 @@ void heart_beat_handle(void)
             update_date_status = UPDATE_STATUS_NONE;
         }
     }
-    #endif
+#endif
 
-    if (update_time_status == UPDATE_STATUS_HANDLING)
+    // if (update_time_status == UPDATE_STATUS_HANDLING)
     {
         // 如果更新时间进入冷却状态，进行冷却计时
         // update_time_cooling_cnt++;
@@ -172,16 +176,17 @@ void heart_beat_handle(void)
         }
     }
 
-    if (mileage_update_time_cnt < 65535)
+    // if (mileage_update_time_cnt < 65535)
     {
         mileage_update_time_cnt++;
     }
 
-    if (battery_scan_time_cnt < 4294967295)
+    // if (battery_scan_time_cnt < 4294967295)
     {
         battery_scan_time_cnt++;
     }
 }
+#endif
 
 // TMR1中断服务函数
 void TIMR1_IRQHandler(void) interrupt TMR1_IRQn
@@ -251,25 +256,14 @@ void TIMR1_IRQHandler(void) interrupt TMR1_IRQn
             }
 #endif // TOUCH_KEY_ENABLE
 
+#if PIN_LEVEL_SCAN_ENABLE
             if (pin_level_scan_time_cnt < 65535) // 防止计数溢出
             {
                 pin_level_scan_time_cnt++;
             }
-
-#if USE_MY_DEBUG
-
-            // {
-            //     static u16 cnt;
-            //     cnt++;
-            //     if (cnt >= 2000)
-            //     {
-            //         cnt = 0;
-            //         flag_is_printf_time = 1;
-            //     }
-            // }
-
 #endif
 
+#if FUEL_CAPACITY_SCAN_ENABLE
             if (flag_timer_scan_update_fuel_gear)
             {
                 if (timer_scan_update_fuel_gear_cnt < 65535)
@@ -288,9 +282,11 @@ void TIMR1_IRQHandler(void) interrupt TMR1_IRQn
                 timer_scan_update_fuel_gear_cnt = 0;
                 flag_update_fuel_gear = 0;
             }
+#endif
 
+#if SPEED_SCAN_ENABLE
             {
-                static cnt = 0;
+                static u16 cnt = 0;
                 cnt++;
                 if (cnt >= SPEED_SCAN_BUFF_UPDATE_TIME)
                 {
@@ -298,8 +294,85 @@ void TIMR1_IRQHandler(void) interrupt TMR1_IRQn
                     flag_is_send_speed_time_come = 1;
                 }
             }
+#endif
 
+#if ENGINE_SPEED_SCAN_ENABLE
+            {
+                static u16 cnt = 0;
+                cnt++;
+                if (cnt >= ENGINE_SPEED_SEND_PERIOD)
+                {
+                    cnt = 0;
+                    flag_is_send_engine_speed_time_come = 1;
+                }
+            }
+#endif
 
+            // if (mileage_save_time_cnt < 4294967295 - diff_ms_cnt) // 防止计数溢出
+            {
+                mileage_save_time_cnt++;
+                // mileage_save_time_cnt += diff_ms_cnt;
+            }
+
+#if FUEL_CAPACITY_SCAN_ENABLE
+            // if (fuel_capacity_scan_cnt < 4294967295 - diff_ms_cnt) // 防止计数溢出
+            {
+                fuel_capacity_scan_cnt++;
+                // fuel_capacity_scan_cnt += diff_ms_cnt;
+            }
+#endif
+
+            // if (synchronous_request_status == SYN_REQUEST_STATUS_HANDLING)
+            {
+                synchronous_request_time_cnt++; // 同步请求的冷却计时
+                // synchronous_request_time_cnt += diff_ms_cnt; // 同步请求的冷却计时
+                if (synchronous_request_time_cnt >= 2000)
+                {
+                    // 如果接收同步请求已经过了 xx s，清除冷却状态
+                    synchronous_request_time_cnt = 0;
+                    synchronous_request_status = SYN_REQUEST_STATUS_NONE;
+                }
+            }
+
+#if 0 // 日期和时间合到了一起，就不用这部分程序
+    if (update_date_status == UPDATE_STATUS_HANDLING)
+    {
+        // 如果更新日期进入冷却状态，进行冷却计时
+        // update_date_cooling_cnt++;
+        update_date_cooling_cnt += diff_ms_cnt;
+        if (update_date_cooling_cnt >= 100) // xx ms
+        {
+            // 过了冷却时间，退出冷却状态
+            update_date_cooling_cnt = 0;
+            update_date_status = UPDATE_STATUS_NONE;
+        }
+    }
+#endif
+
+            // if (update_time_status == UPDATE_STATUS_HANDLING)
+            {
+                // 如果更新时间进入冷却状态，进行冷却计时
+                update_time_cooling_cnt++;
+                // update_time_cooling_cnt += diff_ms_cnt;
+                if (update_time_cooling_cnt >= 100) // xx ms
+                {
+                    // 过了冷却时间，退出冷却状态
+                    update_time_cooling_cnt = 0;
+                    update_time_status = UPDATE_STATUS_NONE;
+                }
+            }
+
+            // if (mileage_update_time_cnt < 65535)
+            {
+                mileage_update_time_cnt++;
+            }
+
+#if BATTERY_SCAN_ENABLE
+            // if (battery_scan_time_cnt < 4294967295)
+            {
+                battery_scan_time_cnt++;
+            }
+#endif // BATTERY_SCAN_ENABLE
 
 #if 0 // DEBUG 只在测试时使用
 
@@ -314,6 +387,16 @@ void TIMR1_IRQHandler(void) interrupt TMR1_IRQn
             }
 
 #endif // // DEBUG 只在测试时使用
+
+            {
+                static u16 cnt;
+                cnt++;
+                if (cnt >= 2000)
+                {
+                    cnt = 0;
+                    flag_debug_is_send_time = 1; // 发送时间
+                }
+            }
         }
     }
 

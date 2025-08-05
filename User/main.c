@@ -19,285 +19,10 @@
 #include "include.h"
 #include "my_config.h"
 
-#if 0
-
-// 更新时间
-// void time_update(void)
-// {
-//     if (tmr4_cnt >= 1000) // 如果计时满1s(1000ms)
-//     {
-//         tmr4_cnt -= 1000; // 为了尽量让时间准确，这里是 -=1000 ，而不是清零
-
-//         if (fun_info.save_info.time_sec < 59) // 最大加到59s，测试通过
-//         {
-//             fun_info.save_info.time_sec++;
-//         }
-//         else
-//         {
-//             fun_info.save_info.time_sec = 0;
-//             fun_info_save(); // 每分钟保存一次时间到flash
-
-//             // printf("cur min %d \n", (u16)fun_info.time_min);
-
-//             if (fun_info.save_info.time_min < 59) // 最大加到59min，测试通过
-//             {
-//                 fun_info.save_info.time_min++;
-//             }
-//             else
-//             {
-//                 fun_info.save_info.time_min = 0;
-//                 // printf("cur hour %d \n", (u16)fun_info.time_hour);
-
-//                 if (fun_info.save_info.time_hour < 23) // 最大加到23h，测试通过
-//                 {
-//                     fun_info.save_info.time_hour++;
-//                 }
-//                 else
-//                 {
-//                     // 加到 23:59:59 后，将时间全部清零
-//                     fun_info.save_info.time_hour = 0;
-//                     fun_info.save_info.time_min = 0;
-//                     fun_info.save_info.time_sec = 0;
-//                 }
-//             }
-//         }
-
-// #if USE_MY_DEBUG // 测试单片机发送的数据
-//         // printf("cur sec %d \n", (u16)fun_info.time_sec);
-
-//         // 测试用，可以在这里修改数据，然后发送
-//         {
-//             /*
-//                 #define TEST_SEND_BATTERY // 测试通过
-//                 #define TEST_SEND_BRAKE // MP5上面没有显示，串口有发送对应的数据
-//                 #define TEST_SEND_LEFT_TURN // 测试通过
-//                 #define TEST_SEND_RIGHT_TURN // 测试通过
-//                 #define TEST_SEND_HIGH_BEAM // 测试通过
-
-//                 #define TEST_SEND_SPEED // 测试通过，但是要注意时速的显示范围
-//                 #define TEST_SEND_ENGINE_SPEED // 测试通过
-//                 #define TEST_SEND_FUEL // 测试通过
-
-//                 #define TEST_SEND_TEMP_OF_WATER // 没有显示，改用水温报警
-//                 #define TEST_SEND_TOTAL_MILEAGE // 测试通过
-//                 #define TEST_SEND_SUBTOTAL_MILEAGE // 测试通过
-
-//                 #define TEST_SEND_TOUCH_KEY
-//                 #define TEST_SEND_TEMP_OF_WATER_WARNING // 测试通过
-//                 #define TEST_SEND_VOLTAGE_OF_BATTERY // 测试通过
-//             */
-
-//             // #define TEST_SEND_VOLTAGE_OF_BATTERY
-
-// #ifdef TEST_SEND_BATTERY
-//             // =============================================
-//             // 测试发送电池电量--单位：百分比
-//             if (fun_info.battery < 100)
-//             {
-//                 fun_info.battery++;
-//             }
-//             else
-//             {
-//                 fun_info.battery = 0;
-//             }
-
-//             // printf("cur battery %d \%\n", (u16)fun_info.battery);
-//             flag_get_battery = 1;
-// #endif
-
-// #ifdef TEST_SEND_BRAKE
-//             // =============================================
-//             // 测试发送 刹车状态
-//             if (fun_info.brake)
-//             {
-//                 fun_info.brake = 0;
-//             }
-//             else
-//             {
-//                 fun_info.brake = 1;
-//             }
-
-//             flag_get_brake = 1;
-// #endif
-
-// #ifdef TEST_SEND_LEFT_TURN
-//             // =============================================
-//             // 测试发送 左转向灯
-//             if (fun_info.left_turn)
-//             {
-//                 fun_info.left_turn = 0;
-//             }
-//             else
-//             {
-//                 fun_info.left_turn = 1;
-//             }
-
-//             flag_get_left_turn = 1;
-// #endif
-
-// #ifdef TEST_SEND_RIGHT_TURN
-//             // =============================================
-//             // 测试发送 右转向灯
-//             if (fun_info.right_turn)
-//             {
-//                 fun_info.right_turn = 0;
-//             }
-//             else
-//             {
-//                 fun_info.right_turn = 1;
-//             }
-
-//             flag_get_right_turn = 1;
-// #endif
-
-// #ifdef TEST_SEND_HIGH_BEAM
-//             // #if 1
-//             // =============================================
-//             // 测试发送 远光灯 状态
-//             if (fun_info.high_beam)
-//             {
-//                 fun_info.high_beam = 0;
-//             }
-//             else
-//             {
-//                 fun_info.high_beam = 1;
-//             }
-
-//             flag_get_high_beam = 1;
-// #endif
-
-// #ifdef TEST_SEND_SPEED
-//             // =============================================
-//             // 测试发送 时速
-//             if (fun_info.speed < 0xFFFF)
-//             {
-//                 fun_info.speed++;
-//             }
-//             else
-//             {
-//                 fun_info.speed = 0;
-//             }
-
-//             flag_get_speed = 1;
-// #endif
-
-// #ifdef TEST_SEND_ENGINE_SPEED
-//             // =============================================
-//             // 测试发送 发动机转速
-//             if (fun_info.engine_speeed < (0xFFFF - 1000))
-//             {
-//                 fun_info.engine_speeed += 1000;
-//             }
-//             else
-//             {
-//                 fun_info.engine_speeed = 1000;
-//             }
-
-//             flag_get_engine_speed = 1;
-// #endif
-
-// #ifdef TEST_SEND_FUEL
-//             // =============================================
-//             // 测试发送 油量
-//             if (fun_info.fuel < 0xFF)
-//             {
-//                 fun_info.fuel++;
-//             }
-//             else
-//             {
-//                 fun_info.fuel = 0;
-//             }
-
-//             flag_get_fuel = 1;
-
-// #endif
-
-// #ifdef TEST_SEND_TEMP_OF_WATER
-//             // =============================================
-//             // 测试发送 水温
-//             if (fun_info.temp_of_water < 0xFF)
-//             {
-//                 fun_info.temp_of_water++;
-//             }
-//             else
-//             {
-//                 fun_info.temp_of_water = 0;
-//             }
-
-//             flag_get_temp_of_water = 1;
-// #endif
-
-// #ifdef TEST_SEND_TOTAL_MILEAGE
-//             // =============================================
-//             // 测试发送 大计里程
-//             // fun_info.save_info.total_mileage = 90000;
-//             if (fun_info.save_info.total_mileage < (0xFFFFFFFF - 1000))
-//             {
-//                 fun_info.save_info.total_mileage += 1000;
-//             }
-//             else
-//             {
-//                 fun_info.save_info.total_mileage = 0xFFFF0000;
-//             }
-
-//             flag_get_total_mileage = 1;
-
-// #endif
-
-// #ifdef TEST_SEND_SUBTOTAL_MILEAGE
-//             // =============================================
-//             // 测试发送 小计里程
-//             if (fun_info.save_info.subtotal_mileage < 1000)
-//             {
-//                 fun_info.save_info.subtotal_mileage++;
-//             }
-//             else
-//             {
-//                 fun_info.save_info.subtotal_mileage = 0;
-//             }
-
-//             flag_get_sub_total_mileage = 1;
-// #endif
-
-// #ifdef TEST_SEND_TEMP_OF_WATER_WARNING
-//             // =============================================
-//             // 测试发送 水温报警
-
-//             if (fun_info.flag_is_in_water_temp_warning)
-//             {
-//                 fun_info.flag_is_in_water_temp_warning = 0;
-//             }
-//             else
-//             {
-//                 fun_info.flag_is_in_water_temp_warning = 1;
-//             }
-
-//             flag_set_temp_of_water_warning = 1;
-// #endif
-
-// #ifdef TEST_SEND_VOLTAGE_OF_BATTERY
-//             // 测试 发送电池电压
-//             if (fun_info.voltage_of_battery < (0xFFFF - 10))
-//             {
-//                 fun_info.voltage_of_battery += 10;
-//             }
-//             else
-//             {
-//                 fun_info.voltage_of_battery = 10000;
-//             }
-
-//             flag_get_voltage_of_battery = 1;
-// #endif
-//         }
-
-// #endif // #if USE_MY_DEBUG // 测试单片机发送的数据
-//     }
-// }
-#endif
-
 // DEBUG
 // volatile bit flag_is_debug_update = 0; // 测试时使用
 volatile bit flag_debug_is_send_time = 0; // 测试时使用
+// volatile bit flag_debug_is_send_time_2 = 0; // 测试时使用
 
 void user_init(void)
 {
@@ -306,9 +31,9 @@ void user_init(void)
     P2_MD0 |= GPIO_P23_MODE_SEL(0x01);    // 输出模式
     FOUT_S23 |= GPIO_FOUT_AF_FUNC;
 
-    fun_info_init(); // 初始化用于存放信息的变量
+    
 
-    tmr0_config();  // 串口检测数据超时需要使用到的定时器
+    // tmr0_config();  // 串口检测数据超时需要使用到的定时器
     uart0_config(); // 发送和接收指令使用到的串口
 
 #if PIN_LEVEL_SCAN_ENABLE
@@ -340,7 +65,11 @@ void user_init(void)
     tmr2_config(); // 扫描脉冲(电平变化)的定时器
 
     // tmr1_enable(); // 打开 检测引脚电平、检测时速、发动机转速、更新里程、定时检测油量 使用的定时器 【现在直接放到了tmr1_config()函数中】
-    tmr2_enable(); // 打开定时检测脉冲的定时器
+    // tmr2_enable(); // 打开定时检测脉冲的定时器
+
+    iic_config();
+
+    fun_info_init(); // 初始化用于存放信息的变量（要放在iic初始化后面）
 
     // delay_ms(10); // 等待系统稳定
     // tk_param_init();  // 触摸按键模块初始化
@@ -380,28 +109,6 @@ void main(void)
     delay_ms(1000);
     P23 = 0;
 
-    // printf("scan_times %bu\n", ad_key_para.scan_times);
-    // printf("cur_scan_times %bu\n", ad_key_para.cur_scan_times);
-    // printf("last_key %bu\n", ad_key_para.last_key);
-    // printf("filter_value %bu\n", ad_key_para.filter_value);
-    // printf("filter_cnt %bu\n", ad_key_para.filter_cnt);
-    // printf("filter_time %bu\n", ad_key_para.filter_time);
-    // printf("long_time %bu\n", ad_key_para.long_time);
-    // printf("hold_time %bu\n", ad_key_para.hold_time);
-    // printf("press_cnt %bu\n", ad_key_para.press_cnt);
-
-    // printf("click_cnt %bu\n", ad_key_para.click_cnt);
-    // printf("click_delay_cnt %bu\n", ad_key_para.click_delay_cnt);
-    // printf("click_delay_time %bu\n", ad_key_para.click_delay_time);
-    // printf("notify_value %bu\n", ad_key_para.notify_value);
-    // printf("key_type %bu\n", ad_key_para.key_type);
-
-    // printf("latest_key_val %bu\n", ad_key_para.latest_key_val);
-    // printf("latest_key_event %bu\n", ad_key_para.latest_key_event);
-
-    // printf("size %bu\n", (u8)sizeof(struct key_driver_para_t *));
-    // printf("addr %p\n", (void *)&ad_key_para);
-
 #if 0  // 测试发送日期和时间
     // 当前日期
     fun_info.aip1302_saveinfo.year = 2024;
@@ -419,7 +126,7 @@ void main(void)
     printf("hour %bu min %bu sec %bu \n", fun_info.aip1302_saveinfo.time_hour, fun_info.aip1302_saveinfo.time_min, fun_info.aip1302_saveinfo.time_sec);
 #endif // 测试发送日期和时间
 
-    // printf("sys reset\n");
+    printf("sys reset\n");
 
     // 测试程序：
     // fun_info.save_info.total_mileage = (u32)999970 * 1000;
@@ -462,16 +169,21 @@ void main(void)
 #if 0 // 调试使用
         if (flag_debug_is_send_time)
         {
-            static u16 tmp = 0;
-            tmp += 10;
-            if (tmp >= 200)
+            if (flag_get_speed == 0) // 等待上一次发送完成
             {
-                tmp = 0;
-            }
+                static u16 tmp = 0;
+                tmp += 10;
+                if (tmp >= 170)
+                {
+                    tmp = 0;
+                }
 
-            fun_info.speed = tmp;
-            // fun_info.speed = 140;
-            flag_get_speed = 1;
+                fun_info.speed = tmp;
+                // fun_info.speed = 140;
+                flag_get_speed = 1;
+
+                flag_debug_is_send_time = 0;
+            }
         }
 #endif
 
@@ -480,6 +192,27 @@ void main(void)
 #if ENGINE_SPEED_SCAN_ENABLE
         engine_speed_scan();      // 检测发动机转速
         engine_speed_send_data(); // 发动发动机转速数据，需要时间到来才会执行
+
+#if 0 // 调试使用
+        if (flag_debug_is_send_time_2)
+        {
+            if (flag_get_engine_speed == 0) // 等待上一次发送完成
+            {
+                static u32 tmp = 0;
+                tmp += 100;
+                if (tmp >= 13000)
+                {
+                    tmp = 0;
+                }
+
+                fun_info.engine_speeed = tmp;
+                // fun_info.speed = 140;
+                flag_get_engine_speed = 1;
+
+                flag_debug_is_send_time_2 = 0;
+            }
+        }
+#endif
 
 #endif // #if ENGINE_SPEED_SCAN_ENABLE
 
@@ -590,6 +323,12 @@ void main(void)
         uart0_scan_handle();  // 检查串口接收缓冲区的数据是否符合协议,如果有正确的指令，会存到另一个缓冲区中（接下来让instruction_scan()函数来处理）
         instruction_scan();   // 扫描是否有合法的指令
         instruction_handle(); // 扫描是否有对应的获取/状态更新操作(最占用时间,因为要等待串口的数据发送完成)
+
+        if (flag_debug_is_send_time)
+        {
+            flag_debug_is_send_time = 0;
+            eeprom_printf_all();
+        }
 
 #endif //
 

@@ -407,16 +407,6 @@
           <GroupName>Hardware</GroupName>
           <Files>
             <File>
-              <FileName>my_gpio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\Hardware\my_gpio.c</FilePath>
-            </File>
-            <File>
-              <FileName>tmr0.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\Hardware\tmr0.c</FilePath>
-            </File>
-            <File>
               <FileName>tmr1.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\Hardware\tmr1.c</FilePath>
@@ -437,11 +427,6 @@
               <FilePath>..\..\Hardware\adc.c</FilePath>
             </File>
             <File>
-              <FileName>flash.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\Hardware\flash.c</FilePath>
-            </File>
-            <File>
               <FileName>aip1302.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\Hardware\aip1302.c</FilePath>
@@ -450,6 +435,16 @@
               <FileName>key_driver.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\Hardware\key_driver.c</FilePath>
+            </File>
+            <File>
+              <FileName>iic_on_chip.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\Hardware\iic_on_chip.c</FilePath>
+            </File>
+            <File>
+              <FileName>iic_eeprom.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\Hardware\iic_eeprom.c</FilePath>
             </File>
           </Files>
         </Group>

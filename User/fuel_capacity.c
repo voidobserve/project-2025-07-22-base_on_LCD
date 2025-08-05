@@ -2,7 +2,7 @@
 
 #if FUEL_CAPACITY_SCAN_ENABLE
 
-volatile u32 fuel_capacity_scan_cnt = 0; // 扫描时间计数，在1ms定时器中断中累加
+volatile u16 fuel_capacity_scan_cnt = 0; // 扫描时间计数，在1ms定时器中断中累加
 
 /*
     标志位，（如果当前油量百分比与上一次的油量百分比不在同一个油量格数下）

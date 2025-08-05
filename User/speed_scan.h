@@ -67,14 +67,14 @@ extern volatile u32 detect_speed_pulse_cnt[2];      // 检测时速的脉冲计�
 
 extern volatile bit flag_is_speed_scan_over_time;
 extern volatile u32 speed_pulse_cnt;
-extern volatile u32 speed_scan_time_ms;
+extern volatile u16 speed_scan_time_ms;
 
 extern volatile bit flag_is_send_speed_time_come ; // 标志位，发送速度的时间到来
 
 void speed_scan_config(void);
 void speed_scan(void);
 
-void speed_buff_update(u8 speed);
+void speed_buff_update(u16 speed);
 void speed_send_data(void);
 
 #endif // SPEED_SCAN_ENABLE

@@ -41,7 +41,7 @@
 
 extern volatile bit flag_is_engine_speed_scan_over_time; // 标志位，发动机转速检测是否超时
 extern volatile u32 engine_speed_scan_cnt;
-extern volatile u32 engine_speed_scan_ms;
+extern volatile u16 engine_speed_scan_ms;
 
 extern bit flag_is_send_engine_speed_time_come; // 标志位，发送发动机转速的时间到来
 

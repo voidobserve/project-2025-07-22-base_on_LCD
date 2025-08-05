@@ -2,7 +2,7 @@
 
 #if BATTERY_SCAN_ENABLE
 
-volatile u32 battery_scan_time_cnt = 0; // 电池扫描时间计时（在定时器中累加）
+volatile u16 battery_scan_time_cnt = 0; // 电池扫描时间计时（在定时器中累加）
 
 /**
  * @brief 将ad值转换为对应的电压值

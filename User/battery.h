@@ -24,7 +24,7 @@
 // 电池电量检测配置
 //======================================================
 
-extern volatile u32 battery_scan_time_cnt; // 电池扫描时间计时
+extern volatile u16 battery_scan_time_cnt; // 电池扫描时间计时
 
 void battery_scan(void);
 

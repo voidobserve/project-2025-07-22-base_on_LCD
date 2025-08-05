@@ -25,6 +25,10 @@ extern volatile u8 recved_flagbuf[(UART0_RXBUF_LEN) / (FRAME_MAX_LEN)];
 extern volatile u8 recv_frame_cnt; // 接收到的数据帧的个数
 extern volatile u8 flagbuf_valid_instruction[(UART0_RXBUF_LEN) / (FRAME_MAX_LEN)]; // 存放有合法指令的标志位数组
 
+extern volatile bit flag_is_uart0_receive_timeout; // 标志位，串口是否接收超时，0--未超时，1--已超时
+extern volatile bit flag_is_uart0_receive_timeout_enable; // 标志位，是否使能串口接收超时，0--否，1--串口接收了数据，却未收到完整一帧数据，使能串口接收超时
+extern volatile u8 uart0_receive_timeout_cnt;            // 存放串口接收超时计数值
+
 // 串口0波特率
 #ifndef UART0_BAUDRATE
 #define UART0_BAUDRATE 115200

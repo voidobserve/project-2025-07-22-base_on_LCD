@@ -29,24 +29,29 @@ void tmr2_config(void)
     TMR2_PRH = TMR_PERIOD_VAL_H((TMR2_PERIOD >> 8) & 0xFF); // 周期值
     TMR2_PRL = TMR_PERIOD_VAL_L((TMR2_PERIOD >> 0) & 0xFF);
 
-    TMR2_CONL &= ~(TMR_SOURCE_SEL(0x07)); // 清除TMR2的时钟源配置寄存器
-    TMR2_CONL |= TMR_SOURCE_SEL(0x05);    // 配置TMR2的时钟源，不用任何时钟
+    // TMR2_CONL &= ~(TMR_SOURCE_SEL(0x07)); // 清除TMR2的时钟源配置寄存器
+    // TMR2_CONL |= TMR_SOURCE_SEL(0x05);    // 配置TMR2的时钟源，不用任何时钟
     TMR2_CONH &= ~TMR_PRD_PND(0x01);      // 清除TMR2的计数标志位，表示未完成计数
     TMR2_CONH |= TMR_PRD_IRQ_EN(1);       // 使能TMR2的计数中断
-}
 
-/**
- * @brief 开启定时器TMR2，开始计时
- */
-void tmr2_enable(void)
-{
-    // 重新给TMR2配置时钟
     TMR2_CONL &= ~(TMR_SOURCE_SEL(0x07)); // 清除定时器的时钟源配置寄存器
     TMR2_CONL |= TMR_SOURCE_SEL(0x06);    // 配置定时器的时钟源，使用系统时钟
 
-    __EnableIRQ(TMR2_IRQn); // 使能中断
-    IE_EA = 1;              // 打开总中断
+    __EnableIRQ(TMR2_IRQn); // 使能中断 
 }
+
+// /**
+//  * @brief 开启定时器TMR2，开始计时
+//  */
+// void tmr2_enable(void)
+// {
+//     // 重新给TMR2配置时钟
+//     TMR2_CONL &= ~(TMR_SOURCE_SEL(0x07)); // 清除定时器的时钟源配置寄存器
+//     TMR2_CONL |= TMR_SOURCE_SEL(0x06);    // 配置定时器的时钟源，使用系统时钟
+
+//     __EnableIRQ(TMR2_IRQn); // 使能中断
+//     IE_EA = 1;              // 打开总中断
+// }
 
 #if 0  // void tmr2_disable(void)
 /**

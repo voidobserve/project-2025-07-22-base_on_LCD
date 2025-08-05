@@ -43,7 +43,7 @@ typedef struct
     aip1302_saveinfo_t aip1302_saveinfo; // 存放 从aip1302读取的数据 / 要写入到aip1302的数据
 
     u32 engine_speeed;      // 发动机的转速（单位：rpm）
-    u32 speed;              // 时速(单位：km/h，使用英制单位时，只需要在发送时进行转换)
+    u16 speed;              // 时速(单位：km/h，使用英制单位时，只需要在发送时进行转换)
     u16 voltage_of_battery; // 电池电压(单位：0.1V)
 
     u8 gear;    // 挡位

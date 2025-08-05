@@ -8,7 +8,7 @@
 // extern volatile u32 tmr2_cnt; // 定时器TMR2的计数值（每次在中断服务函数中会加一）
 
 extern void tmr2_config(void);
-extern void tmr2_enable(void);
-extern void tmr2_disable(void);
+// extern void tmr2_enable(void);
+// extern void tmr2_disable(void);
 
 #endif

@@ -26,6 +26,9 @@
         "uart0.h": "c",
         "engine_speed_scan.h": "c",
         "tmr2.h": "c",
-        "tmr1.h": "c"
+        "tmr1.h": "c",
+        "string.h": "c",
+        "iic_on_chip.h": "c",
+        "iic_eeprom.h": "c"
     },
 }

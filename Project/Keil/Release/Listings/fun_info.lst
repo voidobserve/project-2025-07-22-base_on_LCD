@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.7.0   FUN_INFO                                                          08/02/2025 16:49:14 PAGE 1   
+C51 COMPILER V9.60.7.0   FUN_INFO                                                          08/05/2025 17:55:48 PAGE 1   
 
 
 C51 COMPILER V9.60.7.0, COMPILATION OF MODULE FUN_INFO
@@ -12,29 +12,90 @@ line level    source
    1          #include "fun_info.h"
    2          #include <string.h> // memset()
    3          
-   4          volatile fun_info_t fun_info = {0}; // 存放所有功能状态的结构体变量
+   4          volatile fun_info_t fun_info; // 存放所有功能状态的结构体变量
    5          
    6          // 初始化存放所有信息的结构体变量
    7          void fun_info_init(void)
    8          {
-   9   1          memset(&fun_info, 0, sizeof(fun_info));
-  10   1          flash_read(0x00, (u8 *)&fun_info.save_info, sizeof(fun_info.save_info));
-  11   1      }
-  12          
-  13          // 保存 存放了所有信息的结构体变量，写入flash中
-  14          void fun_info_save(void)
-  15          {
-  16   1          flash_erase_sector(0x00);
-  17   1          flash_write(0x00, (u8 *)&fun_info.save_info, sizeof(fun_info.save_info));
-  18   1      }
-  19          
-  20          
+   9   1          u8 page_id;
+  10   1          // memset(&fun_info, 0, sizeof(fun_info));
+  11   1      
+  12   1          // flash_read(0x00, (u8 *)&fun_info.save_info, sizeof(fun_info.save_info));
+  13   1      
+  14   1          eeprom_menu_init();
+  15   1      
+  16   1          
+  17   1      
+  18   1          page_id = eeprom_menu_prev.cur_write_page_id;
+  19   1      
+  20   1          // 根据从目录读取到的页面id，找到对应的数据
+  21   1          eeprom_24cxx_read(page_id, (u8 *)&eeprom_saveinfo, sizeof(eeprom_saveinfo_t));
+  22   1          if (eeprom_saveinfo.is_data_valid == EEPROM_DATA_VALID_VAL)
+  23   1          {
+  24   2              fun_info.save_info.total_mileage = eeprom_saveinfo.total_mileage;
+  25   2              fun_info.save_info.subtotal_mileage = eeprom_saveinfo.subtotal_mileage;
+  26   2              fun_info.save_info.subtotal_mileage_2 = eeprom_saveinfo.subtotal_mileage_2;
+  27   2          }
+  28   1          else
+  29   1          {
+  30   2              // 如果对应的页面的数据无效，找到它同一组的另一个页面，看看另一个�
+             -�面的数据是否有效
+  31   2      
+  32   2              if (page_id % 2 == 0)
+  33   2              {
+  34   3                  /*
+  35   3                      如果是偶数页面id
+  36   3                      得到的偶数，作为同一组页面的第一个页面 prev
+  37   3                      得到的偶数 + 1，作为同一组页面的第二个页面 next
+  38   3                  */
+  39   3                  page_id += 1;
+  40   3              }
+  41   2              else
+  42   2              {
+  43   3                  /*
+  44   3                      如果是奇数页面id，
+  45   3                      得到的奇数 - 1，作为同一组页面的第一个页面 prev
+  46   3                      得到的奇数，作为同一组页面的第二个页面 next
+  47   3                  */
+  48   3                  page_id -= 1;
+  49   3              }
+  50   2      
+  51   2              eeprom_24cxx_read(page_id, (u8 *)&eeprom_saveinfo, sizeof(eeprom_saveinfo_t));
+  52   2              if (eeprom_saveinfo.is_data_valid == EEPROM_DATA_VALID_VAL)
+C51 COMPILER V9.60.7.0   FUN_INFO                                                          08/05/2025 17:55:48 PAGE 2   
+
+  53   2              {
+  54   3                  // 如果该页面的数据有效，将数据读出
+  55   3                  fun_info.save_info.total_mileage = eeprom_saveinfo.total_mileage;
+  56   3                  fun_info.save_info.subtotal_mileage = eeprom_saveinfo.subtotal_mileage;
+  57   3                  fun_info.save_info.subtotal_mileage_2 = eeprom_saveinfo.subtotal_mileage_2;
+  58   3              }
+  59   2              else
+  60   2              {
+  61   3                  // 如果页面的数据无效，说明eeprom中还没有存放数据
+  62   3                  fun_info.save_info.total_mileage = 0;
+  63   3                  fun_info.save_info.subtotal_mileage = 0;
+  64   3                  fun_info.save_info.subtotal_mileage_2 = 0;
+  65   3              }
+  66   2          }
+  67   1      }
+  68          
+  69          // 保存 存放了所有信息的结构体变量，写入flash中
+  70          void fun_info_save(void)
+  71          {
+  72   1          // flash_erase_sector(0x00);
+  73   1          // flash_write(0x00, (u8 *)&fun_info.save_info, sizeof(fun_info.save_info));
+  74   1      
+  75   1          eeprom_data_save();
+  76   1      
+  77   1          printf("eeprom save\n");
+  78   1      }
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =     50    ----
-   CONSTANT SIZE    =   ----    ----
-   XDATA SIZE       =     38    ----
+   CODE SIZE        =    156    ----
+   CONSTANT SIZE    =     13    ----
+   XDATA SIZE       =     36       1
    PDATA SIZE       =   ----    ----
    DATA SIZE        =   ----    ----
    IDATA SIZE       =   ----    ----

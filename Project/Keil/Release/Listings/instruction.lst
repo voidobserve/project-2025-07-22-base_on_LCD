@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.7.0   INSTRUCTION                                                       08/05/2025 17:55:49 PAGE 1   
+C51 COMPILER V9.60.7.0   INSTRUCTION                                                       08/06/2025 17:46:20 PAGE 1   
 
 
 C51 COMPILER V9.60.7.0, COMPILATION OF MODULE INSTRUCTION
@@ -62,7 +62,7 @@ line level    source
   46          
   47          volatile u16 update_time_cooling_cnt; // 更新时间的冷却计数
   48          // volatile u16 update_date_cooling_cnt = 0; // 更新日期的冷却计数
-C51 COMPILER V9.60.7.0   INSTRUCTION                                                       08/05/2025 17:55:49 PAGE 2   
+C51 COMPILER V9.60.7.0   INSTRUCTION                                                       08/06/2025 17:46:20 PAGE 2   
 
   49          
   50          // // 存放接收到的设置水温报警的指令中，对应的操作，默认为无操作
@@ -126,7 +126,7 @@ line level    source
                               // case INSTRUCTION_GET_TEMP_OF_WATER: // 获取水温
                               //     flag_get_temp_of_water = 1;
                               //     break;
-C51 COMPILER V9.60.7.0   INSTRUCTION                                                       08/05/2025 17:55:49 PAGE 3   
+C51 COMPILER V9.60.7.0   INSTRUCTION                                                       08/06/2025 17:46:20 PAGE 3   
 
               
               
@@ -190,7 +190,7 @@ line level    source
  170   5      
  171   5                      case INSTRUCTION_GET_SUBTOTAL_MILEAGE_2: // 获取小计里程2
  172   5                          flag_get_sub_total_mileage_2 = 1;
-C51 COMPILER V9.60.7.0   INSTRUCTION                                                       08/05/2025 17:55:49 PAGE 4   
+C51 COMPILER V9.60.7.0   INSTRUCTION                                                       08/06/2025 17:46:20 PAGE 4   
 
  173   5                          break;
  174   5      
@@ -254,7 +254,7 @@ line level    source
  230   4                      recved_flagbuf[i] = 0;
  231   4                      memset(uart0_recv_buf[i], 0, FRAME_MAX_LEN); // 清空缓冲区对应的元素
  232   4                  } // if (4 == uart0_recv_buf[i][1])
-C51 COMPILER V9.60.7.0   INSTRUCTION                                                       08/05/2025 17:55:49 PAGE 5   
+C51 COMPILER V9.60.7.0   INSTRUCTION                                                       08/06/2025 17:46:20 PAGE 5   
 
  233   3              }
  234   2          }
@@ -318,7 +318,7 @@ line level    source
                           aip1302_read_all(); // 先从aip1302时钟ic获取所有关于时间的信息，再发送
                           // 14. 发送当前日期
                           //     temp_val = ((u32)fun_info.aip1302_saveinfo.year << 16) |
-C51 COMPILER V9.60.7.0   INSTRUCTION                                                       08/05/2025 17:55:49 PAGE 6   
+C51 COMPILER V9.60.7.0   INSTRUCTION                                                       08/06/2025 17:46:20 PAGE 6   
 
                           //                ((u32)fun_info.aip1302_saveinfo.month << 8) |
                           //                fun_info.aip1302_saveinfo.day;
@@ -382,7 +382,7 @@ line level    source
                   if (flag_get_brake)
                   {
                       // 如果要获取获取刹车的状态
-C51 COMPILER V9.60.7.0   INSTRUCTION                                                       08/05/2025 17:55:49 PAGE 7   
+C51 COMPILER V9.60.7.0   INSTRUCTION                                                       08/06/2025 17:46:20 PAGE 7   
 
                       flag_get_brake = 0;
               
@@ -446,7 +446,7 @@ line level    source
  406   2      
  407   2      #ifdef USE_INTERNATIONAL // 使用公制单位
  408   2      
-C51 COMPILER V9.60.7.0   INSTRUCTION                                                       08/05/2025 17:55:49 PAGE 8   
+C51 COMPILER V9.60.7.0   INSTRUCTION                                                       08/06/2025 17:46:20 PAGE 8   
 
  409   2              send_data(SEND_SPEED, fun_info.speed); // 发送当前采集到的车速（时速）
  410   2                                                     // printf("cur speed %lu km/h\n", fun_info.speed);
@@ -510,7 +510,7 @@ line level    source
  468   2      #ifdef USE_IMPERIAL // 英制单位
               
               #if USE_MY_DEBUG
-C51 COMPILER V9.60.7.0   INSTRUCTION                                                       08/05/2025 17:55:49 PAGE 9   
+C51 COMPILER V9.60.7.0   INSTRUCTION                                                       08/06/2025 17:46:20 PAGE 9   
 
                       // printf(" flag_get_total_mileage \n");
                       // printf(" cur total mileage %lu mile \n", (u32)fun_info.save_info.total_mileage / 1610); // 1km 
@@ -574,7 +574,7 @@ line level    source
               
                       if (update_date_status == UPDATE_STATUS_NONE)
                       {
-C51 COMPILER V9.60.7.0   INSTRUCTION                                                       08/05/2025 17:55:49 PAGE 10  
+C51 COMPILER V9.60.7.0   INSTRUCTION                                                       08/06/2025 17:46:20 PAGE 10  
 
               #if USE_MY_DEBUG
               // printf("handle update_date \n");
@@ -638,7 +638,7 @@ line level    source
               #endif
                       //  发送当前水温报警的状态
                       send_data(SEND_TEMP_OF_WATER_ALERT, fun_info.flag_is_in_water_temp_warning);
-C51 COMPILER V9.60.7.0   INSTRUCTION                                                       08/05/2025 17:55:49 PAGE 11  
+C51 COMPILER V9.60.7.0   INSTRUCTION                                                       08/06/2025 17:46:20 PAGE 11  
 
                   }
               #endif

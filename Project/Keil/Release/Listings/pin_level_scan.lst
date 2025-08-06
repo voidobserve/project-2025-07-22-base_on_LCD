@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.7.0   PIN_LEVEL_SCAN                                                    08/05/2025 17:55:49 PAGE 1   
+C51 COMPILER V9.60.7.0   PIN_LEVEL_SCAN                                                    08/06/2025 17:46:20 PAGE 1   
 
 
 C51 COMPILER V9.60.7.0, COMPILATION OF MODULE PIN_LEVEL_SCAN
@@ -62,7 +62,7 @@ line level    source
                   P2_MD0 &= ~(GPIO_P20_MODE_SEL(0x03)); // 输入模式
                   P2_PU |= GPIO_P20_PULL_UP(0x01);      // 上拉
               
-C51 COMPILER V9.60.7.0   PIN_LEVEL_SCAN                                                    08/05/2025 17:55:49 PAGE 2   
+C51 COMPILER V9.60.7.0   PIN_LEVEL_SCAN                                                    08/06/2025 17:46:20 PAGE 2   
 
                   // 测试用
                   // P0_MD0 &= ~(GPIO_P02_MODE_SEL(0x03)); // 输入模式
@@ -126,7 +126,7 @@ line level    source
                       {
                           // 如果远光灯开启
                           fun_info.high_beam = ON;
-C51 COMPILER V9.60.7.0   PIN_LEVEL_SCAN                                                    08/05/2025 17:55:49 PAGE 3   
+C51 COMPILER V9.60.7.0   PIN_LEVEL_SCAN                                                    08/06/2025 17:46:20 PAGE 3   
 
                       }
                       flag_get_high_beam = 1;
@@ -190,7 +190,7 @@ line level    source
              -��
                           fun_info.flag_is_detect_abs = 0;
                       }
-C51 COMPILER V9.60.7.0   PIN_LEVEL_SCAN                                                    08/05/2025 17:55:49 PAGE 4   
+C51 COMPILER V9.60.7.0   PIN_LEVEL_SCAN                                                    08/06/2025 17:46:20 PAGE 4   
 
               
                       //   printf("cur malfunction %bu\n", fun_info.flag_is_detect_malfunction);

@@ -437,14 +437,9 @@
               <FilePath>..\..\Hardware\key_driver.c</FilePath>
             </File>
             <File>
-              <FileName>iic_on_chip.c</FileName>
+              <FileName>iic_soft.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\Hardware\iic_on_chip.c</FilePath>
-            </File>
-            <File>
-              <FileName>iic_eeprom.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\Hardware\iic_eeprom.c</FilePath>
+              <FilePath>..\..\Hardware\iic_soft.c</FilePath>
             </File>
           </Files>
         </Group>

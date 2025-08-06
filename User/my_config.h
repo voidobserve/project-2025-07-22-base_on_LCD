@@ -93,7 +93,8 @@ extern volatile bit flag_debug_is_send_time; // 测试时使用
 #include "aip1302.h"       // 时钟IC aip1302
 #include "touch_key.h"     // 触摸按键
 
-#include "iic_on_chip.h"
-#include "iic_eeprom.h"
+// #include "iic_on_chip.h"
+// #include "iic_eeprom.h"
+#include "iic_soft.h"
 
 #endif // end file

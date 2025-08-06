@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.7.0   ENGINE_SPEED_SCAN                                                 08/05/2025 17:55:49 PAGE 1   
+C51 COMPILER V9.60.7.0   ENGINE_SPEED_SCAN                                                 08/06/2025 17:46:20 PAGE 1   
 
 
 C51 COMPILER V9.60.7.0, COMPILATION OF MODULE ENGINE_SPEED_SCAN
@@ -62,7 +62,7 @@ line level    source
               {
                   cur_engine_speed_scan_cnt += engine_speed_scan_cnt;
                   engine_speed_scan_cnt = 0;
-C51 COMPILER V9.60.7.0   ENGINE_SPEED_SCAN                                                 08/05/2025 17:55:49 PAGE 2   
+C51 COMPILER V9.60.7.0   ENGINE_SPEED_SCAN                                                 08/06/2025 17:46:20 PAGE 2   
 
                   cur_engine_speed_scan_ms += engine_speed_scan_ms;
                   engine_speed_scan_ms = 0;
@@ -126,7 +126,7 @@ line level    source
                       */
               
                       // printf("cur rpm %lu\n", rpm);
-C51 COMPILER V9.60.7.0   ENGINE_SPEED_SCAN                                                 08/05/2025 17:55:49 PAGE 3   
+C51 COMPILER V9.60.7.0   ENGINE_SPEED_SCAN                                                 08/06/2025 17:46:20 PAGE 3   
 
               
                       fun_info.engine_speeed = rpm; // 向全局变量存放发动机转速
@@ -190,7 +190,7 @@ line level    source
                       {
                           // 这一句会导致最后不能显示 数值为0 ：
                           // engine_speed_buff[ENGINE_SPEED_SCAN_BUFF_SIZE - 1 - i] = last_engine_speed - (u32)engine_sp
-C51 COMPILER V9.60.7.0   ENGINE_SPEED_SCAN                                                 08/05/2025 17:55:49 PAGE 4   
+C51 COMPILER V9.60.7.0   ENGINE_SPEED_SCAN                                                 08/06/2025 17:46:20 PAGE 4   
 
              -eed_difference * (ENGINE_SPEED_SCAN_BUFF_SIZE - i - 1) / ENGINE_SPEED_SCAN_BUFF_SIZE;
               

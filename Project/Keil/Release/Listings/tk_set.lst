@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.7.0   TK_SET                                                            08/05/2025 17:55:47 PAGE 1   
+C51 COMPILER V9.60.7.0   TK_SET                                                            08/06/2025 17:46:19 PAGE 1   
 
 
 C51 COMPILER V9.60.7.0, COMPILATION OF MODULE TK_SET
@@ -62,7 +62,7 @@ line level    source
   51          
   52          // 用户不允许修改
   53          unsigned long code __tk_adjust_line = TK_DATA_LINE;
-C51 COMPILER V9.60.7.0   TK_SET                                                            08/05/2025 17:55:47 PAGE 2   
+C51 COMPILER V9.60.7.0   TK_SET                                                            08/06/2025 17:46:19 PAGE 2   
 
   54          unsigned short code __tk_adjust_time = TK_ADJUST_TIME;
   55          unsigned short code __tk_adjust_diff_valu = TK_MAX_DIFF_VALU;
@@ -126,7 +126,7 @@ line level    source
                       },
               #endif
  115          
-C51 COMPILER V9.60.7.0   TK_SET                                                            08/05/2025 17:55:47 PAGE 3   
+C51 COMPILER V9.60.7.0   TK_SET                                                            08/06/2025 17:46:19 PAGE 3   
 
  116          #if TK6_CH_EN
                       {
@@ -190,7 +190,7 @@ line level    source
                           TK14_THR_DATA,
                       },
               #endif
-C51 COMPILER V9.60.7.0   TK_SET                                                            08/05/2025 17:55:47 PAGE 4   
+C51 COMPILER V9.60.7.0   TK_SET                                                            08/06/2025 17:46:19 PAGE 4   
 
  178          
  179          #if TK15_CH_EN
@@ -254,7 +254,7 @@ line level    source
                           23u,
                           TK23_THR_DATA,
                       },
-C51 COMPILER V9.60.7.0   TK_SET                                                            08/05/2025 17:55:47 PAGE 5   
+C51 COMPILER V9.60.7.0   TK_SET                                                            08/06/2025 17:46:19 PAGE 5   
 
               #endif
  241          
@@ -318,7 +318,7 @@ line level    source
  299   4                      P2_MD0 &= ~(0x3 << (__tk_ch_index[i] - 16) * 2);
  300   4                      P2_MD0 |= (0x3 << (__tk_ch_index[i] - 16) * 2);
  301   4                  }
-C51 COMPILER V9.60.7.0   TK_SET                                                            08/05/2025 17:55:47 PAGE 6   
+C51 COMPILER V9.60.7.0   TK_SET                                                            08/06/2025 17:46:19 PAGE 6   
 
  302   3                  else
  303   3                  {
@@ -382,7 +382,7 @@ line level    source
  361          // void WUT_IRQHandler(void) interrupt WUT_IRQn
  362          // {
  363          //     // 进入中断设置IP，不可删除
-C51 COMPILER V9.60.7.0   TK_SET                                                            08/05/2025 17:55:47 PAGE 7   
+C51 COMPILER V9.60.7.0   TK_SET                                                            08/06/2025 17:46:19 PAGE 7   
 
  364          //     __IRQnIPnPush(WUT_IRQn);
  365          //     // 周期中断
@@ -446,7 +446,7 @@ line level    source
  420   1          __tk_lib_init(); // 调用了库（闭源）
  421   1      
  422   1          /* 按键模块配置函数 */
-C51 COMPILER V9.60.7.0   TK_SET                                                            08/05/2025 17:55:47 PAGE 8   
+C51 COMPILER V9.60.7.0   TK_SET                                                            08/06/2025 17:46:19 PAGE 8   
 
  423   1          tk_init();
  424   1      

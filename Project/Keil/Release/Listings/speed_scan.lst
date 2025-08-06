@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.7.0   SPEED_SCAN                                                        08/05/2025 17:55:49 PAGE 1   
+C51 COMPILER V9.60.7.0   SPEED_SCAN                                                        08/06/2025 17:46:20 PAGE 1   
 
 
 C51 COMPILER V9.60.7.0, COMPILATION OF MODULE SPEED_SCAN
@@ -62,7 +62,7 @@ line level    source
   48          
   49          void speed_scan(void)
   50          {
-C51 COMPILER V9.60.7.0   SPEED_SCAN                                                        08/05/2025 17:55:49 PAGE 2   
+C51 COMPILER V9.60.7.0   SPEED_SCAN                                                        08/06/2025 17:46:20 PAGE 2   
 
   51   1          volatile u16 cur_speed = 0;
   52   1          u32 tmp = 0;
@@ -126,7 +126,7 @@ line level    source
  102   2      
  103   2      #if 0
                       /*
-C51 COMPILER V9.60.7.0   SPEED_SCAN                                                        08/05/2025 17:55:49 PAGE 3   
+C51 COMPILER V9.60.7.0   SPEED_SCAN                                                        08/06/2025 17:46:20 PAGE 3   
 
                           扫描完时速就发送的程序，在显示部分会有卡顿，
                           显示做不了动画，只能单片机来调节
@@ -190,7 +190,7 @@ line level    source
  163   3              }
  164   2          }
  165   1          else
-C51 COMPILER V9.60.7.0   SPEED_SCAN                                                        08/05/2025 17:55:49 PAGE 4   
+C51 COMPILER V9.60.7.0   SPEED_SCAN                                                        08/06/2025 17:46:20 PAGE 4   
 
  166   1          {
  167   2              // 如果速度在变小，数组从 [0] ~ [SPEED_SCAN_BUFF_SIZE - 1] 数值越来越小

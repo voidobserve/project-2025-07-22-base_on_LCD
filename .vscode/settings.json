@@ -29,6 +29,7 @@
         "tmr1.h": "c",
         "string.h": "c",
         "iic_on_chip.h": "c",
-        "iic_eeprom.h": "c"
+        "iic_eeprom.h": "c",
+        "iic_soft.h": "c"
     },
 }

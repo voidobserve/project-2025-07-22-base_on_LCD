@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.7.0   AIP1302                                                           08/05/2025 17:55:48 PAGE 1   
+C51 COMPILER V9.60.7.0   AIP1302                                                           08/06/2025 17:46:19 PAGE 1   
 
 
 C51 COMPILER V9.60.7.0, COMPILATION OF MODULE AIP1302
@@ -62,7 +62,7 @@ line level    source
                       aip1302_write_byte(AIP1302_YEAR_REG_ADDR, 10);    // 2010年
                       aip1302_write_byte(AIP1302_MONTH_REG_ADDR, 1);   // 1月
                       aip1302_write_byte(AIP1302_DATE_REG_ADDR, 1);    // 1日
-C51 COMPILER V9.60.7.0   AIP1302                                                           08/05/2025 17:55:48 PAGE 2   
+C51 COMPILER V9.60.7.0   AIP1302                                                           08/06/2025 17:46:19 PAGE 2   
 
                       // aip1302_write_byte(AIP1302_WEEKDAY_REG_ADDR, 1); // 星期1
                       aip1302_write_byte(AIP1302_MIN_REG_ADDR, 0);     // 0分
@@ -126,7 +126,7 @@ line level    source
                       }
                       else
                       {
-C51 COMPILER V9.60.7.0   AIP1302                                                           08/05/2025 17:55:48 PAGE 3   
+C51 COMPILER V9.60.7.0   AIP1302                                                           08/06/2025 17:46:19 PAGE 3   
 
                       }
                       arg >>= 1;
@@ -190,7 +190,7 @@ line level    source
               
                   // DATA脚--配置为输出模式
                   P2_MD1 &= ~GPIO_P24_MODE_SEL(0x3); // 清空配置
-C51 COMPILER V9.60.7.0   AIP1302                                                           08/05/2025 17:55:48 PAGE 4   
+C51 COMPILER V9.60.7.0   AIP1302                                                           08/06/2025 17:46:19 PAGE 4   
 
                   P2_MD1 |= GPIO_P24_MODE_SEL(0x1);  // 输出模式
                   FOUT_S24 = GPIO_FOUT_AF_FUNC;
@@ -254,7 +254,7 @@ line level    source
                */
               u8 aip1302_read_byte(const u8 cmd)
               {
-C51 COMPILER V9.60.7.0   AIP1302                                                           08/05/2025 17:55:48 PAGE 5   
+C51 COMPILER V9.60.7.0   AIP1302                                                           08/06/2025 17:46:19 PAGE 5   
 
                   u8 recv_data = 0; // 存放读取到的数据
                   recv_data = __aip1302_read_byte(cmd);
@@ -318,7 +318,7 @@ line level    source
               
                   AIP1302_SCLK_PIN = 0;
                   AIP1302_DELAY(); // 等待电平信号稳定
-C51 COMPILER V9.60.7.0   AIP1302                                                           08/05/2025 17:55:48 PAGE 6   
+C51 COMPILER V9.60.7.0   AIP1302                                                           08/06/2025 17:46:19 PAGE 6   
 
                   AIP1302_CE_PIN = 0;
                   AIP1302_DATA_PIN = 0;
@@ -382,7 +382,7 @@ line level    source
                *
                * @return  void
                */
-C51 COMPILER V9.60.7.0   AIP1302                                                           08/05/2025 17:55:48 PAGE 7   
+C51 COMPILER V9.60.7.0   AIP1302                                                           08/06/2025 17:46:19 PAGE 7   
 
               void aip1302_write_byte(const u8 cmd, u8 byte)
               {
@@ -446,7 +446,7 @@ line level    source
                   cnt++;
               
                   if (cnt >= 200) // 每隔一段时间，打印一次时钟ic中的时间
-C51 COMPILER V9.60.7.0   AIP1302                                                           08/05/2025 17:55:48 PAGE 8   
+C51 COMPILER V9.60.7.0   AIP1302                                                           08/06/2025 17:46:19 PAGE 8   
 
                   {
                       cnt = 0;
@@ -510,7 +510,7 @@ line level    source
               
               // 向aip1302更新 年、月、日、时、分、秒
               void aip1302_update_time(aip1302_saveinfo_t aip1302_saveinfo)
-C51 COMPILER V9.60.7.0   AIP1302                                                           08/05/2025 17:55:48 PAGE 9   
+C51 COMPILER V9.60.7.0   AIP1302                                                           08/06/2025 17:46:19 PAGE 9   
 
               {
                   aip1302_write_byte(AIP1302_YEAR_REG_ADDR, (u16)aip1302_saveinfo.year - 2000);
@@ -574,7 +574,7 @@ line level    source
                       flag = 0;
                   }
               }
-C51 COMPILER V9.60.7.0   AIP1302                                                           08/05/2025 17:55:48 PAGE 10  
+C51 COMPILER V9.60.7.0   AIP1302                                                           08/06/2025 17:46:19 PAGE 10  
 
               
               // 测试aip1302是否开启了写保护--测试通过

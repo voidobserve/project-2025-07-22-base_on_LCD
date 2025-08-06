@@ -22,7 +22,7 @@ Dialog DLL:      TP51.DLL V2.60.1.0
  
 <h2>Project:</h2>
 D:\BaiduSyncdisk\A_WorkSt\Aworkst\2025-05-20-project-2025-05-20-丰凡-摩托车仪表（检测部分，数据收发）-3260-SSOP28\code\02-液晶屏工程\project-2025-07-22-base_on_LCD\Project\Keil\Project.uvproj
-Project File Date:  08/05/2025
+Project File Date:  08/06/2025
 
 <h2>Output:</h2>
 Build target 'Target 1'
@@ -34,8 +34,7 @@ compiling uart0.c...
 compiling adc.c...
 compiling aip1302.c...
 compiling key_driver.c...
-compiling iic_on_chip.c...
-compiling iic_eeprom.c...
+compiling iic_soft.c...
 compiling main.c...
 compiling fun_info.c...
 compiling send_data.c...
@@ -53,14 +52,18 @@ linking...
 *** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
     SEGMENT: ?PR?TK_PARAM_INIT?TK_SET
 *** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
-    SEGMENT: ?PR?EEPROM_24CXX_CLEAR?IIC_EEPROM
+    SEGMENT: ?PR?UART0_SCAN_HANDLE?UART0
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?INSTRUCTION_SCAN?INSTRUCTION
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?INSTRUCTION_HANDLE?INSTRUCTION
 *** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
     SEGMENT: ?PR?__TK_MS_HANDLER?TK_LIB
 *** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
     SEGMENT: ?PR?__TK_SCAN?TK_LIB
-Program Size: data=80.0 xdata=1229 code=12692
+Program Size: data=80.1 xdata=1239 code=12898
 creating hex file from ".\Release\Objects\Project"...
-".\Release\Objects\Project" - 0 Error(s), 4 Warning(s).
+".\Release\Objects\Project" - 0 Error(s), 6 Warning(s).
 Build Time Elapsed:  00:00:03
 </pre>
 </body>

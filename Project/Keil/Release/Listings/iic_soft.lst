@@ -1,0 +1,695 @@
+C51 COMPILER V9.60.7.0   IIC_SOFT                                                          08/06/2025 17:46:19 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE IIC_SOFT
+OBJECT MODULE PLACED IN .\Release\Objects\iic_soft.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE ..\..\Hardware\iic_soft.c LARGE OPTIMIZE(9,SIZE) BROWSE ORDER INTVECTOR(
+                    -0X000C) INCDIR(..\..\Libraries\Include;..\..\User;..\..\User\lib;..\..\Hardware) INTERVAL(3) DEBUG OBJECTEXTEND PRINT(.\
+                    -Release\Listings\iic_soft.lst) OBJECT(.\Release\Objects\iic_soft.obj)
+
+line level    source
+
+   1          #include "iic_soft.h"
+   2          
+   3          volatile eeprom_menu_t eeprom_menu_prev;
+   4          volatile eeprom_menu_t eeprom_menu_next;
+   5          volatile eeprom_saveinfo_t eeprom_saveinfo;
+   6          
+   7          // 更新eeprom中目录相关的数据，需要提前写好 eeprom_menu_prev 和 eeprom_menu_next
+   8          void eeprom_menu_write(void)
+   9          {
+  10   1          eeprom_24cxx_write(0, (u8 *)&eeprom_menu_prev, sizeof(eeprom_menu_t));
+  11   1          eeprom_24cxx_write(1, (u8 *)&eeprom_menu_next, sizeof(eeprom_menu_t));
+  12   1      }
+  13          
+  14          void eeprom_menu_read(void)
+  15          {
+  16   1          eeprom_24cxx_read(0, (u8 *)&eeprom_menu_prev, sizeof(eeprom_menu_t));
+  17   1          eeprom_24cxx_read(1, (u8 *)&eeprom_menu_next, sizeof(eeprom_menu_t));
+  18   1      }
+  19          
+  20          void eeprom_menu_init(void)
+  21          {
+  22   1          eeprom_menu_read();
+  23   1      
+  24   1          if (eeprom_menu_prev.is_data_valid != EEPROM_DATA_VALID_VAL && eeprom_menu_next.is_data_valid != EEPRO
+             -M_DATA_VALID_VAL)
+  25   1          {
+  26   2              // 如果两个页 的目录读到的数据都是无效的，说明是第一次使用eeprom，进�
+             -��初始化
+  27   2              eeprom_menu_prev.cur_write_page_id = 2; // 0为目录prev，1为目录next，真正的数据从2�
+             -�始
+  28   2              eeprom_menu_prev.is_data_valid = EEPROM_DATA_VALID_VAL;
+  29   2      
+  30   2              eeprom_menu_next = eeprom_menu_prev;
+  31   2              eeprom_menu_write();
+  32   2      
+  33   2              printf("all menus are invalid\n");
+  34   2          }
+  35   1          else if ((eeprom_menu_prev.is_data_valid == EEPROM_DATA_VALID_VAL && eeprom_menu_next.is_data_valid !=
+             - EEPROM_DATA_VALID_VAL) ||
+  36   1                   (eeprom_menu_prev.is_data_valid != EEPROM_DATA_VALID_VAL && eeprom_menu_next.is_data_valid ==
+             - EEPROM_DATA_VALID_VAL))
+  37   1          {
+  38   2              // 如果两个页的目录读到的数据有一个页是有效的，有一个页是无效的
+  39   2              // 用有效的那个页的数据进行初始化
+  40   2      
+  41   2              if (eeprom_menu_prev.is_data_valid == EEPROM_DATA_VALID_VAL)
+  42   2              {
+  43   3                  eeprom_menu_next = eeprom_menu_prev;
+  44   3                  eeprom_24cxx_write(1, (u8 *)&eeprom_menu_next, sizeof(eeprom_menu_t));
+  45   3              }
+  46   2              else if (eeprom_menu_next.is_data_valid == EEPROM_DATA_VALID_VAL)
+  47   2              {
+  48   3                  eeprom_menu_prev = eeprom_menu_next;
+C51 COMPILER V9.60.7.0   IIC_SOFT                                                          08/06/2025 17:46:19 PAGE 2   
+
+  49   3                  eeprom_24cxx_write(0, (u8 *)&eeprom_menu_prev, sizeof(eeprom_menu_t));
+  50   3              }
+  51   2      
+  52   2              printf("one of menus is valid\n");
+  53   2          }
+  54   1          else
+  55   1          {
+  56   2              // 如果两个页的目录中的数据都有效
+  57   2              printf("menus are valid\n");
+  58   2          }
+  59   1      }
+  60          
+  61          #if USE_MY_DEBUG
+  62          volatile bit flag_is_printf_eeprom_data;
+  63          
+  64          volatile eeprom_menu_t eeprom_menu;
+  65          
+  66          void eeprom_printf_all(void)
+  67          {
+  68   1          u16 i;
+  69   1      
+  70   1          // eeprom_menu_t eeprom_menu = {0};
+  71   1          eeprom_menu.cur_write_page_id = 0;
+  72   1          eeprom_menu.is_data_valid = 0;
+  73   1          eeprom_24cxx_read(0, (u8 *)&eeprom_menu, sizeof(eeprom_menu_t));
+  74   1          printf("eeprom_menu_prev.cur_write_page_id = %bu\n", eeprom_menu.cur_write_page_id);
+  75   1          printf("eeprom_menu_prev.is_data_valid = 0x %x\n", (u16)eeprom_menu.is_data_valid);
+  76   1      
+  77   1          eeprom_menu.cur_write_page_id = 0;
+  78   1          eeprom_menu.is_data_valid = 0;
+  79   1          eeprom_24cxx_read(1, (u8 *)&eeprom_menu, sizeof(eeprom_menu_t));
+  80   1          printf("eeprom_menu_next.cur_write_page_id = %bu\n", eeprom_menu.cur_write_page_id);
+  81   1          printf("eeprom_menu_next.is_data_valid = 0x %x\n", (u16)eeprom_menu.is_data_valid);
+  82   1      
+  83   1          printf("====================================================\n");
+  84   1      
+  85   1          // for (i = 2; i < 128; i++)
+  86   1          // for (i = 2; i < 128; i++)
+  87   1          for (i = 2; i < 10; i++)
+  88   1          {
+  89   2              eeprom_24cxx_read(i, (u8 *)&eeprom_saveinfo, sizeof(eeprom_saveinfo_t));
+  90   2              printf("cur_page_id %u\n", i);
+  91   2              printf("eeprom_saveinfo.erase_cnt = %lu\n", eeprom_saveinfo.erase_cnt);
+  92   2              printf("eeprom_saveinfo.toal_mileage = %lu\n", eeprom_saveinfo.total_mileage);
+  93   2              printf("eeprom_saveinfo.subtotal_mileage = %lu\n", eeprom_saveinfo.subtotal_mileage);
+  94   2              printf("eeprom_saveinfo.subtotal_mileage_2 = %lu\n", eeprom_saveinfo.subtotal_mileage_2);
+  95   2              printf("====================================================\n");
+  96   2          }
+  97   1      }
+  98          
+  99          void eeprom_24cxx_clear(void)
+ 100          {
+ 101   1          u16 i;
+ 102   1          const u8 clear_data = 0x00;
+ 103   1          for (i = 0; i < ((u16)128 * 32); i++)
+ 104   1          {
+ 105   2              while (iic_eeprom_write(i, (u8 *)&clear_data, 1))
+ 106   2                  ;
+ 107   2          }
+ 108   1      }
+ 109          
+ 110          #endif
+C51 COMPILER V9.60.7.0   IIC_SOFT                                                          08/06/2025 17:46:19 PAGE 3   
+
+ 111          
+ 112          // 向eeprom写入需要保存的数据
+ 113          volatile eeprom_saveinfo_t eeprom_saveinfo_prev; // 存放从eeprom读出的数据，prev，同一组数�
+             -�的前一页数据
+ 114          volatile eeprom_saveinfo_t eeprom_saveinfo_next; // 存放从eeprom读出的数据，next，同一组数�
+             -�的后一页数据
+ 115          /*
+ 116              函数内部会把 fun_info.save_info 的数据写入eeprom
+ 117          */
+ 118          void eeprom_data_save(void)
+ 119          {
+ 120   1          u8 cur_save_info_id_prev; // 当前保存数据的页id，prev，同一组数据的前一页（为了�
+             -��省程序空间，不进行初始化，由函数内部赋值）
+ 121   1          u8 cur_save_info_id_next; // 当前保存数据的页id，next，同一组数据的后一页
+ 122   1      
+ 123   1          u8 cur_write_page_id = 0; // 存放待写入数据的地址对应id
+ 124   1          u32 cur_erase_cnt;        // 存放读取到的擦写次数
+ 125   1      
+ 126   1          /*
+ 127   1              写入前，读取目录，根据目录找到要写入的地址
+ 128   1      
+ 129   1              如果目录的数据不一致，以最后写入的地址作为新写入地址（目录中的两�
+             -�地址，最后写入的地址应该大于另一个地址）
+ 130   1          */
+ 131   1      
+ 132   1          eeprom_menu_read();
+ 133   1      
+ 134   1          // if (eeprom_menu_prev.is_data_valid == EEPROM_DATA_VALID_VAL && eeprom_menu_next.is_data_valid == EE
+             -PROM_DATA_VALID_VAL)
+ 135   1          if (eeprom_menu_prev.cur_write_page_id == eeprom_menu_next.cur_write_page_id)
+ 136   1          {
+ 137   2              cur_write_page_id = eeprom_menu_prev.cur_write_page_id;
+ 138   2          }
+ 139   1          else
+ 140   1          {
+ 141   2              // 如果目录中的数据不一致，判断哪个地址更大，哪个就作为待写入的地�
+             -�的id
+ 142   2              if (eeprom_menu_prev.cur_write_page_id > eeprom_menu_next.cur_write_page_id)
+ 143   2              {
+ 144   3                  cur_write_page_id = eeprom_menu_prev.cur_write_page_id;
+ 145   3              }
+ 146   2              else
+ 147   2              {
+ 148   3                  cur_write_page_id = eeprom_menu_next.cur_write_page_id;
+ 149   3              }
+ 150   2          }
+ 151   1      
+ 152   1          /*
+ 153   1              page[0]和page[1]已经作为目录使用（id==0和id==1），
+ 154   1              剩下的页面，每两个页面作为一组数据，
+ 155   1              那么偶数页面作为同一组页面的前一个页面，奇数页面作为同一组页面的�
+             -�一个页面
+ 156   1      
+ 157   1              例如 id == 2 作为第 1 组页面的前一个页面 prev，
+ 158   1                  id == 3 作为第 1 组页面的后一个页面 next
+ 159   1          */
+ 160   1          if (cur_write_page_id % 2 == 0)
+ 161   1          {
+ 162   2              /*
+ 163   2                  如果得到的是偶数页面，
+ 164   2                  得到的偶数，作为同一组页面的第一个页面 prev
+ 165   2                  得到的偶数 + 1，作为同一组页面的第二个页面 next
+C51 COMPILER V9.60.7.0   IIC_SOFT                                                          08/06/2025 17:46:19 PAGE 4   
+
+ 166   2              */
+ 167   2              cur_save_info_id_prev = cur_write_page_id;
+ 168   2              cur_save_info_id_next = cur_write_page_id + 1;
+ 169   2          }
+ 170   1          else
+ 171   1          {
+ 172   2              /*
+ 173   2                  如果得到的是奇数页面，
+ 174   2      
+ 175   2                  得到的奇数 - 1，作为同一组页面的第一个页面 prev
+ 176   2                  得到的奇数，作为同一组页面的第二个页面 next
+ 177   2              */
+ 178   2              cur_save_info_id_prev = cur_write_page_id - 1;
+ 179   2              cur_save_info_id_next = cur_write_page_id;
+ 180   2          }
+ 181   1      
+ 182   1          /*
+ 183   1              得到同一组页面的前、后两个页面的id后，读取这两个页面对应的数据
+ 184   1      
+ 185   1              将两个页面的数据进行比较， 用总里程较大的数据 覆盖 总里程较小的数�
+             -�
+ 186   1      
+ 187   1              如果超过了限制的擦写次数，要换下一组页面，并且更新到目录中
+ 188   1              如果写完之后，记录的页面id与目录中的id不一致，要更新目录中记录的页�
+             -��id
+ 189   1          */
+ 190   1          eeprom_24cxx_read((cur_save_info_id_prev), (u8 *)&eeprom_saveinfo_prev, sizeof(eeprom_saveinfo_t));
+ 191   1          eeprom_24cxx_read((cur_save_info_id_next), (u8 *)&eeprom_saveinfo_next, sizeof(eeprom_saveinfo_t));
+ 192   1      
+ 193   1          // 数据无效，可能是第一次读取，或者由于写入时掉电导致数据丢失
+ 194   1          if (eeprom_saveinfo_prev.is_data_valid != EEPROM_DATA_VALID_VAL)
+ 195   1          {
+ 196   2              eeprom_saveinfo_prev.erase_cnt = 0;
+ 197   2              eeprom_saveinfo_prev.total_mileage = 0;
+ 198   2              eeprom_saveinfo_prev.subtotal_mileage = 0;
+ 199   2              eeprom_saveinfo_prev.subtotal_mileage_2 = 0;
+ 200   2              eeprom_saveinfo_prev.is_data_valid = EEPROM_DATA_VALID_VAL;
+ 201   2          }
+ 202   1      
+ 203   1          // 数据无效，可能是第一次读取，或者由于写入时掉电导致数据丢失
+ 204   1          if (eeprom_saveinfo_next.is_data_valid != EEPROM_DATA_VALID_VAL)
+ 205   1          {
+ 206   2              eeprom_saveinfo_next = eeprom_saveinfo_prev;
+ 207   2          }
+ 208   1      
+ 209   1          if (eeprom_saveinfo_prev.total_mileage < eeprom_saveinfo_next.total_mileage)
+ 210   1          {
+ 211   2              /*
+ 212   2                  如果前一个页面的总里程要小于后一个页面的总里程，
+ 213   2                  后一个页面的总里程 加上 新增的总里程增量，得到的总里程保存到前�
+             -�个页面中，
+ 214   2                  后一个页面作为备份，也保存下来
+ 215   2              */
+ 216   2              eeprom_saveinfo_next.total_mileage = fun_info.save_info.total_mileage;
+ 217   2              eeprom_saveinfo_next.subtotal_mileage = fun_info.save_info.subtotal_mileage;
+ 218   2              eeprom_saveinfo_next.subtotal_mileage_2 = fun_info.save_info.subtotal_mileage_2;
+ 219   2      
+ 220   2              cur_erase_cnt = eeprom_saveinfo_next.erase_cnt; // 存放擦写次数
+ 221   2              eeprom_saveinfo_prev = eeprom_saveinfo_next;
+ 222   2          }
+ 223   1          else
+ 224   1          {
+C51 COMPILER V9.60.7.0   IIC_SOFT                                                          08/06/2025 17:46:19 PAGE 5   
+
+ 225   2              /*
+ 226   2                  如果前一个页面的总里程要 大于或等于 后一个页面的总里程，
+ 227   2                  前一个页面的总里程 加上 新增的总里程增量，得到的总里程保存到后�
+             -�个页面中，
+ 228   2                  前一个页面作为备份，也保存下来
+ 229   2              */
+ 230   2      
+ 231   2              eeprom_saveinfo_prev.total_mileage = fun_info.save_info.total_mileage;
+ 232   2              eeprom_saveinfo_prev.subtotal_mileage = fun_info.save_info.subtotal_mileage;
+ 233   2              eeprom_saveinfo_prev.subtotal_mileage_2 = fun_info.save_info.subtotal_mileage_2;
+ 234   2      
+ 235   2              cur_erase_cnt = eeprom_saveinfo_prev.erase_cnt; // 存放擦写次数
+ 236   2              eeprom_saveinfo_next = eeprom_saveinfo_prev;
+ 237   2          }
+ 238   1      
+ 239   1          cur_erase_cnt++; // 擦写次数累加
+ 240   1          eeprom_saveinfo_prev.erase_cnt = cur_erase_cnt;
+ 241   1          eeprom_saveinfo_next.erase_cnt = cur_erase_cnt;
+ 242   1          if (cur_erase_cnt >= EEPROM_MAX_ERASE_COUNTS_PER_PAGE)
+ 243   1          {
+ 244   2              // 如果超过了一组页面的最大擦写次数，更换下一组页面
+ 245   2              cur_save_info_id_prev = cur_save_info_id_next + 1; // 当前为奇数id，加一，为偶数id，�
+             -��下一组页面的第一个页面
+ 246   2              cur_save_info_id_next = cur_save_info_id_prev + 1;
+ 247   2      
+ 248   2              // 擦写次数清零
+ 249   2              eeprom_saveinfo_prev.erase_cnt = 0;
+ 250   2              eeprom_saveinfo_next.erase_cnt = 0;
+ 251   2          }
+ 252   1      
+ 253   1          eeprom_24cxx_write(cur_save_info_id_prev, (u8 *)&eeprom_saveinfo_prev, sizeof(eeprom_saveinfo_t));
+ 254   1          eeprom_24cxx_write(cur_save_info_id_next, (u8 *)&eeprom_saveinfo_next, sizeof(eeprom_saveinfo_t));
+ 255   1      
+ 256   1          /*
+ 257   1              如果写入的页面id与目录记录的id不一样，则更新目录记录的id
+ 258   1          */
+ 259   1          if (cur_save_info_id_prev != eeprom_menu_prev.cur_write_page_id)
+ 260   1          {
+ 261   2              eeprom_menu_prev.cur_write_page_id = cur_save_info_id_prev;
+ 262   2              eeprom_menu_prev.is_data_valid = EEPROM_DATA_VALID_VAL;
+ 263   2      
+ 264   2              // eeprom_menu_next.cur_write_page_id = cur_save_info_id_prev;
+ 265   2              // eeprom_menu_next.is_data_valid = EEPROM_DATA_VALID_VAL;
+ 266   2      
+ 267   2              eeprom_menu_next = eeprom_menu_prev;
+ 268   2      
+ 269   2              eeprom_menu_write();
+ 270   2          }
+ 271   1      }
+ 272          
+ 273          static void delay_5us(u32 us)
+ 274          {
+ 275   1          u32 b = us * 1;
+ 276   1          // u32 b = us * 2;
+ 277   1          while (b--)
+ 278   1          {
+ 279   2          }
+ 280   1      }
+ 281          
+ 282          /**
+ 283           * @brief  iic start function
+ 284           * @param  None
+C51 COMPILER V9.60.7.0   IIC_SOFT                                                          08/06/2025 17:46:19 PAGE 6   
+
+ 285           * @retval None
+ 286           */
+ 287          void iic_start(void)
+ 288          {
+ 289   1          // 起始时，系统时钟线（SCLK）和系统数据线（SDATA）都处于高电平
+ 290   1          SDA_OUT(); // SDA线输出
+ 291   1          IIC_SDA = 1;
+ 292   1          IIC_SCL = 1;
+ 293   1          // 延时函数是为了等待配置完成，当SCLK为高电平时，SDATA跳变为低电平
+ 294   1          // 紧接着SCLK也跳变为低电平
+ 295   1          // 产生一个起始信号
+ 296   1          IIC_DELAY();
+ 297   1          IIC_SDA = 0; // START:when CLK is high,DATA change form high to low
+ 298   1          IIC_DELAY();
+ 299   1          IIC_SCL = 0;
+ 300   1      }
+ 301          
+ 302          /**
+ 303           * @brief  iic stop function
+ 304           * @param  None
+ 305           * @retval None
+ 306           */
+ 307          void iic_stop(void)
+ 308          {
+ 309   1          SDA_OUT(); // SDA线输出
+ 310   1      
+ 311   1          // 配置时钟线和数据线均为低电平
+ 312   1          IIC_SCL = 0;
+ 313   1          IIC_SDA = 0; // STOP:when CLK is high DATA change form low to high
+ 314   1          IIC_DELAY();
+ 315   1      
+ 316   1          // 配置时钟线为高电平
+ 317   1          IIC_SCL = 1;
+ 318   1          IIC_DELAY();
+ 319   1      
+ 320   1          // 在时钟线为高电平时，输出的数据线从低电平跳变到高电平，则产生了停止
+             -信号
+ 321   1          IIC_SDA = 1;
+ 322   1          IIC_DELAY();
+ 323   1      }
+ 324          
+ 325          /**
+ 326           * @brief  wait ack function
+ 327           * @param  None
+ 328           * @retval 1:no ack 0:ack
+ 329           */
+ 330          u8 iic_wait_ack(void)
+ 331          {
+ 332   1          u8 timeout = 0;
+ 333   1      
+ 334   1          SDA_IN(); // SDA设置为输入
+ 335   1      
+ 336   1          // 配置为高电平
+ 337   1          IIC_SDA = 1;
+ 338   1          delay_5us(1);
+ 339   1      
+ 340   1          // 配置为高电平
+ 341   1          IIC_SCL = 1;
+ 342   1          delay_5us(1);
+ 343   1      
+ 344   1          while (IIC_SDA)
+ 345   1          {
+C51 COMPILER V9.60.7.0   IIC_SOFT                                                          08/06/2025 17:46:19 PAGE 7   
+
+ 346   2              // 等待SDA拉低，表示应答带来，不然一直while循环，直到超时
+ 347   2              timeout++;
+ 348   2              if (timeout > 250)
+ 349   2              {
+ 350   3                  iic_stop(); // 等待超时，应答失败，发出停止信号
+ 351   3                  return 1;   // 返回1，表示失败
+ 352   3              }
+ 353   2              IIC_DELAY();
+ 354   2          }
+ 355   1          IIC_SCL = 0; // SCL拉低
+ 356   1      
+ 357   1          return 0; // 返回0，表示成功
+ 358   1      }
+ 359          
+ 360          /**
+ 361           * @brief  iic ack function
+ 362           * @param  None
+ 363           * @retval None
+ 364           */
+ 365          void iic_ack(void)
+ 366          {
+ 367   1          IIC_SCL = 0;
+ 368   1          SDA_OUT();
+ 369   1          IIC_SDA = 0;
+ 370   1          delay_5us(1);
+ 371   1          IIC_SCL = 1;
+ 372   1          delay_5us(1);
+ 373   1          IIC_SCL = 0;
+ 374   1      }
+ 375          
+ 376          /**
+ 377           * @brief  iic no ack function
+ 378           * @param  None
+ 379           * @retval None
+ 380           */
+ 381          void iic_nack(void)
+ 382          {
+ 383   1          IIC_SCL = 0;
+ 384   1          SDA_OUT();
+ 385   1          IIC_SDA = 1;
+ 386   1          delay_5us(1);
+ 387   1          IIC_SCL = 1;
+ 388   1          delay_5us(1);
+ 389   1          IIC_SCL = 0;
+ 390   1      }
+ 391          
+ 392          /**
+ 393           * @brief  iic send 1 byte data function
+ 394           * @param  None
+ 395           * @retval 1:Ack 0:No Ack
+ 396           */
+ 397          void iic_send_byte(u8 txd)
+ 398          {
+ 399   1          u8 i;
+ 400   1      
+ 401   1          // 配置P03为输出模式
+ 402   1          SDA_OUT(); // SDA线输出模式
+ 403   1      
+ 404   1          // 只有在时钟线为0的情况下，数据线才可以进行高低电平的跳变
+ 405   1          IIC_SCL = 0; // 拉低时钟开始数据传输
+ 406   1      
+ 407   1          for (i = 0; i < 8; i++)
+C51 COMPILER V9.60.7.0   IIC_SOFT                                                          08/06/2025 17:46:19 PAGE 8   
+
+ 408   1          {                                // for循环，一位一位的发送，从最高位 位7开始
+ 409   2              IIC_SDA = (txd & 0x80) >> 7; // 除了位7外，其余全屏蔽为0，然后右移到位0，给SDA
+             -数据线
+ 410   2              txd <<= 1;                   // 左移一位，准备下一次发送
+ 411   2              delay_5us(1);
+ 412   2      
+ 413   2              // 发送完成之后，时钟线拉高
+ 414   2              IIC_SCL = 1;
+ 415   2              delay_5us(1);
+ 416   2      
+ 417   2              // 紧接着拉低
+ 418   2              IIC_SCL = 0;
+ 419   2              delay_5us(1);
+ 420   2      
+ 421   2              // 发送完一个数据都将时钟线进行一次的拉高和拉低，完成一个位的传输
+ 422   2          }
+ 423   1      }
+ 424          
+ 425          /**
+ 426           * @brief  iic read 1 byte function
+ 427           * @param  none
+ 428           * @retval ack=1,send ack=0;ack=0,send no ack
+ 429           */
+ 430          u8 iic_read_byte(unsigned char ack)
+ 431          {
+ 432   1          unsigned char i, receive = 0;
+ 433   1      
+ 434   1          SDA_IN(); // SDA设置为输入
+ 435   1      
+ 436   1          for (i = 0; i < 8; i++)
+ 437   1          { // for循环，一位一位的读取，从最高位 位7开始
+ 438   2              IIC_SCL = 0;
+ 439   2              delay_5us(1);
+ 440   2              IIC_SCL = 1;
+ 441   2              receive <<= 1; // 左移一位，准备下次的读取
+ 442   2      
+ 443   2              if (IIC_SDA)
+ 444   2              {
+ 445   3                  receive++;
+ 446   3              }
+ 447   2              delay_5us(1);
+ 448   2          }
+ 449   1      
+ 450   1          if (!ack)
+ 451   1          {               // 不需要发送
+ 452   2              iic_nack(); // 发送nACK
+ 453   2          }
+ 454   1          else
+ 455   1          {              // 需要发送
+ 456   2              iic_ack(); // 发送ACK
+ 457   2          }
+ 458   1      
+ 459   1          return receive;
+ 460   1      }
+ 461          
+ 462          /**
+ 463           * @brief  在AT24CXX里面的指定地址开始读出指定个数的数据
+ 464           * @param  addr : 开始读出的地址 对24c512为0~65535
+ 465           * @param  pBuffer  : 数据数组首地址
+ 466           * @param  num_read_data: 要读出数据的个数
+ 467           * @retval u8  0--成功，1--失败
+ 468           */
+C51 COMPILER V9.60.7.0   IIC_SOFT                                                          08/06/2025 17:46:19 PAGE 9   
+
+ 469          u8 iic_eeprom_read(u16 addr, u8 *pBuffer, u16 num_read_data)
+ 470          {
+ 471   1          // 起始信号
+ 472   1          iic_start();
+ 473   1      
+ 474   1          // 发送设备地址
+ 475   1          // iic_send_byte(E2PROM_DEVICE_ADDR + ((device_addr / 256) << 1));
+ 476   1          iic_send_byte(E2PROM_DEVICE_ADDR | IIC_WRITE_CMD);
+ 477   1      
+ 478   1          // 等待应答
+ 479   1          if (iic_wait_ack())
+ 480   1          {
+ 481   2              return 1;
+ 482   2          }
+ 483   1      
+ 484   1          // iic_send_byte(addr / 256 >> 8); // 发送高地址
+ 485   1          iic_send_byte(addr >> 8); // 发送高地址
+ 486   1      
+ 487   1          // 等待应答
+ 488   1          if (iic_wait_ack())
+ 489   1          {
+ 490   2              return 1;
+ 491   2          }
+ 492   1      
+ 493   1          // iic_send_byte(addr % 256); // 发送低地址
+ 494   1          iic_send_byte(addr & 0xFF); // 发送低地址
+ 495   1      
+ 496   1          // 等待应答
+ 497   1          if (iic_wait_ack())
+ 498   1          {
+ 499   2              return 1;
+ 500   2          }
+ 501   1      
+ 502   1          IIC_DELAY();
+ 503   1      
+ 504   1          // 起始信号
+ 505   1          iic_start();
+ 506   1          iic_send_byte(E2PROM_DEVICE_ADDR | IIC_READ_CMD); // 进入接收模式
+ 507   1      
+ 508   1          // 等待应答
+ 509   1          if (iic_wait_ack())
+ 510   1          {
+ 511   2              return 1;
+ 512   2          }
+ 513   1      
+ 514   1          num_read_data--;
+ 515   1          while (num_read_data)
+ 516   1          {
+ 517   2              *pBuffer++ = iic_read_byte(1);
+ 518   2              num_read_data--;
+ 519   2          }
+ 520   1          *pBuffer = iic_read_byte(0);
+ 521   1          // 停止信号
+ 522   1          iic_stop(); // 产生一个停止条件
+ 523   1      
+ 524   1          return 0;
+ 525   1      }
+ 526          
+ 527          /**
+ 528           * @brief  在AT24CXX里面的指定地址开始写入指定个数的数据
+ 529           * @param  addr : 开始写入的地址 对24c512为0~65535
+ 530           * @param  pBuffer   : 数据数组首地址
+C51 COMPILER V9.60.7.0   IIC_SOFT                                                          08/06/2025 17:46:19 PAGE 10  
+
+ 531           * @param  num_write_data: 要写入数据的个数
+ 532           * @retval 0--操作成功，1--操作失败
+ 533           */
+ 534          u8 iic_eeprom_write(u16 addr, u8 *pBuffer, u16 num_write_data)
+ 535          {
+ 536   1          // 总线发送一个开始信号
+ 537   1          iic_start();
+ 538   1      
+ 539   1          // 发送设备地址
+ 540   1          // iic_send_byte(E2PROM_DEVICE_ADDR + ((device_addr / 256) << 1));
+ 541   1          iic_send_byte(E2PROM_DEVICE_ADDR | IIC_WRITE_CMD);
+ 542   1      
+ 543   1          // 应答信号，等待从机应答
+ 544   1          if (iic_wait_ack())
+ 545   1          {
+ 546   2              return 1; // 表示操作失败，没有收到应答
+ 547   2          }
+ 548   1      
+ 549   1          // iic_send_byte(addr / 256 >> 8); // 发送高地址
+ 550   1          iic_send_byte(addr >> 8); // 发送高地址
+ 551   1      
+ 552   1          // 应答信号，等待从机应答
+ 553   1          if (iic_wait_ack())
+ 554   1          {
+ 555   2              return 1; // 表示操作失败，没有收到应答
+ 556   2          }
+ 557   1      
+ 558   1          // iic_send_byte(addr % 256); // 发送低地址
+ 559   1          iic_send_byte(addr & 0xFF); // 发送低地址
+ 560   1      
+ 561   1          // 应答信号，等待从机应答
+ 562   1          if (iic_wait_ack())
+ 563   1          {
+ 564   2              return 1; // 表示操作失败，没有收到应答
+ 565   2          }
+ 566   1      
+ 567   1          while (num_write_data--)
+ 568   1          {
+ 569   2              iic_send_byte(*pBuffer); // 发送字节
+ 570   2              if (iic_wait_ack())
+ 571   2              {
+ 572   3                  return 1; // 表示操作失败，没有收到应答
+ 573   3              }
+ 574   2      
+ 575   2              addr++;
+ 576   2              pBuffer++;
+ 577   2          }
+ 578   1      
+ 579   1          delay_5us(1);
+ 580   1          // 总线发送一个停止信号
+ 581   1          iic_stop(); // 产生一个停止条件
+ 582   1      
+ 583   1          return 0; // 表示操作成功
+ 584   1      }
+ 585          
+ 586          void eeprom_24cxx_write(u8 page_id, u8 *p_buf, u16 len)
+ 587          {
+ 588   1          u16 addr = EEPROM_PAGE_X_ADDR(page_id);
+ 589   1      
+ 590   1          while (iic_eeprom_write(addr, p_buf, len))
+ 591   1          {
+ 592   2              // printf("time out\n");
+C51 COMPILER V9.60.7.0   IIC_SOFT                                                          08/06/2025 17:46:19 PAGE 11  
+
+ 593   2          };
+ 594   1      }
+ 595          
+ 596          void eeprom_24cxx_read(u8 page_id, u8 *p_buf, u16 len)
+ 597          {
+ 598   1          u16 addr = EEPROM_PAGE_X_ADDR(page_id);
+ 599   1          while (iic_eeprom_read(addr, p_buf, len))
+ 600   1              ;
+ 601   1      }
+ 602          
+ 603          void iic_config(void)
+ 604          {
+ 605   1          // 初始化IIC
+ 606   1          IIC_SDA = 1; // 设置为高电平
+ 607   1          IIC_SCL = 1; // 设置为高电平
+ 608   1      
+ 609   1          // P1_PU |= GPIO_P16_PULL_UP(0x01);
+ 610   1          // P2_PU |= GPIO_P25_PULL_UP(0x01);
+ 611   1      
+ 612   1          // P1_MD1 &= ~GPIO_P16_MODE_SEL(0x3); // 清零
+ 613   1          // P1_MD1 |= GPIO_P16_MODE_SEL(0x1);  // 配置为输出模式：DATA
+ 614   1      
+ 615   1          // P2_MD1 &= ~GPIO_P25_MODE_SEL(0x3); // 清零
+ 616   1          // P2_MD1 |= GPIO_P25_MODE_SEL(0x1);  // 配置为输出模式：CLK
+ 617   1      
+ 618   1          P1_MD1 &= ~GPIO_P17_MODE_SEL(0x3); // 清空配置
+ 619   1          P1_MD1 |= GPIO_P17_MODE_SEL(0x1);  // 输出模式
+ 620   1          FOUT_S17 = GPIO_FOUT_AF_FUNC;
+ 621   1          P17 = 0;
+ 622   1          // P17 = 1;
+ 623   1      
+ 624   1          P1_MD1 &= ~GPIO_P16_MODE_SEL(0x03);
+ 625   1          P1_MD1 |= GPIO_P16_MODE_SEL(0x1);
+ 626   1          FOUT_S16 = GPIO_FOUT_AF_FUNC;
+ 627   1      
+ 628   1          P2_MD1 &= ~GPIO_P24_MODE_SEL(0x03);
+ 629   1          P2_MD1 |= GPIO_P24_MODE_SEL(0x1);
+ 630   1          FOUT_S24 = GPIO_FOUT_AF_FUNC;
+ 631   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =   1736    ----
+   CONSTANT SIZE    =    448    ----
+   XDATA SIZE       =     57      46
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =      1    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

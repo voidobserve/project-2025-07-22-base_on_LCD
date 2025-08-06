@@ -31,9 +31,7 @@ void user_init(void)
     P2_MD0 |= GPIO_P23_MODE_SEL(0x01);    // 输出模式
     FOUT_S23 |= GPIO_FOUT_AF_FUNC;
 
-    
-
-    // tmr0_config();  // 串口检测数据超时需要使用到的定时器
+        // tmr0_config();  // 串口检测数据超时需要使用到的定时器
     uart0_config(); // 发送和接收指令使用到的串口
 
 #if PIN_LEVEL_SCAN_ENABLE
@@ -68,9 +66,24 @@ void user_init(void)
     // tmr2_enable(); // 打开定时检测脉冲的定时器
 
     iic_config();
+    delay_ms(1); // 等待系统稳定
+    // {
+    //     IIC_SCL =1;
+    //     IIC_SDA = 1;
 
+    //     P2_MD0 &= ~(GPIO_P21_MODE_SEL(0x03));
+    //     P2_MD0 |= GPIO_P21_MODE_SEL(0x1);
+
+    //     P2_MD0 &= ~(GPIO_P22_MODE_SEL(0x03));
+    //     P2_MD0 |= GPIO_P22_MODE_SEL(0x1);
+
+    // }
+
+    eeprom_24cxx_clear();
+
+    printf("begin read eeprom\n");
     fun_info_init(); // 初始化用于存放信息的变量（要放在iic初始化后面）
-
+ 
     // delay_ms(10); // 等待系统稳定
     // tk_param_init();  // 触摸按键模块初始化
     delay_ms(1); // 等待系统稳定
@@ -82,7 +95,7 @@ void main(void)
     // 看门狗默认打开, 复位时间2s
     system_init();
 
-    // WDT_KEY = WDT_KEY_VAL(0xDD); //  关闭看门狗
+    WDT_KEY = WDT_KEY_VAL(0xDD); //  关闭看门狗
 
     // 关闭HCK和HDA的调试功能
     WDT_KEY = 0x55;  // 解除写保护
@@ -320,14 +333,15 @@ void main(void)
         }
 #endif
 
-        uart0_scan_handle();  // 检查串口接收缓冲区的数据是否符合协议,如果有正确的指令，会存到另一个缓冲区中（接下来让instruction_scan()函数来处理）
-        instruction_scan();   // 扫描是否有合法的指令
-        instruction_handle(); // 扫描是否有对应的获取/状态更新操作(最占用时间,因为要等待串口的数据发送完成)
+        // uart0_scan_handle();  // 检查串口接收缓冲区的数据是否符合协议,如果有正确的指令，会存到另一个缓冲区中（接下来让instruction_scan()函数来处理）
+        // instruction_scan();   // 扫描是否有合法的指令
+        // instruction_handle(); // 扫描是否有对应的获取/状态更新操作(最占用时间,因为要等待串口的数据发送完成)
 
         if (flag_debug_is_send_time)
         {
-            flag_debug_is_send_time = 0;
+            // flag_debug_is_send_time = 0;
             eeprom_printf_all();
+            flag_debug_is_send_time = 0;
         }
 
 #endif //

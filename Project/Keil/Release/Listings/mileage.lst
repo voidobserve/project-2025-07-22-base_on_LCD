@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.7.0   MILEAGE                                                           08/05/2025 17:55:49 PAGE 1   
+C51 COMPILER V9.60.7.0   MILEAGE                                                           08/06/2025 17:46:20 PAGE 1   
 
 
 C51 COMPILER V9.60.7.0, COMPILATION OF MODULE MILEAGE
@@ -62,7 +62,7 @@ line level    source
   47   2              mileage_save_time_cnt = 0;
   48   2          }
   49   1      
-C51 COMPILER V9.60.7.0   MILEAGE                                                           08/05/2025 17:55:49 PAGE 2   
+C51 COMPILER V9.60.7.0   MILEAGE                                                           08/06/2025 17:46:20 PAGE 2   
 
   50   1          if (distance >= 1000) // 1000mm -- 1m
   51   1          {
@@ -126,7 +126,7 @@ line level    source
                   if ((fun_info.save_info.subtotal_mileage - old_subtotal_mileage) > 161)
               #endif
  109   1          {
-C51 COMPILER V9.60.7.0   MILEAGE                                                           08/05/2025 17:55:49 PAGE 3   
+C51 COMPILER V9.60.7.0   MILEAGE                                                           08/06/2025 17:46:20 PAGE 3   
 
  110   2              old_subtotal_mileage = fun_info.save_info.subtotal_mileage; // 记录旧的里程
  111   2      

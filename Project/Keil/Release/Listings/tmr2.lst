@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.7.0   TMR2                                                              08/06/2025 17:46:19 PAGE 1   
+C51 COMPILER V9.60.7.0   TMR2                                                              08/07/2025 17:46:19 PAGE 1   
 
 
 C51 COMPILER V9.60.7.0, COMPILATION OF MODULE TMR2
@@ -62,7 +62,7 @@ line level    source
   49          //     TMR2_CONL &= ~(TMR_SOURCE_SEL(0x07)); // 清除定时器的时钟源配置寄存器
   50          //     TMR2_CONL |= TMR_SOURCE_SEL(0x06);    // 配置定时器的时钟源，使用系统时钟
   51          
-C51 COMPILER V9.60.7.0   TMR2                                                              08/06/2025 17:46:19 PAGE 2   
+C51 COMPILER V9.60.7.0   TMR2                                                              08/07/2025 17:46:19 PAGE 2   
 
   52          //     __EnableIRQ(TMR2_IRQn); // 使能中断
   53          //     IE_EA = 1;              // 打开总中断
@@ -93,11 +93,11 @@ line level    source
   78          {
   79   1      // 上升沿检测
   80   1      #if ENGINE_SPEED_SCAN_ENABLE
-              
-                  static volatile bit last_engine_speed_scan_level = 0; // 记录上一次检测到的引脚电平（发
+  81   1      
+  82   1          static volatile bit last_engine_speed_scan_level = 0; // 记录上一次检测到的引脚电平（发
              -送机转速检测脚）
-              
-              #endif // #if ENGINE_SPEED_SCAN_ENABLE
+  83   1      
+  84   1      #endif // #if ENGINE_SPEED_SCAN_ENABLE
   85   1      
   86   1      #if SPEED_SCAN_ENABLE
   87   1      
@@ -117,50 +117,50 @@ line level    source
  100   2              TMR2_CONH |= TMR_PRD_PND(0x1); // 清除pending
  101   2      
  102   2      #if ENGINE_SPEED_SCAN_ENABLE
-              
-                      { // 记录发动机转速扫描的时间
-                          static u8 cnt = 0;
-                          cnt++;
-                          if (cnt >= 20) // 每1ms进入一次
-                          {
-                              cnt = 0;
-                              engine_speed_scan_ms++;
-              
-C51 COMPILER V9.60.7.0   TMR2                                                              08/06/2025 17:46:19 PAGE 3   
+ 103   2      
+ 104   2              { // 记录发动机转速扫描的时间
+ 105   3                  static u8 cnt = 0;
+ 106   3                  cnt++;
+ 107   3                  if (cnt >= 20) // 每1ms进入一次
+ 108   3                  {
+ 109   4                      cnt = 0;
+ 110   4                      engine_speed_scan_ms++;
+ 111   4      
+C51 COMPILER V9.60.7.0   TMR2                                                              08/07/2025 17:46:19 PAGE 3   
 
-                              if (engine_speed_scan_ms >= ENGINE_SPEED_SCAN_OVER_TIME &&
-                                  flag_is_engine_speed_scan_over_time == 0)
-                              {
-                                  engine_speed_scan_ms = 0;
-                                  flag_is_engine_speed_scan_over_time = 1; // 说明超时，脉冲计数一直没有加
+ 112   4                      if (engine_speed_scan_ms >= ENGINE_SPEED_SCAN_OVER_TIME &&
+ 113   4                          flag_is_engine_speed_scan_over_time == 0)
+ 114   4                      {
+ 115   5                          engine_speed_scan_ms = 0;
+ 116   5                          flag_is_engine_speed_scan_over_time = 1; // 说明超时，脉冲计数一直没有加
              -一
-                              }
-                          }
-                      }
-              
-                      if (ENGINE_SPEED_SCAN_PIN) // 检测发动机转速的引脚
-                      {
-                          if (0 == last_engine_speed_scan_level)
-                          {
-                              // 如果之前检测到低电平，现在检测到高电平，说明有上升沿，对脉
+ 117   5                      }
+ 118   4                  }
+ 119   3              }
+ 120   2      
+ 121   2              if (ENGINE_SPEED_SCAN_PIN) // 检测发动机转速的引脚
+ 122   2              {
+ 123   3                  if (0 == last_engine_speed_scan_level)
+ 124   3                  {
+ 125   4                      // 如果之前检测到低电平，现在检测到高电平，说明有上升沿，对脉
              -冲计数加一
-                              // if (detect_engine_pulse_cnt[0] < 4294967295) // 防止计数溢出
-                              // {
-                              //     detect_engine_pulse_cnt[0]++;
-                              // }
-                              engine_speed_scan_cnt++;
-                              update_engine_speed_scan_data();
-                          }
-              
-                          last_engine_speed_scan_level = 1;
-                      }
-                      else
-                      {
-                          // 如果现在检测到低电平
-                          last_engine_speed_scan_level = 0;
-                      }
-              
-              #endif // #if ENGINE_SPEED_SCAN_ENABLE
+ 126   4                      // if (detect_engine_pulse_cnt[0] < 4294967295) // 防止计数溢出
+ 127   4                      // {
+ 128   4                      //     detect_engine_pulse_cnt[0]++;
+ 129   4                      // }
+ 130   4                      engine_speed_scan_cnt++;
+ 131   4                      update_engine_speed_scan_data();
+ 132   4                  }
+ 133   3      
+ 134   3                  last_engine_speed_scan_level = 1;
+ 135   3              }
+ 136   2              else
+ 137   2              {
+ 138   3                  // 如果现在检测到低电平
+ 139   3                  last_engine_speed_scan_level = 0;
+ 140   3              }
+ 141   2      
+ 142   2      #endif // #if ENGINE_SPEED_SCAN_ENABLE
  143   2      
  144   2      #if SPEED_SCAN_ENABLE
  145   2              { // 记录时速扫描的时间
@@ -190,7 +190,7 @@ line level    source
              -加一
                               if (detect_speed_pulse_cnt[0] < 4294967295) // 防止计数溢出
                               {
-C51 COMPILER V9.60.7.0   TMR2                                                              08/06/2025 17:46:19 PAGE 4   
+C51 COMPILER V9.60.7.0   TMR2                                                              08/07/2025 17:46:19 PAGE 4   
 
                                   detect_speed_pulse_cnt[0]++;
                               }
@@ -217,13 +217,13 @@ line level    source
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    238    ----
+   CODE SIZE        =    315    ----
    CONSTANT SIZE    =   ----    ----
-   XDATA SIZE       =      2    ----
+   XDATA SIZE       =      3    ----
    PDATA SIZE       =   ----    ----
    DATA SIZE        =   ----    ----
    IDATA SIZE       =   ----    ----
-   BIT SIZE         =      1    ----
+   BIT SIZE         =      2    ----
 END OF MODULE INFORMATION.
 
 

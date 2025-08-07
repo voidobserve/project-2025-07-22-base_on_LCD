@@ -2,45 +2,56 @@
 // mileage.c
 #include "mileage.h"
 
-volatile u16 mileage_save_time_cnt = 0; // 里程扫描所需的计数值,每隔一定时间将里程写入flash
-volatile u32 distance = 0;              // 存放每次扫描时走过的路程（单位：毫米）-->用于里程表的计数
+volatile u16 mileage_save_time_cnt; // 里程扫描所需的计数值,每隔一定时间将里程写入flash
+volatile u32 distance;              // 存放每次扫描时走过的路程（单位：毫米）-->用于里程表的计数
 
-volatile u16 mileage_update_time_cnt = 0; // 里程更新的时间计数,每隔一段时间更新一次当前里程（负责控制发送里程的周期）
+volatile u16 mileage_update_time_cnt; // 里程更新的时间计数,每隔一段时间更新一次当前里程（负责控制发送里程的周期）
 
 // 总里程扫描
 void mileage_scan(void)
 {
     // 下面这组变量用来控制每走过一段距离时，发送里程数据
-    static u32 old_total_mileage = 0;      // 用来记录旧的大计里程的变量
-    static u32 old_subtotal_mileage = 0;   // 用来记录旧的小计里程的变量
-    static u32 old_subtotal_mileage_2 = 0; // 用来记录旧的小计里程2的变量
+    static u32 old_total_mileage;      // 用来记录旧的大计里程的变量
+    static u32 old_subtotal_mileage;   // 用来记录旧的小计里程的变量
+    static u32 old_subtotal_mileage_2; // 用来记录旧的小计里程2的变量
 
     /*
         是否有里程数据需要保存的标志变量，0--没有里程变化，不需要保存，1--有里程变化，需要保存
         目前每过1m就会置位一次，保存之后清零
     */
-    static bit flag_is_any_mileage_save = 0;
+    static volatile bit flag_is_any_mileage_save;
 
     /*
         速度为0，里程变化一次就保存一次
         速度不为0， 每30s且里程有变化，则保存一次，每走过100m也保存一次
     */
-    if (mileage_save_time_cnt >= 30000) // 30 000 ms -- 30s
-    {
-        mileage_save_time_cnt = 0;
+    // if (mileage_save_time_cnt >= 30000) // 30 000 ms -- 30s
+    // {
+    //     if (fun_info.speed > 0 && flag_is_any_mileage_save)
+    //     {
+    //         // 速度大于0且里程有变化
+    //         // printf("30s \n");
+    //         fun_info_save(); // 将 fun_info 写回flash
+    //         flag_is_any_mileage_save = 0;
+    //     }
 
-        if (fun_info.speed > 0 && flag_is_any_mileage_save)
-        {
-            // 速度大于0且里程有变化
-            fun_info_save(); // 将 fun_info 写回flash
-            flag_is_any_mileage_save = 0;
-        }
-    }
+    //     mileage_save_time_cnt = 0;
+    // }
 
     // 如果速度==0，里程有变化，每 1s 写入一次flash
-    if (0 == fun_info.speed &&           /* 当前速度为0 */
-        mileage_save_time_cnt >= 1000 && /* 1s 后 */
-        flag_is_any_mileage_save)        /* 里程有变化，需要保存 */
+    // if ((0 == fun_info.speed) &&           /* 当前速度为0 */
+    //     (mileage_save_time_cnt >= 1000) && /* 1s 后 */
+    //     flag_is_any_mileage_save)          /* 里程有变化，需要保存 */
+    // {
+    //     // printf("1s \n");
+    //     fun_info_save();
+    //     flag_is_any_mileage_save = 0;
+    //     mileage_save_time_cnt = 0;
+    // }
+
+    // 每过1s，且里程有变化，就保存一次；这个里程变化的条件最好大于10m，否则会经常写入eeprom
+    if ((mileage_save_time_cnt >= 1000) && /* 1s后 */
+        flag_is_any_mileage_save)          /* 里程有变化，需要保存 */
     {
         fun_info_save();
         flag_is_any_mileage_save = 0;
@@ -49,12 +60,12 @@ void mileage_scan(void)
 
     if (distance >= 1000) // 1000mm -- 1m
     {
-        // 如果走过的距离超过了1m，再进行保存（保存到变量） 
+        // 如果走过的距离超过了1m，再进行保存（保存到变量）
         if (fun_info.save_info.total_mileage < (u32)(999999 * 1000)) // 99 9999 KM
         {
             fun_info.save_info.total_mileage++; // +1m
-        } 
-        
+        }
+
         if (fun_info.save_info.subtotal_mileage < (u32)(9999999)) // 9999.9KM， 9999 999 m
         {
             fun_info.save_info.subtotal_mileage++; // +1m
@@ -65,20 +76,15 @@ void mileage_scan(void)
             fun_info.save_info.subtotal_mileage_2++; // +1m
         }
 
-        flag_is_any_mileage_save = 1; // 表示需要把里程输入写入到flash
-        distance -= 1000;             // 剩下的、未保存的、不满1m的数据留到下一次再保存
+        distance -= 1000; // 剩下的、未保存的、不满1m的数据留到下一次再保存
 
         {
-            static cnt = 0;
+            static u8 cnt = 0;
             cnt++;
-            if (cnt >= 100)
+            if (cnt >= 10) // cnt >= 10，说明走过了10m
             {
                 cnt = 0;
-
-                // 进入到这里，说明走过了100m
-                fun_info_save();
-                flag_is_any_mileage_save = 0;
-                mileage_save_time_cnt = 0;
+                flag_is_any_mileage_save = 1; // 表示需要把里程输入写入到flash
             }
         }
     }

@@ -21,7 +21,7 @@
 
 // DEBUG
 // volatile bit flag_is_debug_update = 0; // 测试时使用
-volatile bit flag_debug_is_send_time = 0; // 测试时使用
+// volatile bit flag_debug_is_send_time = 0; // 测试时使用
 // volatile bit flag_debug_is_send_time_2 = 0; // 测试时使用
 
 void user_init(void)
@@ -66,26 +66,13 @@ void user_init(void)
     // tmr2_enable(); // 打开定时检测脉冲的定时器
 
     iic_config();
-    delay_ms(1); // 等待系统稳定
-    // {
-    //     IIC_SCL =1;
-    //     IIC_SDA = 1;
 
-    //     P2_MD0 &= ~(GPIO_P21_MODE_SEL(0x03));
-    //     P2_MD0 |= GPIO_P21_MODE_SEL(0x1);
+    // eeprom_24cxx_clear(); // 全片擦除
 
-    //     P2_MD0 &= ~(GPIO_P22_MODE_SEL(0x03));
-    //     P2_MD0 |= GPIO_P22_MODE_SEL(0x1);
-
-    // }
-
-    eeprom_24cxx_clear();
-
-    printf("begin read eeprom\n");
+    // printf("begin read eeprom\n");
     fun_info_init(); // 初始化用于存放信息的变量（要放在iic初始化后面）
  
     // delay_ms(10); // 等待系统稳定
-    // tk_param_init();  // 触摸按键模块初始化
     delay_ms(1); // 等待系统稳定
     // delay_ms(2000); // 等待系统稳定
 }
@@ -95,7 +82,7 @@ void main(void)
     // 看门狗默认打开, 复位时间2s
     system_init();
 
-    WDT_KEY = WDT_KEY_VAL(0xDD); //  关闭看门狗
+    // WDT_KEY = WDT_KEY_VAL(0xDD); //  关闭看门狗
 
     // 关闭HCK和HDA的调试功能
     WDT_KEY = 0x55;  // 解除写保护
@@ -139,7 +126,7 @@ void main(void)
     printf("hour %bu min %bu sec %bu \n", fun_info.aip1302_saveinfo.time_hour, fun_info.aip1302_saveinfo.time_min, fun_info.aip1302_saveinfo.time_sec);
 #endif // 测试发送日期和时间
 
-    printf("sys reset\n");
+    // printf("sys reset\n");
 
     // 测试程序：
     // fun_info.save_info.total_mileage = (u32)999970 * 1000;
@@ -333,16 +320,16 @@ void main(void)
         }
 #endif
 
-        // uart0_scan_handle();  // 检查串口接收缓冲区的数据是否符合协议,如果有正确的指令，会存到另一个缓冲区中（接下来让instruction_scan()函数来处理）
-        // instruction_scan();   // 扫描是否有合法的指令
-        // instruction_handle(); // 扫描是否有对应的获取/状态更新操作(最占用时间,因为要等待串口的数据发送完成)
+        uart0_scan_handle();  // 检查串口接收缓冲区的数据是否符合协议,如果有正确的指令，会存到另一个缓冲区中（接下来让instruction_scan()函数来处理）
+        instruction_scan();   // 扫描是否有合法的指令
+        instruction_handle(); // 扫描是否有对应的获取/状态更新操作(最占用时间,因为要等待串口的数据发送完成)
 
-        if (flag_debug_is_send_time)
-        {
-            // flag_debug_is_send_time = 0;
-            eeprom_printf_all();
-            flag_debug_is_send_time = 0;
-        }
+        // DEBUG:
+        // if (flag_debug_is_send_time)
+        // {
+        //     eeprom_printf_all();
+        //     flag_debug_is_send_time = 0;
+        // }
 
 #endif //
 
@@ -383,7 +370,7 @@ void main(void)
 
         // heart_beat_handle(); //
 
-        WDT_KEY = WDT_KEY_VAL(0xAA); // 喂狗并清除 wdt_pending
+        // WDT_KEY = WDT_KEY_VAL(0xAA); // 喂狗并清除 wdt_pending
     }
 }
 

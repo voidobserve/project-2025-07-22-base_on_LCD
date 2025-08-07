@@ -2,7 +2,7 @@
 
 #if (BATTERY_SCAN_ENABLE || AD_KEY_ENABLE || FUEL_CAPACITY_SCAN_ENABLE || TEMP_OF_WATER_SCAN_ENABLE)
 
-volatile u16 adc_val = 0; // adc值，0~4095
+volatile u16 adc_val; // adc值，0~4095
 // bit adc_done_flag = 0; // adc转换完成标志
 
 // adc配置，使用adc时还需要切换到对应的引脚通道

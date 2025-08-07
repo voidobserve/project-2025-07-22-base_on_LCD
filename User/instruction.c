@@ -4,13 +4,13 @@
 
 // 用bit定义，来节省空间
 // 下面的标志位，有可能是从串口接收到了指令来置位，也有可能是其他的扫描函数更新了状态来置位
-volatile bit flag_get_all_status;   // 获取所有功能的状态
-volatile bit flag_get_gear;         // 获取挡位状态 / 得到了挡位的状态
-volatile bit flag_get_battery;      // 获取电池状态 / 得到了电池的状态（电池电量，单位：百分比）
-volatile bit flag_get_brake;        // 获取刹车状态 / 得到了刹车的状态
-volatile bit flag_get_left_turn;    // 获取左转向灯的状态 / 得到了左转向灯的状态
-volatile bit flag_get_right_turn;   // 获取右转向灯的状态 / 得到了右转向灯的状态
-volatile bit flag_get_high_beam;    // 获取远光灯的状态 / 得到了远光灯的状态
+volatile bit flag_get_all_status; // 获取所有功能的状态
+volatile bit flag_get_gear;       // 获取挡位状态 / 得到了挡位的状态
+volatile bit flag_get_battery;    // 获取电池状态 / 得到了电池的状态（电池电量，单位：百分比）
+// volatile bit flag_get_brake;        // 获取刹车状态 / 得到了刹车的状态
+// volatile bit flag_get_left_turn;    // 获取左转向灯的状态 / 得到了左转向灯的状态
+// volatile bit flag_get_right_turn;   // 获取右转向灯的状态 / 得到了右转向灯的状态
+// volatile bit flag_get_high_beam;    // 获取远光灯的状态 / 得到了远光灯的状态
 volatile bit flag_get_engine_speed; // 获取发动机的转速 / 得到了发动机的转速
 volatile bit flag_get_speed;        // 获取时速 / 得到了时速
 volatile bit flag_get_fuel;         // 获取油量 / 得到了油量（单位：百分比）
@@ -251,12 +251,12 @@ void instruction_handle(void)
             // printf("handle get_all_status\n");// 测试通过，每次收到同步请求，都会等待冷却后，才处理下一次同步请求
             synchronous_request_status = SYN_REQUEST_STATUS_HANDLING;
             // 获取所有功能的状态，需要把这些功能对应的状态都发送出去
-            send_data(SEND_GEAR, fun_info.gear);                  // 1. 发送当前挡位的状态
-            send_data(SEND_BATTERY, fun_info.battery);            // 2. 发送电池电量
-            send_data(SEND_BARKE, fun_info.brake);                // 3. 发送当前刹车的状态
-            send_data(SEND_LEFT_TURN, fun_info.left_turn);        // 4. 发送当前左转向灯的状态
-            send_data(SEND_RIGHT_TURN, fun_info.right_turn);      // 5. 发送当前右转向灯的状态
-            send_data(SEND_HIGH_BEAM, fun_info.high_beam);        // 6. 发送当前远光灯的状态
+            send_data(SEND_GEAR, fun_info.gear);       // 1. 发送当前挡位的状态
+            send_data(SEND_BATTERY, fun_info.battery); // 2. 发送电池电量
+            // send_data(SEND_BARKE, fun_info.brake);                // 3. 发送当前刹车的状态
+            // send_data(SEND_LEFT_TURN, fun_info.left_turn);        // 4. 发送当前左转向灯的状态
+            // send_data(SEND_RIGHT_TURN, fun_info.right_turn);      // 5. 发送当前右转向灯的状态
+            // send_data(SEND_HIGH_BEAM, fun_info.high_beam);        // 6. 发送当前远光灯的状态
             send_data(SEND_ENGINE_SPEED, fun_info.engine_speeed); // 7. 发送发动机转速
             send_data(SEND_SPEED, fun_info.speed);                // 8. 发送当前采集到的车速（时速）
             send_data(SEND_FUEL, fun_info.fuel);                  // 9. 发送当前油量(单位：百分比)
@@ -293,9 +293,10 @@ void instruction_handle(void)
             //                fun_info.aip1302_saveinfo.time_sec;
             //     send_data(SEND_TIME, temp_val);
             send_data(SEND_TIME, 0); // 第二个参数无效
-#endif                               // #if IC_1302_ENABLE
-                                     // printf("time send\n");
-                                     // 16. 发送当前的电池电压
+            // printf("time send\n");
+#endif // #if IC_1302_ENABLE
+
+            // 16. 发送当前的电池电压
             send_data(SEND_VOLTAGE_OF_BATTERY, fun_info.voltage_of_battery);
 
 #if TEMP_OF_WATER_SCAN_ENABLE
@@ -354,36 +355,36 @@ void instruction_handle(void)
     }
 #endif // 发送刹车的状态
 
-    if (flag_get_left_turn) // 如果要获取左转向灯的状态
-    {
-        flag_get_left_turn = 0;
+    //     if (flag_get_left_turn) // 如果要获取左转向灯的状态
+    //     {
+    //         flag_get_left_turn = 0;
 
-#if USE_MY_DEBUG
-        // printf(" flag_get_left_turn\n");
-#endif
+    // #if USE_MY_DEBUG
+    //         // printf(" flag_get_left_turn\n");
+    // #endif
 
-        send_data(SEND_LEFT_TURN, fun_info.left_turn); // 发送当前左转向灯的状态
-    } // if (flag_get_left_turn) // 如果要获取左转向灯的状态
+    //         send_data(SEND_LEFT_TURN, fun_info.left_turn); // 发送当前左转向灯的状态
+    //     } // if (flag_get_left_turn) // 如果要获取左转向灯的状态
 
-    if (flag_get_right_turn)
-    {
-        // 如果要获取右转向灯的状态
-        flag_get_right_turn = 0;
-#if USE_MY_DEBUG
-        // printf(" flag_get_right_turn\n");
-#endif
-        send_data(SEND_RIGHT_TURN, fun_info.right_turn); // 发送当前右转向灯的状态
-    }
+    //     if (flag_get_right_turn)
+    //     {
+    //         // 如果要获取右转向灯的状态
+    //         flag_get_right_turn = 0;
+    // #if USE_MY_DEBUG
+    //         // printf(" flag_get_right_turn\n");
+    // #endif
+    //         send_data(SEND_RIGHT_TURN, fun_info.right_turn); // 发送当前右转向灯的状态
+    //     }
 
-    if (flag_get_high_beam)
-    {
-        // 如果要获取远光灯的状态
-        flag_get_high_beam = 0;
-#if USE_MY_DEBUG
-        // printf(" flag_get_high_beam\n");
-#endif
-        send_data(SEND_HIGH_BEAM, fun_info.high_beam); // 发送当前远光灯的状态
-    }
+    //     if (flag_get_high_beam)
+    //     {
+    //         // 如果要获取远光灯的状态
+    //         flag_get_high_beam = 0;
+    // #if USE_MY_DEBUG
+    //         // printf(" flag_get_high_beam\n");
+    // #endif
+    //         send_data(SEND_HIGH_BEAM, fun_info.high_beam); // 发送当前远光灯的状态
+    //     }
 
     if (flag_get_engine_speed)
     {

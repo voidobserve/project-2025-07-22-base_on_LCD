@@ -2,7 +2,7 @@
 
 #if PIN_LEVEL_SCAN_ENABLE
 
-u16 pin_level_scan_time_cnt = 0;
+volatile u16 pin_level_scan_time_cnt;
 
 void pin_level_scan_config(void)
 {

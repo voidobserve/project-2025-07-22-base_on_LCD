@@ -8,12 +8,14 @@ volatile eeprom_saveinfo_t eeprom_saveinfo;
 void eeprom_menu_write(void)
 {
     eeprom_24cxx_write(0, (u8 *)&eeprom_menu_prev, sizeof(eeprom_menu_t));
+    WDT_KEY = WDT_KEY_VAL(0xAA); // 喂狗并清除 wdt_pending
     eeprom_24cxx_write(1, (u8 *)&eeprom_menu_next, sizeof(eeprom_menu_t));
 }
 
 void eeprom_menu_read(void)
 {
     eeprom_24cxx_read(0, (u8 *)&eeprom_menu_prev, sizeof(eeprom_menu_t));
+    WDT_KEY = WDT_KEY_VAL(0xAA); // 喂狗并清除 wdt_pending
     eeprom_24cxx_read(1, (u8 *)&eeprom_menu_next, sizeof(eeprom_menu_t));
 }
 
@@ -30,7 +32,7 @@ void eeprom_menu_init(void)
         eeprom_menu_next = eeprom_menu_prev;
         eeprom_menu_write();
 
-        printf("all menus are invalid\n");
+        // printf("all menus are invalid\n");
     }
     else if ((eeprom_menu_prev.is_data_valid == EEPROM_DATA_VALID_VAL && eeprom_menu_next.is_data_valid != EEPROM_DATA_VALID_VAL) ||
              (eeprom_menu_prev.is_data_valid != EEPROM_DATA_VALID_VAL && eeprom_menu_next.is_data_valid == EEPROM_DATA_VALID_VAL))
@@ -49,12 +51,31 @@ void eeprom_menu_init(void)
             eeprom_24cxx_write(0, (u8 *)&eeprom_menu_prev, sizeof(eeprom_menu_t));
         }
 
-        printf("one of menus is valid\n");
+        // printf("one of menus is valid\n");
     }
     else
     {
         // 如果两个页的目录中的数据都有效
-        printf("menus are valid\n");
+        // printf("menus are valid\n");
+
+        /*
+            判断目录中 cur_write_page_id 当前要写入里程数据的页面编号是否一致，
+            如果不一致，以最大的id作为最新的页面编号，再写回eeprom
+        */
+        if (eeprom_menu_prev.cur_write_page_id > eeprom_menu_next.cur_write_page_id)
+        {
+            eeprom_menu_next.cur_write_page_id = eeprom_menu_prev.cur_write_page_id;
+            eeprom_menu_write();
+        }
+        else if (eeprom_menu_prev.cur_write_page_id < eeprom_menu_next.cur_write_page_id)
+        {
+            eeprom_menu_prev.cur_write_page_id = eeprom_menu_next.cur_write_page_id;
+            eeprom_menu_write();
+        }
+        else // (eeprom_menu_prev.cur_write_page_id == eeprom_menu_next.cur_write_page_id)
+        {
+            // 数据一致
+        }
     }
 }
 
@@ -83,8 +104,8 @@ void eeprom_printf_all(void)
     printf("====================================================\n");
 
     // for (i = 2; i < 128; i++)
-    // for (i = 2; i < 128; i++)
-    for (i = 2; i < 10; i++)
+    for (i = 2; i < EEPROM_PAGE_NUMS; i++)
+    // for (i = 2; i < 10; i++)
     {
         eeprom_24cxx_read(i, (u8 *)&eeprom_saveinfo, sizeof(eeprom_saveinfo_t));
         printf("cur_page_id %u\n", i);
@@ -93,8 +114,11 @@ void eeprom_printf_all(void)
         printf("eeprom_saveinfo.subtotal_mileage = %lu\n", eeprom_saveinfo.subtotal_mileage);
         printf("eeprom_saveinfo.subtotal_mileage_2 = %lu\n", eeprom_saveinfo.subtotal_mileage_2);
         printf("====================================================\n");
+        WDT_KEY = WDT_KEY_VAL(0xAA); // 喂狗并清除 wdt_pending
     }
 }
+
+#endif
 
 void eeprom_24cxx_clear(void)
 {
@@ -103,11 +127,11 @@ void eeprom_24cxx_clear(void)
     for (i = 0; i < ((u16)128 * 32); i++)
     {
         while (iic_eeprom_write(i, (u8 *)&clear_data, 1))
-            ;
+        {
+            WDT_KEY = WDT_KEY_VAL(0xAA); // 喂狗并清除 wdt_pending
+        }
     }
 }
-
-#endif
 
 // 向eeprom写入需要保存的数据
 volatile eeprom_saveinfo_t eeprom_saveinfo_prev; // 存放从eeprom读出的数据，prev，同一组数据的前一页数据
@@ -239,11 +263,19 @@ void eeprom_data_save(void)
     cur_erase_cnt++; // 擦写次数累加
     eeprom_saveinfo_prev.erase_cnt = cur_erase_cnt;
     eeprom_saveinfo_next.erase_cnt = cur_erase_cnt;
-    if (cur_erase_cnt >= EEPROM_MAX_ERASE_COUNTS_PER_PAGE)
+    if (cur_erase_cnt > EEPROM_MAX_ERASE_COUNTS_PER_PAGE)
     {
         // 如果超过了一组页面的最大擦写次数，更换下一组页面
+
         cur_save_info_id_prev = cur_save_info_id_next + 1; // 当前为奇数id，加一，为偶数id，是下一组页面的第一个页面
         cur_save_info_id_next = cur_save_info_id_prev + 1;
+
+        if (cur_save_info_id_prev >= (EEPROM_PAGE_NUMS - 2))
+        {
+            // 防止目录和擦写的位置越界，超出了eeprom能存放的位置
+            cur_save_info_id_prev = EEPROM_PAGE_NUMS - 2; // eeprom的倒数第2页
+            cur_save_info_id_next = EEPROM_PAGE_NUMS - 1; // eeprom的倒数第1页，最后一页
+        }
 
         // 擦写次数清零
         eeprom_saveinfo_prev.erase_cnt = 0;
@@ -270,14 +302,14 @@ void eeprom_data_save(void)
     }
 }
 
-static void delay_5us(u32 us)
-{
-    u32 b = us * 1;
-    // u32 b = us * 2;
-    while (b--)
-    {
-    }
-}
+// static void delay_5us(u32 us)
+// {
+//     u32 b = us * 1;
+//     // u32 b = us * 2;
+//     while (b--)
+//     {
+//     }
+// }
 
 /**
  * @brief  iic start function
@@ -335,11 +367,11 @@ u8 iic_wait_ack(void)
 
     // 配置为高电平
     IIC_SDA = 1;
-    delay_5us(1);
+    IIC_DELAY();
 
     // 配置为高电平
     IIC_SCL = 1;
-    delay_5us(1);
+    IIC_DELAY();
 
     while (IIC_SDA)
     {
@@ -367,9 +399,9 @@ void iic_ack(void)
     IIC_SCL = 0;
     SDA_OUT();
     IIC_SDA = 0;
-    delay_5us(1);
+    IIC_DELAY();
     IIC_SCL = 1;
-    delay_5us(1);
+    IIC_DELAY();
     IIC_SCL = 0;
 }
 
@@ -383,9 +415,9 @@ void iic_nack(void)
     IIC_SCL = 0;
     SDA_OUT();
     IIC_SDA = 1;
-    delay_5us(1);
+    IIC_DELAY();
     IIC_SCL = 1;
-    delay_5us(1);
+    IIC_DELAY();
     IIC_SCL = 0;
 }
 
@@ -408,15 +440,15 @@ void iic_send_byte(u8 txd)
     {                                // for循环，一位一位的发送，从最高位 位7开始
         IIC_SDA = (txd & 0x80) >> 7; // 除了位7外，其余全屏蔽为0，然后右移到位0，给SDA数据线
         txd <<= 1;                   // 左移一位，准备下一次发送
-        delay_5us(1);
+        IIC_DELAY();
 
         // 发送完成之后，时钟线拉高
         IIC_SCL = 1;
-        delay_5us(1);
+        IIC_DELAY();
 
         // 紧接着拉低
         IIC_SCL = 0;
-        delay_5us(1);
+        IIC_DELAY();
 
         // 发送完一个数据都将时钟线进行一次的拉高和拉低，完成一个位的传输
     }
@@ -429,14 +461,16 @@ void iic_send_byte(u8 txd)
  */
 u8 iic_read_byte(unsigned char ack)
 {
-    unsigned char i, receive = 0;
+    // unsigned char i, receive = 0;
+    u8 i;
+    u8 receive = 0;
 
     SDA_IN(); // SDA设置为输入
 
     for (i = 0; i < 8; i++)
     { // for循环，一位一位的读取，从最高位 位7开始
         IIC_SCL = 0;
-        delay_5us(1);
+        IIC_DELAY();
         IIC_SCL = 1;
         receive <<= 1; // 左移一位，准备下次的读取
 
@@ -444,7 +478,7 @@ u8 iic_read_byte(unsigned char ack)
         {
             receive++;
         }
-        delay_5us(1);
+        IIC_DELAY();
     }
 
     if (!ack)
@@ -576,7 +610,7 @@ u8 iic_eeprom_write(u16 addr, u8 *pBuffer, u16 num_write_data)
         pBuffer++;
     }
 
-    delay_5us(1);
+    IIC_DELAY();
     // 总线发送一个停止信号
     iic_stop(); // 产生一个停止条件
 
@@ -590,6 +624,7 @@ void eeprom_24cxx_write(u8 page_id, u8 *p_buf, u16 len)
     while (iic_eeprom_write(addr, p_buf, len))
     {
         // printf("time out\n");
+        WDT_KEY = WDT_KEY_VAL(0xAA); // 喂狗并清除 wdt_pending
     };
 }
 
@@ -597,7 +632,9 @@ void eeprom_24cxx_read(u8 page_id, u8 *p_buf, u16 len)
 {
     u16 addr = EEPROM_PAGE_X_ADDR(page_id);
     while (iic_eeprom_read(addr, p_buf, len))
-        ;
+    {
+        WDT_KEY = WDT_KEY_VAL(0xAA); // 喂狗并清除 wdt_pending
+    };
 }
 
 void iic_config(void)
@@ -606,26 +643,13 @@ void iic_config(void)
     IIC_SDA = 1; // 设置为高电平
     IIC_SCL = 1; // 设置为高电平
 
-    // P1_PU |= GPIO_P16_PULL_UP(0x01);
-    // P2_PU |= GPIO_P25_PULL_UP(0x01);
+    // P31 芯片22脚，用作SCL
+    // P26 芯片25脚，用作SDA
+    P3_MD0 &= ~GPIO_P31_MODE_SEL(0x03);
+    P3_MD0 |= GPIO_P31_MODE_SEL(0x01);
+    FOUT_S31 = GPIO_FOUT_AF_FUNC; // 选择AF功能输出
 
-    // P1_MD1 &= ~GPIO_P16_MODE_SEL(0x3); // 清零
-    // P1_MD1 |= GPIO_P16_MODE_SEL(0x1);  // 配置为输出模式：DATA
-
-    // P2_MD1 &= ~GPIO_P25_MODE_SEL(0x3); // 清零
-    // P2_MD1 |= GPIO_P25_MODE_SEL(0x1);  // 配置为输出模式：CLK
-
-    P1_MD1 &= ~GPIO_P17_MODE_SEL(0x3); // 清空配置
-    P1_MD1 |= GPIO_P17_MODE_SEL(0x1);  // 输出模式
-    FOUT_S17 = GPIO_FOUT_AF_FUNC;
-    P17 = 0;
-    // P17 = 1;
-
-    P1_MD1 &= ~GPIO_P16_MODE_SEL(0x03);
-    P1_MD1 |= GPIO_P16_MODE_SEL(0x1);
-    FOUT_S16 = GPIO_FOUT_AF_FUNC;
-
-    P2_MD1 &= ~GPIO_P24_MODE_SEL(0x03);
-    P2_MD1 |= GPIO_P24_MODE_SEL(0x1);
-    FOUT_S24 = GPIO_FOUT_AF_FUNC;
+    P2_MD1 &= ~GPIO_P26_MODE_SEL(0x03);
+    P2_MD1 |= GPIO_P26_MODE_SEL(0x1);
+    FOUT_S26 = GPIO_FOUT_AF_FUNC; // 选择AF功能输出
 }

@@ -4,37 +4,44 @@
 #include "my_config.h"
 
 #define E2PROM_DEVICE_ADDR (0xA0) // 器件地址
-#define IIC_DELAY()   \
-    do                \
-    {                 \
-        delay_5us(1); \
+#define IIC_DELAY()                                                                                                   \
+    do                                                                                                                \
+    {                                                                                                                 \
+        /*  delay_5us(1);   */                                                                                        \
+        delay(4);                                                                                                     \
+        /*  delay_ms(1);  测试eeprom读写器件，如果突然断电，会不会影响数据                       \
+        测试发现，延长时间后，会影响主循环，每轮distance-=1000时，distance还有剩余数据， \
+        会重复进入distance-=1000，再触发每s保存里程，写入eeprom的功能） */                       \
     } while (0)
 
-#define IIC_SCL P16
-#define IIC_SDA P24
-#define SDA_IN()                           \
-    do                                     \
-    {                                      \
-        P2_MD1 &= ~GPIO_P24_MODE_SEL(0x3); \
-        P2_PU |= GPIO_P24_PULL_UP(0x01);   \
+#define IIC_SCL P31 /* iic 时钟引脚 SCL */
+#define IIC_SDA P26 /* iic 数据引脚 SDA */
+                    /* SDA配置为输入模式 */
+#define SDA_IN()                                                                   \
+    do                                                                             \
+    {                                                                              \
+        P2_MD1 &= ~GPIO_P26_MODE_SEL(0x03); /* 清除寄存器配置，此时对应输入模式 */ \
+        P2_PU |= GPIO_P26_PULL_UP(0x01);    /* 打开上拉 */                         \
     } while (0)
 
 #define SDA_OUT()                                        \
     do                                                   \
     {                                                    \
-        P2_PU &= ~GPIO_P24_PULL_UP(0x01); /* 关闭上拉 */ \
-        P2_MD1 &= ~GPIO_P24_MODE_SEL(0x3);               \
-        P2_MD1 |= GPIO_P24_MODE_SEL(0x1); /* 输出模式 */ \
-        FOUT_S24 = GPIO_FOUT_AF_FUNC;                    \
+        P2_PU &= ~GPIO_P26_PULL_UP(0x01); /* 关闭上拉 */ \
+        P2_MD1 &= ~GPIO_P26_MODE_SEL(0x3);               \
+        P2_MD1 |= GPIO_P26_MODE_SEL(0x1); /* 输出模式 */ \
+        FOUT_S26 = GPIO_FOUT_AF_FUNC;                    \
     } while (0)
 
 #define IIC_WRITE_CMD ((u8)0x00) // iic写命令
 #define IIC_READ_CMD ((u8)0x01)  // iic读命令
 
-// #define EEPROM_MAX_ERASE_COUNTS_PER_PAGE ((u32)100000) // 程序限制的，每组页面最大的擦写次数
-#define EEPROM_MAX_ERASE_COUNTS_PER_PAGE ((u32)100)                       // 程序限制的，每组页面最大的擦写次数 -- 测试用
+#define EEPROM_MAX_ERASE_COUNTS_PER_PAGE ((u32)300000) // 程序限制的，每组页面最大的擦写次数
+// DEBUG:
+// #define EEPROM_MAX_ERASE_COUNTS_PER_PAGE ((u32)10)                        // 程序限制的，每组页面最大的擦写次数 -- 测试用（最大写到 n 次，包括第 n 次）
 #define EEPROM_DATA_VALID_VAL ((u8)0xC5)                                  // 数据有效时，对应位置的变量存放到的数值
-#define EEPROM_PAGE_SIZE (u8)(32)                                         // eeprom 页地址大小，单位：字节
+#define EEPROM_PAGE_NUMS ((u8)128)                                        // eeprom 页数量
+#define EEPROM_PAGE_SIZE ((u8)(32))                                       // eeprom 页地址大小，单位：字节
 #define EEPROM_PAGE_X_ADDR(x) ((u16)(0x00 + (u16)(x) * EEPROM_PAGE_SIZE)) // 将页面id转换成对应的地址
 
 typedef struct
@@ -62,18 +69,20 @@ extern volatile eeprom_menu_t eeprom_menu_prev; // 存放从eeprom读出的目�
 extern volatile eeprom_menu_t eeprom_menu_next;
 extern volatile eeprom_saveinfo_t eeprom_saveinfo_prev; // 存放从eeprom读出的数据，prev，同一组数据的前一页数据
 extern volatile eeprom_saveinfo_t eeprom_saveinfo_next; // 存放从eeprom读出的数据，next，同一组数据的后一页数据
+extern volatile eeprom_saveinfo_t eeprom_saveinfo;
 
 #if USE_MY_DEBUG
 
-extern volatile eeprom_saveinfo_t eeprom_saveinfo;
 extern volatile eeprom_menu_t eeprom_menu;
 extern volatile bit flag_is_printf_eeprom_data;
 
 void eeprom_printf_all(void);
-void eeprom_24cxx_clear(void);
+
 // void iic_eeprom_clear(void);
 
 #endif // #if USE_MY_DEBUG
+
+void eeprom_24cxx_clear(void);
 
 // void eeprom_menu_write(void);
 // void eeprom_menu_read(void);

@@ -27,16 +27,16 @@ void speed_scan_config(void)
 
 #endif // 使用定时器扫描IO电平变化来计算脉冲
 }
-  
-static volatile u8 speed_buff[SPEED_SCAN_BUFF_SIZE] = {0};
-static volatile u8 cur_send_speed_buff_index = 0;
-volatile bit flag_is_send_speed_time_come = 0; // 标志位，发送速度的时间到来
 
-volatile bit flag_is_speed_scan_over_time = 0; // 速度检测是否一直没有脉冲到来，导致超时
-volatile u32 speed_pulse_cnt = 0;              // 记录脉冲个数，在定时器中断累加
-volatile u16 speed_scan_time_ms = 0;           // 记录扫描时间
-static volatile u32 cur_speed_scan_time = 0;
-static volatile u32 cur_speed_scan_pulse = 0;
+static volatile u8 speed_buff[SPEED_SCAN_BUFF_SIZE];
+static volatile u8 cur_send_speed_buff_index;
+volatile bit flag_is_send_speed_time_come; // 标志位，发送速度的时间到来
+
+volatile bit flag_is_speed_scan_over_time; // 速度检测是否一直没有脉冲到来，导致超时
+volatile u32 speed_pulse_cnt;              // 记录脉冲个数，在定时器中断累加
+volatile u16 speed_scan_time_ms;           // 记录扫描时间
+static volatile u32 cur_speed_scan_time;
+static volatile u32 cur_speed_scan_pulse;
 
 void update_speed_scan_data(void) // 更新检测时速的数据
 {
@@ -86,6 +86,8 @@ void speed_scan(void)
         // 防止时速为0时（有可能是推车，记录不到速度），记录不到里程
         distance += tmp;
 
+        // printf("distance %lu\n",distance);
+
         // printf("cur distace 2 %lu\n", distance);
         // printf("cur distace %lu\n", distance);
         // printf("cur speed %lu km/h\n", cur_speed);
@@ -122,10 +124,10 @@ void speed_scan(void)
 
 void speed_buff_update(u16 speed)
 {
-    static u16 last_speed = 0;    // 存放上一次采集到的速度
-    u16 speed_difference = 0;     // 存放速度的差值
+    static u16 last_speed;       // 存放上一次采集到的速度
+    u16 speed_difference = 0;    // 存放速度的差值
     bit dir_of_speed_change = 0; // 速度变化的方向，0--速度变小，1--速度变大
-    u8 i = 0;                    // 循环计数值
+    u8 i;                        // 循环计数值（由下面的语句赋值，这里为了节省程序空间，没有给初始值）
 
     if (speed > last_speed)
     {

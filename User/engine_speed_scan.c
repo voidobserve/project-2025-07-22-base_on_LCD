@@ -32,18 +32,18 @@ void engine_speed_scan_config(void)
 
 #endif // 使用定时器扫描IO电平的方式
 }
-  
-static volatile u32 engine_speed_buff[ENGINE_SPEED_SCAN_BUFF_SIZE] = {0};
-static volatile u8 cur_send_engine_speed_buff_index = 0; // 当前要发送的缓冲区索引
-volatile bit flag_is_send_engine_speed_time_come = 0;    // 标志位，发送发动机转速的时间到来
 
-volatile u32 engine_speed_scan_cnt = 0; // 检测到的脉冲个数，在定时器中断累加
-volatile u16 engine_speed_scan_ms = 0;  // 在定时器中断累加
+static volatile u32 engine_speed_buff[ENGINE_SPEED_SCAN_BUFF_SIZE];
+static volatile u8 cur_send_engine_speed_buff_index; // 当前要发送的缓冲区索引
+volatile bit flag_is_send_engine_speed_time_come;    // 标志位，发送发动机转速的时间到来
 
-static volatile u32 cur_engine_speed_scan_cnt = 0;
-static volatile u32 cur_engine_speed_scan_ms = 0;
+volatile u32 engine_speed_scan_cnt; // 检测到的脉冲个数，在定时器中断累加
+volatile u16 engine_speed_scan_ms;  // 在定时器中断累加
 
-volatile bit flag_is_engine_speed_scan_over_time = 0; // 标志位，检测是否超时
+static volatile u32 cur_engine_speed_scan_cnt;
+static volatile u32 cur_engine_speed_scan_ms;
+
+volatile bit flag_is_engine_speed_scan_over_time; // 标志位，检测是否超时
 
 void update_engine_speed_scan_data(void) // 更新检测发动机转速的数据
 {
@@ -57,7 +57,7 @@ void update_engine_speed_scan_data(void) // 更新检测发动机转速的数据
 void engine_speed_scan(void)
 {
 #define CONVER_ONE_MINUTE_TO_MS (60000UL) // 将1min转换成以ms为单位的数据
-    volatile u32 rpm = 0;
+    volatile u32 rpm;                     // 由下面的语句赋值，这里为了节省程序空间，没有赋初始值
 
     if (cur_engine_speed_scan_ms >= ENGINE_SPEED_SCAN_UPDATE_TIME || flag_is_engine_speed_scan_over_time)
     // if (cur_engine_speed_scan_ms >= ENGINE_SPEED_SCAN_UPDATE_TIME )
@@ -116,10 +116,10 @@ void engine_speed_scan(void)
 
 void engine_speed_buff_update(u32 engine_speed)
 {
-    static u32 last_engine_speed = 0;   // 存放上一次采集到的发动机转速
+    static u32 last_engine_speed;       // 存放上一次采集到的发动机转速
     u32 engine_speed_difference = 0;    // 存放 发动机转速 的差值
     bit dir_of_engine_speed_change = 0; // 发动机转速变化的方向，0--变小，1--变大
-    u8 i = 0;                           // 循环计数值
+    u8 i;                               // 循环计数值（由下面的语句赋值，这里为了节省程序空间，没有给初始值）
 
     if (engine_speed > last_engine_speed)
     {

@@ -2,29 +2,29 @@
 
 #if FUEL_CAPACITY_SCAN_ENABLE
 
-volatile u16 fuel_capacity_scan_cnt = 0; // 扫描时间计数，在1ms定时器中断中累加
+volatile u16 fuel_capacity_scan_cnt; // 扫描时间计数，在1ms定时器中断中累加
 
 /*
     标志位，（如果当前油量百分比与上一次的油量百分比不在同一个油量格数下）
     是否要更新上一次的油量百分比
     由定时器置一，软件清零
 */
-volatile bit flag_update_fuel_gear = 0;
+volatile bit flag_update_fuel_gear;
 /*
     标志位，是否让定时器累计累计要更新油量挡位的时间
     如果当前油量百分比与上一次的油量百分比不在同一个挡位，由软件置一，定时器开始累计时间（flag_timer_scan_update_fuel_gear_cnt）
 */
-volatile bit flag_timer_scan_update_fuel_gear = 0;
+volatile bit flag_timer_scan_update_fuel_gear;
 /*
     定时器扫描计数，累计要更新油量挡位的时间
     由定时器累加
 */
-volatile u16 timer_scan_update_fuel_gear_cnt = 0;
+volatile u16 timer_scan_update_fuel_gear_cnt;
 
 // 滑动平均：
 #define SAMPLE_COUNT 20 // 样本计数
-static volatile u16 samples[SAMPLE_COUNT] = {0};
-static volatile u8 sample_index = 0;
+static volatile u16 samples[SAMPLE_COUNT];
+static volatile u8 sample_index;
 u16 get_filtered_adc(u16 adc_val)
 {
     u8 i = 0;
@@ -205,7 +205,7 @@ void fuel_capacity_scan(void)
                 fuel_capacity_scan_cnt = 0;
                 adc_sel_pin(ADC_PIN_FUEL); // 内部至少占用1ms
                 adc_val = adc_getval();    //
-                samples_init(adc_val); // 滑动平均滤波初始化
+                samples_init(adc_val);     // 滑动平均滤波初始化
                 fuel_adc_val = adc_val;
 
                 fuel_percent = convert_fuel_adc_to_percent(fuel_adc_val);

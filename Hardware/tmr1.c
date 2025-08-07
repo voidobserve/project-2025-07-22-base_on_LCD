@@ -48,7 +48,7 @@ void TIMR1_IRQHandler(void) interrupt TMR1_IRQn
 {
     // 进入中断设置IP，不可删除
     __IRQnIPnPush(TMR1_IRQn);
-  
+
     // ---------------- 用户函数处理 -------------------
 
     // 周期中断
@@ -61,107 +61,103 @@ void TIMR1_IRQHandler(void) interrupt TMR1_IRQn
         //     tmr1_cnt++;
         // }
 
+        // 串口接收超时计数
+        if (flag_is_uart0_receive_timeout_enable)
         {
-
-            // 串口接收超时计数
-            if (flag_is_uart0_receive_timeout_enable)
-            {
-                uart0_receive_timeout_cnt++;
-            }
+            uart0_receive_timeout_cnt++;
+        }
 
 #if AD_KEY_ENABLE
-            // 在定时器注册按键扫描：
-            // if (ad_key_para.cur_scan_times < 255)
-            {
-                ad_key_para.cur_scan_times++;
-            }
+        // 在定时器注册按键扫描：
+        // if (ad_key_para.cur_scan_times < 255)
+        {
+            ad_key_para.cur_scan_times++;
+        }
 #endif // AD_KEY_ENABLE
 
 #if TOUCH_KEY_ENABLE
-            // if (touch_key_para.cur_scan_times < 255)
-            {
-                touch_key_para.cur_scan_times++;
-            }
+        // if (touch_key_para.cur_scan_times < 255)
+        {
+            touch_key_para.cur_scan_times++;
+        }
 #endif // TOUCH_KEY_ENABLE
 
 #if PIN_LEVEL_SCAN_ENABLE
-            // if (pin_level_scan_time_cnt < 65535) // 防止计数溢出
-            {
-                pin_level_scan_time_cnt++;
-            }
+        // if (pin_level_scan_time_cnt < 65535) // 防止计数溢出
+        {
+            pin_level_scan_time_cnt++;
+        }
 #endif
 
 #if FUEL_CAPACITY_SCAN_ENABLE
-            if (flag_timer_scan_update_fuel_gear)
+        if (flag_timer_scan_update_fuel_gear) // 更新油量挡位
+        {
+            // if (timer_scan_update_fuel_gear_cnt < 65535)
             {
-                // if (timer_scan_update_fuel_gear_cnt < 65535)
+                timer_scan_update_fuel_gear_cnt++;
+                if (timer_scan_update_fuel_gear_cnt >= FUEL_UPDATE_LAST_FUEL_PERCENTAGE_TIME)
+                // if (timer_scan_update_fuel_gear_cnt >= 5000) // DEBUG 测试用
                 {
-                    timer_scan_update_fuel_gear_cnt++;
-                    if (timer_scan_update_fuel_gear_cnt >= FUEL_UPDATE_LAST_FUEL_PERCENTAGE_TIME)
-                    // if (timer_scan_update_fuel_gear_cnt >= 5000) // DEBUG 测试用
-                    {
-                        timer_scan_update_fuel_gear_cnt = 0;
-                        flag_update_fuel_gear = 1; // 更新油量挡位
-                    }
+                    timer_scan_update_fuel_gear_cnt = 0;
+                    flag_update_fuel_gear = 1; // 更新油量挡位
                 }
             }
-            else
-            {
-                timer_scan_update_fuel_gear_cnt = 0;
-                flag_update_fuel_gear = 0;
-            }
+        }
+        else
+        {
+            timer_scan_update_fuel_gear_cnt = 0;
+            flag_update_fuel_gear = 0;
+        }
 #endif
 
 #if SPEED_SCAN_ENABLE
+        {
+            static u16 cnt = 0;
+            cnt++;
+            if (cnt >= SPEED_SCAN_BUFF_UPDATE_TIME)
             {
-                static u16 cnt = 0;
-                cnt++;
-                if (cnt >= SPEED_SCAN_BUFF_UPDATE_TIME)
-                {
-                    cnt = 0;
-                    flag_is_send_speed_time_come = 1;
-                }
+                cnt = 0;
+                flag_is_send_speed_time_come = 1;
             }
+        }
 #endif
 
 #if ENGINE_SPEED_SCAN_ENABLE
+        {
+            static u16 cnt = 0;
+            cnt++;
+            if (cnt >= ENGINE_SPEED_SEND_PERIOD)
             {
-                static u16 cnt = 0;
-                cnt++;
-                if (cnt >= ENGINE_SPEED_SEND_PERIOD)
-                {
-                    cnt = 0;
-                    flag_is_send_engine_speed_time_come = 1;
-                }
+                cnt = 0;
+                flag_is_send_engine_speed_time_come = 1;
             }
+        }
 #endif
 
-            // if (mileage_save_time_cnt < 4294967295 - diff_ms_cnt) // 防止计数溢出
-            if (mileage_save_time_cnt < 65535)
-            {
-                mileage_save_time_cnt++;
-                // mileage_save_time_cnt += diff_ms_cnt;
-            }
+        // if (mileage_save_time_cnt < 4294967295 - diff_ms_cnt) // 防止计数溢出
+        if (mileage_save_time_cnt < 65535) // 防止计数溢出
+        {
+            mileage_save_time_cnt++;
+        }
 
 #if FUEL_CAPACITY_SCAN_ENABLE
-            // if (fuel_capacity_scan_cnt < 4294967295 - diff_ms_cnt) // 防止计数溢出
-            {
-                fuel_capacity_scan_cnt++;
-                // fuel_capacity_scan_cnt += diff_ms_cnt;
-            }
+        // if (fuel_capacity_scan_cnt < 4294967295 - diff_ms_cnt) // 防止计数溢出
+        {
+            fuel_capacity_scan_cnt++;
+        }
 #endif
 
-            // if (synchronous_request_status == SYN_REQUEST_STATUS_HANDLING)
+        // if (synchronous_request_status == SYN_REQUEST_STATUS_HANDLING)
+        {
+            synchronous_request_time_cnt++; // 同步请求的冷却计时
+            // synchronous_request_time_cnt += diff_ms_cnt; // 同步请求的冷却计时
+            if (synchronous_request_time_cnt >= 2000)
             {
-                synchronous_request_time_cnt++; // 同步请求的冷却计时
-                // synchronous_request_time_cnt += diff_ms_cnt; // 同步请求的冷却计时
-                if (synchronous_request_time_cnt >= 2000)
-                {
-                    // 如果接收同步请求已经过了 xx s，清除冷却状态
-                    synchronous_request_time_cnt = 0;
-                    synchronous_request_status = SYN_REQUEST_STATUS_NONE;
-                }
+                // 如果接收同步请求已经过了 xx s，清除冷却状态
+                synchronous_request_time_cnt = 0;
+                synchronous_request_status = SYN_REQUEST_STATUS_NONE;
             }
+        }
 
 #if 0 // 日期和时间合到了一起，就不用这部分程序
     if (update_date_status == UPDATE_STATUS_HANDLING)
@@ -178,29 +174,29 @@ void TIMR1_IRQHandler(void) interrupt TMR1_IRQn
     }
 #endif
 
-            // if (update_time_status == UPDATE_STATUS_HANDLING)
+        // if (update_time_status == UPDATE_STATUS_HANDLING)
+        {
+            // 如果更新时间进入冷却状态，进行冷却计时
+            update_time_cooling_cnt++;
+            // update_time_cooling_cnt += diff_ms_cnt;
+            if (update_time_cooling_cnt >= 100) // xx ms
             {
-                // 如果更新时间进入冷却状态，进行冷却计时
-                update_time_cooling_cnt++;
-                // update_time_cooling_cnt += diff_ms_cnt;
-                if (update_time_cooling_cnt >= 100) // xx ms
-                {
-                    // 过了冷却时间，退出冷却状态
-                    update_time_cooling_cnt = 0;
-                    update_time_status = UPDATE_STATUS_NONE;
-                }
+                // 过了冷却时间，退出冷却状态
+                update_time_cooling_cnt = 0;
+                update_time_status = UPDATE_STATUS_NONE;
             }
+        }
 
-            // if (mileage_update_time_cnt < 65535)
-            {
-                mileage_update_time_cnt++;
-            }
+        // if (mileage_update_time_cnt < 65535)
+        {
+            mileage_update_time_cnt++;
+        }
 
 #if BATTERY_SCAN_ENABLE
-            // if (battery_scan_time_cnt < 4294967295)
-            {
-                battery_scan_time_cnt++;
-            }
+        // if (battery_scan_time_cnt < 4294967295)
+        {
+            battery_scan_time_cnt++;
+        }
 #endif // BATTERY_SCAN_ENABLE
 
 #if 0 // DEBUG 只在测试时使用
@@ -217,17 +213,16 @@ void TIMR1_IRQHandler(void) interrupt TMR1_IRQn
 
 #endif // // DEBUG 只在测试时使用
 
-            {
-                static u16 cnt;
-                cnt++;
-                if (cnt >= 4000)
-                {
-                    cnt = 0;
-                    flag_debug_is_send_time = 1; // 发送时间
-                    // flag_debug_is_send_time_2 = 1;
-                }
-            }
-        }
+        // {
+        //     static u16 cnt;
+        //     cnt++;
+        //     if (cnt >= 4000)
+        //     {
+        //         cnt = 0;
+        //         flag_debug_is_send_time = 1; // 发送时间
+        //         // flag_debug_is_send_time_2 = 1;
+        //     }
+        // }
     }
 
     // P20 = 0;// 测试中断持续时间

@@ -2,7 +2,7 @@
 
 #if BATTERY_SCAN_ENABLE
 
-volatile u16 battery_scan_time_cnt = 0; // 电池扫描时间计时（在定时器中累加）
+volatile u16 battery_scan_time_cnt; // 电池扫描时间计时（在定时器中累加）
 
 /**
  * @brief 将ad值转换为对应的电压值
@@ -26,7 +26,7 @@ u16 conver_adc_val_to_voltage(u16 arg_adc_val)
 
 // 将电池电压转换为对应的百分比
 // voltage： 0~255 ， 对应0~25.5V
-// 例如 voltage == 140，对应14.0V 
+// 例如 voltage == 140，对应14.0V
 u8 conver_voltage_of_battery_to_percentage(u8 voltage)
 {
     u8 tmp;
@@ -51,8 +51,8 @@ void battery_scan(void)
     u16 voltage_of_battery = 0;       // 存放电池电压
     u8 cur_percentage_of_battery = 0; // 存放当前电池电量百分比
 
-    static volatile u32 battery_scan_cnt = 0; // 记录电池电压扫描次数
-    static volatile u32 battery_val = 0;      // 累加每次采集到的ad值，到了电池扫描时间时，直接求平均值
+    static volatile u32 battery_scan_cnt; // 记录电池电压扫描次数
+    static volatile u32 battery_val;      // 累加每次采集到的ad值，到了电池扫描时间时，直接求平均值
 
     static bit flag_is_power_on_first = 1; // 是否第一次上电
 

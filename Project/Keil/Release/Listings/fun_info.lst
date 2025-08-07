@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.7.0   FUN_INFO                                                          08/06/2025 17:46:20 PAGE 1   
+C51 COMPILER V9.60.7.0   FUN_INFO                                                          08/07/2025 17:46:20 PAGE 1   
 
 
 C51 COMPILER V9.60.7.0, COMPILATION OF MODULE FUN_INFO
@@ -18,84 +18,93 @@ line level    source
    7          void fun_info_init(void)
    8          {
    9   1          u8 page_id;
-  10   1          // memset(&fun_info, 0, sizeof(fun_info));
+  10   1          u32 temp_total_mileage; // 临时存放从eeprom读出的总里程数据
   11   1      
-  12   1          // flash_read(0x00, (u8 *)&fun_info.save_info, sizeof(fun_info.save_info));
-  13   1      
-  14   1          eeprom_menu_init();
-  15   1      
-  16   1          
-  17   1      
-  18   1          page_id = eeprom_menu_prev.cur_write_page_id;
+  12   1          /* 全局变量，上电应该默认为0 */
+  13   1          // fun_info.save_info.total_mileage = 0;
+  14   1          // fun_info.save_info.subtotal_mileage = 0;
+  15   1          // fun_info.save_info.subtotal_mileage_2 = 0;
+  16   1      
+  17   1          eeprom_menu_init();
+  18   1          page_id = eeprom_menu_prev.cur_write_page_id; // 获取目录的id
   19   1      
-  20   1          // 根据从目录读取到的页面id，找到对应的数据
-  21   1          eeprom_24cxx_read(page_id, (u8 *)&eeprom_saveinfo, sizeof(eeprom_saveinfo_t));
-  22   1          if (eeprom_saveinfo.is_data_valid == EEPROM_DATA_VALID_VAL)
-  23   1          {
-  24   2              fun_info.save_info.total_mileage = eeprom_saveinfo.total_mileage;
-  25   2              fun_info.save_info.subtotal_mileage = eeprom_saveinfo.subtotal_mileage;
-  26   2              fun_info.save_info.subtotal_mileage_2 = eeprom_saveinfo.subtotal_mileage_2;
-  27   2          }
-  28   1          else
-  29   1          {
-  30   2              // 如果对应的页面的数据无效，找到它同一组的另一个页面，看看另一个�
-             -�面的数据是否有效
+  20   1          /*
+  21   1              应该将同一组的数据都读出来，比较总里程的大小，以较大的为最新的数�
+             -�。
+  22   1              较小的可能是因为写入eeprom时突然掉电，中断了写入
+  23   1          */
+  24   1          // 根据从目录读取到的页面id，找到对应的数据
+  25   1          eeprom_24cxx_read(page_id, (u8 *)&eeprom_saveinfo, sizeof(eeprom_saveinfo_t));
+  26   1          if (eeprom_saveinfo.is_data_valid == EEPROM_DATA_VALID_VAL)
+  27   1          {
+  28   2              fun_info.save_info.total_mileage = eeprom_saveinfo.total_mileage;
+  29   2              fun_info.save_info.subtotal_mileage = eeprom_saveinfo.subtotal_mileage;
+  30   2              fun_info.save_info.subtotal_mileage_2 = eeprom_saveinfo.subtotal_mileage_2;
   31   2      
-  32   2              if (page_id % 2 == 0)
-  33   2              {
-  34   3                  /*
-  35   3                      如果是偶数页面id
-  36   3                      得到的偶数，作为同一组页面的第一个页面 prev
-  37   3                      得到的偶数 + 1，作为同一组页面的第二个页面 next
-  38   3                  */
-  39   3                  page_id += 1;
-  40   3              }
-  41   2              else
-  42   2              {
-  43   3                  /*
-  44   3                      如果是奇数页面id，
-  45   3                      得到的奇数 - 1，作为同一组页面的第一个页面 prev
-  46   3                      得到的奇数，作为同一组页面的第二个页面 next
-  47   3                  */
-  48   3                  page_id -= 1;
-  49   3              }
-  50   2      
-  51   2              eeprom_24cxx_read(page_id, (u8 *)&eeprom_saveinfo, sizeof(eeprom_saveinfo_t));
-  52   2              if (eeprom_saveinfo.is_data_valid == EEPROM_DATA_VALID_VAL)
-C51 COMPILER V9.60.7.0   FUN_INFO                                                          08/06/2025 17:46:20 PAGE 2   
+  32   2              temp_total_mileage = fun_info.save_info.total_mileage;
+  33   2          }
+  34   1      
+  35   1          // 找到它同一组的另一个页面，看看另一个页面的数据是否有效
+  36   1          if (page_id % 2 == 0)
+  37   1          {
+  38   2              /*
+  39   2                  如果是偶数页面id
+  40   2                  得到的偶数，作为同一组页面的第一个页面 prev
+  41   2                  得到的偶数 + 1，作为同一组页面的第二个页面 next
+  42   2              */
+  43   2              page_id += 1;
+  44   2          }
+  45   1          else
+  46   1          {
+  47   2              /*
+  48   2                  如果是奇数页面id，
+  49   2                  得到的奇数 - 1，作为同一组页面的第一个页面 prev
+  50   2                  得到的奇数，作为同一组页面的第二个页面 next
+  51   2              */
+  52   2              page_id -= 1;
+C51 COMPILER V9.60.7.0   FUN_INFO                                                          08/07/2025 17:46:20 PAGE 2   
 
-  53   2              {
-  54   3                  // 如果该页面的数据有效，将数据读出
-  55   3                  fun_info.save_info.total_mileage = eeprom_saveinfo.total_mileage;
-  56   3                  fun_info.save_info.subtotal_mileage = eeprom_saveinfo.subtotal_mileage;
-  57   3                  fun_info.save_info.subtotal_mileage_2 = eeprom_saveinfo.subtotal_mileage_2;
-  58   3              }
-  59   2              else
+  53   2          }
+  54   1      
+  55   1          eeprom_24cxx_read(page_id, (u8 *)&eeprom_saveinfo, sizeof(eeprom_saveinfo_t));
+  56   1          if (eeprom_saveinfo.is_data_valid == EEPROM_DATA_VALID_VAL)
+  57   1          {
+  58   2              // 如果该页面的数据有效，将数据读出
+  59   2              if (temp_total_mileage >= eeprom_saveinfo.total_mileage)
   60   2              {
-  61   3                  // 如果页面的数据无效，说明eeprom中还没有存放数据
-  62   3                  fun_info.save_info.total_mileage = 0;
-  63   3                  fun_info.save_info.subtotal_mileage = 0;
-  64   3                  fun_info.save_info.subtotal_mileage_2 = 0;
-  65   3              }
-  66   2          }
-  67   1      }
-  68          
-  69          // 保存 存放了所有信息的结构体变量，写入flash中
-  70          void fun_info_save(void)
-  71          {
-  72   1          // flash_erase_sector(0x00);
-  73   1          // flash_write(0x00, (u8 *)&fun_info.save_info, sizeof(fun_info.save_info));
-  74   1      
-  75   1          eeprom_data_save();
-  76   1      
-  77   1          printf("eeprom save\n");
-  78   1      }
+  61   3              }
+  62   2              else
+  63   2              {
+  64   3                  fun_info.save_info.total_mileage = eeprom_saveinfo.total_mileage;
+  65   3                  fun_info.save_info.subtotal_mileage = eeprom_saveinfo.subtotal_mileage;
+  66   3                  fun_info.save_info.subtotal_mileage_2 = eeprom_saveinfo.subtotal_mileage_2;
+  67   3              }
+  68   2          }
+  69   1      
+  70   1          /*
+  71   1              运行到这里，如果两个页面的数据都无效
+  72   1              is_data_valid 都不等于 EEPROM_DATA_VALID_VAL，
+  73   1              那么 fun_info.save_info 应该没有被赋值，都为0
+  74   1          */
+  75   1      }
+  76          
+  77          // 保存 存放了所有信息的结构体变量，写入flash中
+  78          void fun_info_save(void)
+  79          {
+  80   1          // DEBUG ：
+  81   1          // printf("eeprom save begin\n"); // 打印这句话时，可以试试突然断电，测试eeprom突�
+             -�断电后，会不会影响整个里程记录的数据
+  82   1          eeprom_data_save();
+  83   1      
+  84   1          // DEBUG ：
+  85   1          // printf("eeprom save\n");
+  86   1      }
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    156    ----
-   CONSTANT SIZE    =     13    ----
-   XDATA SIZE       =     36       1
+   CODE SIZE        =    151    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =     36       5
    PDATA SIZE       =   ----    ----
    DATA SIZE        =   ----    ----
    IDATA SIZE       =   ----    ----

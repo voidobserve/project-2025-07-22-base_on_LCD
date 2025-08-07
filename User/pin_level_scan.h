@@ -6,7 +6,6 @@
 
 #if PIN_LEVEL_SCAN_ENABLE
 
-
 #define PIN_DETECT_LEFT_TURN (P25)   // 检测左转向灯的引脚
 #define PIN_DETECT_RIGHT_TURN (P22)  // 检测右转向灯的引脚
 #define PIN_DETECT_HIGH_BEAM (P21)   // 检测远光灯的引脚
@@ -28,11 +27,10 @@
 // 引脚电平扫描配置
 // ======================================================
 
-
 extern u16 pin_level_scan_time_cnt;
 
 void pin_level_scan_config(void); // 扫描引脚的配置（初始化）
 void pin_level_scan(void);        // 扫描引脚的电平
-#endif // PIN_LEVEL_SCAN_ENABLE
+#endif                            // PIN_LEVEL_SCAN_ENABLE
 
 #endif

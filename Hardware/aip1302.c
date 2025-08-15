@@ -70,13 +70,13 @@ void aip1302_config(void)
 
 #if 0
     /* 测试程序 */
-    printf("power on, get aip1302 data: \n");
-    printf("year %u \n", fun_info.aip1302_saveinfo.year);
-    printf("month %bu \n", fun_info.aip1302_saveinfo.month);
-    printf("day %bu \n", fun_info.aip1302_saveinfo.day);
-    printf("hour %bu \n", fun_info.aip1302_saveinfo.time_hour);
-    printf("min %bu \n", fun_info.aip1302_saveinfo.time_min);
-    printf("sec %bu \n", fun_info.aip1302_saveinfo.time_sec);
+    // printf("power on, get aip1302 data: \n");
+    // printf("year %u \n", fun_info.aip1302_saveinfo.year);
+    // printf("month %bu \n", fun_info.aip1302_saveinfo.month);
+    // printf("day %bu \n", fun_info.aip1302_saveinfo.day);
+    // printf("hour %bu \n", fun_info.aip1302_saveinfo.time_hour);
+    // printf("min %bu \n", fun_info.aip1302_saveinfo.time_min);
+    // printf("sec %bu \n", fun_info.aip1302_saveinfo.time_sec);
 
     // fun_info.aip1302_saveinfo.year = (u16)2025;
     // fun_info.aip1302_saveinfo.month = 7;

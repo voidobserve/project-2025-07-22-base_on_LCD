@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.7.0   AD_KEY                                                            08/07/2025 17:46:21 PAGE 1   
+C51 COMPILER V9.60.7.0   AD_KEY                                                            08/15/2025 17:30:46 PAGE 1   
 
 
 C51 COMPILER V9.60.7.0, COMPILATION OF MODULE AD_KEY
@@ -62,7 +62,7 @@ line level    source
   50          {
   51              AD_KEY_EVENT_NONE,
   52              AD_KEY_EVENT_ID_1_CLICK,
-C51 COMPILER V9.60.7.0   AD_KEY                                                            08/07/2025 17:46:21 PAGE 2   
+C51 COMPILER V9.60.7.0   AD_KEY                                                            08/15/2025 17:30:46 PAGE 2   
 
   53              AD_KEY_EVENT_ID_1_DOUBLE,
   54              AD_KEY_EVENT_ID_1_LONG,
@@ -126,7 +126,7 @@ line level    source
  104              // .hold_time = (75 + 15), // 判定按键是HOLD对应的数量，与扫描频率有关
  105              // // .press_cnt = 0, // 与long_time和hold_time对比, 判断长按事件和HOLD事件
  106              // // .click_cnt = 0,
-C51 COMPILER V9.60.7.0   AD_KEY                                                            08/07/2025 17:46:21 PAGE 3   
+C51 COMPILER V9.60.7.0   AD_KEY                                                            08/15/2025 17:30:46 PAGE 3   
 
  107              // .click_delay_time = 20, // 按键抬起后，等待连击的数量，与扫描频率有关
  108              // // .notify_value = 0,
@@ -190,7 +190,7 @@ line level    source
  165   1      
  166   1          return ad_key_id;
  167   1      }
-C51 COMPILER V9.60.7.0   AD_KEY                                                            08/07/2025 17:46:21 PAGE 4   
+C51 COMPILER V9.60.7.0   AD_KEY                                                            08/15/2025 17:30:46 PAGE 4   
 
  168          
  169          //
@@ -254,7 +254,7 @@ line level    source
  225   1      
  226   1          if (ad_key_para.latest_key_val == AD_KEY_ID_NONE)
  227   1          {
-C51 COMPILER V9.60.7.0   AD_KEY                                                            08/07/2025 17:46:21 PAGE 5   
+C51 COMPILER V9.60.7.0   AD_KEY                                                            08/15/2025 17:30:46 PAGE 5   
 
  228   2              return;
  229   2          }
@@ -318,7 +318,7 @@ line level    source
  287   2          case AD_KEY_EVENT_ID_3_DOUBLE:
  288   2              // printf("key 3 double\n");
  289   2              break;
-C51 COMPILER V9.60.7.0   AD_KEY                                                            08/07/2025 17:46:21 PAGE 6   
+C51 COMPILER V9.60.7.0   AD_KEY                                                            08/15/2025 17:30:46 PAGE 6   
 
  290   2      
  291   2          case AD_KEY_EVENT_ID_3_LONG:
@@ -382,7 +382,7 @@ line level    source
  349   2      #endif
  350   2          }
  351   1      }
-C51 COMPILER V9.60.7.0   AD_KEY                                                            08/07/2025 17:46:21 PAGE 7   
+C51 COMPILER V9.60.7.0   AD_KEY                                                            08/15/2025 17:30:46 PAGE 7   
 
  352          
  353          #endif//  AD_KEY_ENABLE

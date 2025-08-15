@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.7.0   MILEAGE                                                           08/07/2025 17:46:21 PAGE 1   
+C51 COMPILER V9.60.7.0   MILEAGE                                                           08/15/2025 17:30:46 PAGE 1   
 
 
 C51 COMPILER V9.60.7.0, COMPILATION OF MODULE MILEAGE
@@ -62,7 +62,7 @@ line level    source
   47   1          //     fun_info_save();
   48   1          //     flag_is_any_mileage_save = 0;
   49   1          //     mileage_save_time_cnt = 0;
-C51 COMPILER V9.60.7.0   MILEAGE                                                           08/07/2025 17:46:21 PAGE 2   
+C51 COMPILER V9.60.7.0   MILEAGE                                                           08/15/2025 17:30:46 PAGE 2   
 
   50   1          // }
   51   1      
@@ -126,7 +126,7 @@ line level    source
  107   1      
  108   1      #ifdef USE_INTERNATIONAL /* 公制单位 */
  109   1                               // 如果小计里程有变化且超过了100m
-C51 COMPILER V9.60.7.0   MILEAGE                                                           08/07/2025 17:46:21 PAGE 3   
+C51 COMPILER V9.60.7.0   MILEAGE                                                           08/15/2025 17:30:46 PAGE 3   
 
  110   1          if ((fun_info.save_info.subtotal_mileage - old_subtotal_mileage) > 100)
  111   1      #else /* USE_IMPERIAL // 英制单位 */

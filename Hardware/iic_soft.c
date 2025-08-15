@@ -123,7 +123,8 @@ void eeprom_printf_all(void)
 void eeprom_24cxx_clear(void)
 {
     u16 i;
-    const u8 clear_data = 0x00;
+    // const u8 clear_data = 0x00;
+    const u8 clear_data = 0xFF;
     for (i = 0; i < ((u16)128 * 32); i++)
     {
         while (iic_eeprom_write(i, (u8 *)&clear_data, 1))

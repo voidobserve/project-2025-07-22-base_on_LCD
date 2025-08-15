@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.7.0   MAIN                                                              08/07/2025 17:46:20 PAGE 1   
+C51 COMPILER V9.60.7.0   MAIN                                                              08/15/2025 17:30:45 PAGE 1   
 
 
 C51 COMPILER V9.60.7.0, COMPILATION OF MODULE MAIN
@@ -62,7 +62,7 @@ line level    source
   51   1      #if (BATTERY_SCAN_ENABLE || AD_KEY_ENABLE || FUEL_CAPACITY_SCAN_ENABLE || TEMP_OF_WATER_SCAN_ENABLE)
   52   1          adc_config();
   53   1      #endif
-C51 COMPILER V9.60.7.0   MAIN                                                              08/07/2025 17:46:20 PAGE 2   
+C51 COMPILER V9.60.7.0   MAIN                                                              08/15/2025 17:30:45 PAGE 2   
 
   54   1      
   55   1      #if TOUCH_KEY_ENABLE
@@ -126,7 +126,7 @@ line level    source
  110   1          P23 = 0;
  111   1      
  112   1      #if 0  // 测试发送日期和时间
-C51 COMPILER V9.60.7.0   MAIN                                                              08/07/2025 17:46:20 PAGE 3   
+C51 COMPILER V9.60.7.0   MAIN                                                              08/15/2025 17:30:45 PAGE 3   
 
                   // 当前日期
                   fun_info.aip1302_saveinfo.year = 2024;
@@ -190,7 +190,7 @@ line level    source
                       if (flag_debug_is_send_time)
                       {
                           if (flag_get_speed == 0) // 等待上一次发送完成
-C51 COMPILER V9.60.7.0   MAIN                                                              08/07/2025 17:46:20 PAGE 4   
+C51 COMPILER V9.60.7.0   MAIN                                                              08/15/2025 17:30:45 PAGE 4   
 
                           {
                               static u16 tmp = 0;
@@ -254,7 +254,7 @@ line level    source
                           flag_is_debug_update = 0;
               
                           // fun_info.fuel++;
-C51 COMPILER V9.60.7.0   MAIN                                                              08/07/2025 17:46:20 PAGE 5   
+C51 COMPILER V9.60.7.0   MAIN                                                              08/15/2025 17:30:45 PAGE 5   
 
                           // if (fun_info.fuel > 100)
                           // {
@@ -318,7 +318,7 @@ line level    source
                                   u8 i;
                                   // 如果到了扫描更新时间
                                   fuel_capacity_scan_cnt = 0;
-C51 COMPILER V9.60.7.0   MAIN                                                              08/07/2025 17:46:20 PAGE 6   
+C51 COMPILER V9.60.7.0   MAIN                                                              08/15/2025 17:30:45 PAGE 6   
 
               
                                   fuel_gear++;
@@ -382,7 +382,7 @@ line level    source
  354   2              // AIP1302_CE_PIN = 0;
  355   2              // delay_ms(500);
  356   2      
-C51 COMPILER V9.60.7.0   MAIN                                                              08/07/2025 17:46:20 PAGE 7   
+C51 COMPILER V9.60.7.0   MAIN                                                              08/15/2025 17:30:45 PAGE 7   
 
  357   2      #if 0
                       if (flag_debug_is_send_time)

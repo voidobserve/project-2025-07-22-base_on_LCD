@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.7.0   FUEL_CAPACITY                                                     08/07/2025 17:46:21 PAGE 1   
+C51 COMPILER V9.60.7.0   FUEL_CAPACITY                                                     08/15/2025 17:30:46 PAGE 1   
 
 
 C51 COMPILER V9.60.7.0, COMPILATION OF MODULE FUEL_CAPACITY
@@ -62,7 +62,7 @@ line level    source
   49   2          }
   50   1      }
   51          
-C51 COMPILER V9.60.7.0   FUEL_CAPACITY                                                     08/07/2025 17:46:21 PAGE 2   
+C51 COMPILER V9.60.7.0   FUEL_CAPACITY                                                     08/15/2025 17:30:46 PAGE 2   
 
   52          // 将油量检测对应的ad值转换成百分比值
   53          u8 convert_fuel_adc_to_percent(u16 fuel_adc_val)
@@ -126,7 +126,7 @@ line level    source
              -�到4格油量，51% ~ 68% */
  102   2              {
  103   3                  ret = ((u32)fuel_adc_val - FUEL_LEVEL_4_ADC_VAL) * 68 / ((u32)FUEL_LEVEL_3_ADC_VAL - FUEL_LEVE
-C51 COMPILER V9.60.7.0   FUEL_CAPACITY                                                     08/07/2025 17:46:21 PAGE 3   
+C51 COMPILER V9.60.7.0   FUEL_CAPACITY                                                     08/15/2025 17:30:46 PAGE 3   
 
              -L_4_ADC_VAL);
  104   3                  ret = 68 - ret;
@@ -190,7 +190,7 @@ line level    source
  158   2          }
  159   1          else if (fuel_percent >= 51 && fuel_percent <= 67)
  160   1          {
-C51 COMPILER V9.60.7.0   FUEL_CAPACITY                                                     08/07/2025 17:46:21 PAGE 4   
+C51 COMPILER V9.60.7.0   FUEL_CAPACITY                                                     08/15/2025 17:30:46 PAGE 4   
 
  161   2              fuel_gear = 4;
  162   2          }
@@ -254,7 +254,7 @@ line level    source
  220   4                      status = STATUS_IN_SERVICE;
  221   4                  }
  222   3              }
-C51 COMPILER V9.60.7.0   FUEL_CAPACITY                                                     08/07/2025 17:46:21 PAGE 5   
+C51 COMPILER V9.60.7.0   FUEL_CAPACITY                                                     08/15/2025 17:30:46 PAGE 5   
 
  223   2          }
  224   1      
@@ -318,7 +318,7 @@ line level    source
  280   5                          u8 tmp = convert_fuel_percent_to_gear(i);
  281   5                          if (tmp == fuel_gear)
  282   5                          {
-C51 COMPILER V9.60.7.0   FUEL_CAPACITY                                                     08/07/2025 17:46:21 PAGE 6   
+C51 COMPILER V9.60.7.0   FUEL_CAPACITY                                                     08/15/2025 17:30:46 PAGE 6   
 
  283   6                              fuel_percent = i; // 得到变化一个挡位后对应的油量百分比
  284   6                              break;

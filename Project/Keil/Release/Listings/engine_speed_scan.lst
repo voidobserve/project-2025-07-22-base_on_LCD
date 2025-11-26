@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.7.0   ENGINE_SPEED_SCAN                                                 08/15/2025 17:30:46 PAGE 1   
+C51 COMPILER V9.60.7.0   ENGINE_SPEED_SCAN                                                 11/25/2025 15:26:55 PAGE 1   
 
 
 C51 COMPILER V9.60.7.0, COMPILATION OF MODULE ENGINE_SPEED_SCAN
@@ -13,228 +13,208 @@ line level    source
    2          
    3          #if ENGINE_SPEED_SCAN_ENABLE
    4          
-   5          #if 0
-              // 发动机每转一圈，能检测到的脉冲个数
-              #ifndef ENGINE_SPEED_SCAN_PULSE_PER_TURN
-              #define ENGINE_SPEED_SCAN_PULSE_PER_TURN (16)
-              #endif
-              
-              volatile u16 engine_scan_time_cnt = 0;        // 发动机转速扫描时，用到的时间计数值，会
-             -在定时器中断中累加
-              volatile u16 engine_actual_scan_time_cnt = 0; // 存放实际的发动机转速扫描用时
-              
-              // 标志位，是否有更新脉冲计数,由定时器来置位
-              // 0--未更新脉冲计数，1--有新的脉冲计数
-              volatile bit flag_is_update_engine_pulse_cnt = 0;
-              /*
-                  存放 检测到的发送机转速的脉冲计数值，会在中断内累加
-                  使用了双缓冲，[0]用在定时器中断中，[1]用在发动机转速处理函数中
-                  当 flag_is_update_engine_pulse_cnt == 1时，说明已经有数据更新
-              */
-              volatile u32 detect_engine_pulse_cnt[2] = {0};
-              #endif
-  24          
-  25          // 发动机转速的相关配置
-  26          void engine_speed_scan_config(void)
-  27          {
-  28   1      #if 1 // 使用定时器扫描IO电平的方式
-  29   1      
-  30   1          P0_MD0 &= ~GPIO_P02_MODE_SEL(0x3); // 输入模式
-  31   1          P0_PU |= GPIO_P02_PULL_UP(0x01);   // 上拉
-  32   1      
-  33   1      #endif // 使用定时器扫描IO电平的方式
+   5          // 发动机转速的相关配置
+   6          void engine_speed_scan_config(void)
+   7          {
+   8   1      #if 1 // 使用定时器扫描IO电平的方式
+   9   1      
+  10   1          P0_MD0 &= ~GPIO_P02_MODE_SEL(0x3); // 输入模式
+  11   1          P0_PU |= GPIO_P02_PULL_UP(0x01);   // 上拉
+  12   1      
+  13   1      #endif // 使用定时器扫描IO电平的方式
+  14   1      }
+  15          
+  16          // static volatile u32 engine_speed_buff[ENGINE_SPEED_SCAN_BUFF_SIZE];
+  17          // static volatile u8 cur_send_engine_speed_buff_index; // 当前要发送的缓冲区索引
+  18          // volatile bit flag_is_send_engine_speed_time_come;    // 标志位，发送发动机转速的时间到�
+             -�
+  19          
+  20          volatile u32 engine_speed_scan_cnt; // 检测到的脉冲个数，在定时器中断累加
+  21          volatile u16 engine_speed_scan_ms;  // 在定时器中断累加
+  22          
+  23          static volatile u32 cur_engine_speed_scan_cnt;
+  24          static volatile u32 cur_engine_speed_scan_ms;
+  25          
+  26          volatile bit flag_is_engine_speed_scan_over_time; // 标志位，检测是否超时
+  27          
+  28          void update_engine_speed_scan_data(void) // 更新检测发动机转速的数据
+  29          {
+  30   1          cur_engine_speed_scan_cnt += engine_speed_scan_cnt;
+  31   1          engine_speed_scan_cnt = 0;
+  32   1          cur_engine_speed_scan_ms += engine_speed_scan_ms;
+  33   1          engine_speed_scan_ms = 0;
   34   1      }
   35          
-  36          static volatile u32 engine_speed_buff[ENGINE_SPEED_SCAN_BUFF_SIZE];
-  37          static volatile u8 cur_send_engine_speed_buff_index; // 当前要发送的缓冲区索引
-  38          volatile bit flag_is_send_engine_speed_time_come;    // 标志位，发送发动机转速的时间到来
-  39          
-  40          volatile u32 engine_speed_scan_cnt; // 检测到的脉冲个数，在定时器中断累加
-  41          volatile u16 engine_speed_scan_ms;  // 在定时器中断累加
-  42          
-  43          static volatile u32 cur_engine_speed_scan_cnt;
-  44          static volatile u32 cur_engine_speed_scan_ms;
-  45          
-  46          volatile bit flag_is_engine_speed_scan_over_time; // 标志位，检测是否超时
-  47          
-  48          void update_engine_speed_scan_data(void) // 更新检测发动机转速的数据
-  49          {
-  50   1          cur_engine_speed_scan_cnt += engine_speed_scan_cnt;
-  51   1          engine_speed_scan_cnt = 0;
-  52   1          cur_engine_speed_scan_ms += engine_speed_scan_ms;
-C51 COMPILER V9.60.7.0   ENGINE_SPEED_SCAN                                                 08/15/2025 17:30:46 PAGE 2   
-
-  53   1          engine_speed_scan_ms = 0;
-  54   1      }
-  55          
-  56          // 发动机转速扫描
-  57          void engine_speed_scan(void)
-  58          {
-  59   1      #define CONVER_ONE_MINUTE_TO_MS (60000UL) // 将1min转换成以ms为单位的数据
-  60   1          volatile u32 rpm;                     // 由下面的语句赋值，这里为了节省程序空间，�
+  36          // 发动机转速扫描
+  37          void engine_speed_scan(void)
+  38          {
+  39   1      #define CONVER_ONE_MINUTE_TO_MS (60000UL) // 将1min转换成以ms为单位的数据
+  40   1          volatile u32 rpm;                     // 由下面的语句赋值，这里为了节省程序空间，�
              -��有赋初始值
-  61   1      
-  62   1          if (cur_engine_speed_scan_ms >= ENGINE_SPEED_SCAN_UPDATE_TIME || flag_is_engine_speed_scan_over_time)
-  63   1          // if (cur_engine_speed_scan_ms >= ENGINE_SPEED_SCAN_UPDATE_TIME )
-  64   1          {
-  65   2              // printf("cur_engine_speed_scan_ms:%lu\n", cur_engine_speed_scan_ms);
-  66   2              if (flag_is_engine_speed_scan_over_time)
-  67   2              {
-  68   3                  rpm = 0;
-  69   3              }
-  70   2              else
-  71   2              {
-  72   3                  /*
-  73   3                      (1min / 1min转过的圈数) == (扫描时间 / 扫描时间内的转过的圈数)
-  74   3                      1min转过的圈数 == 1min * 扫描时间内转过的圈数 / 扫描时间
-  75   3                      1min转过的圈数 == 1min * (扫描时间内采集到的脉冲个数 / 发动机转过�
+  41   1      
+  42   1          if (cur_engine_speed_scan_ms >= ENGINE_SPEED_SCAN_UPDATE_TIME || flag_is_engine_speed_scan_over_time)
+  43   1          // if (cur_engine_speed_scan_ms >= ENGINE_SPEED_SCAN_UPDATE_TIME )
+  44   1          {
+  45   2              // printf("cur_engine_speed_scan_ms:%lu\n", cur_engine_speed_scan_ms);
+  46   2              if (flag_is_engine_speed_scan_over_time)
+  47   2              {
+  48   3                  rpm = 0;
+  49   3              }
+  50   2              else
+  51   2              {
+C51 COMPILER V9.60.7.0   ENGINE_SPEED_SCAN                                                 11/25/2025 15:26:55 PAGE 2   
+
+  52   3                  /*
+  53   3                      (1min / 1min转过的圈数) == (扫描时间 / 扫描时间内的转过的圈数)
+  54   3                      1min转过的圈数 == 1min * 扫描时间内转过的圈数 / 扫描时间
+  55   3                      1min转过的圈数 == 1min * (扫描时间内采集到的脉冲个数 / 发动机转过�
              -�圈对应的脉冲个数) / 扫描时间
-  76   3                      转换成单片机能计算的形式：
-  77   3                      1min转过的圈数 == 扫描时间内采集到的脉冲个数 * 1min / 发动机转过一
+  56   3                      转换成单片机能计算的形式：
+  57   3                      1min转过的圈数 == 扫描时间内采集到的脉冲个数 * 1min / 发动机转过一
              -圈对应的脉冲个数 / 扫描时间
-  78   3                      1min转过的圈数 == 扫描时间内采集到的脉冲个数 * 1min / 扫描时间 / 发
+  58   3                      1min转过的圈数 == 扫描时间内采集到的脉冲个数 * 1min / 扫描时间 / 发
              -动机转过一圈对应的脉冲个数
-  79   3                  */
-  80   3                  // rpm = (u32)cur_engine_speed_scan_cnt * ((u32)CONVER_ONE_MINUTE_TO_MS / ENGINE_SPEED_SCAN_PU
+  59   3                  */
+  60   3                  // rpm = (u32)cur_engine_speed_scan_cnt * ((u32)CONVER_ONE_MINUTE_TO_MS / ENGINE_SPEED_SCAN_PU
              -LSE_PER_TURN) / cur_engine_speed_scan_ms;
-  81   3      
-  82   3                  /*
-  83   3                      扫描时间内转过的圈数 == 一个脉冲对应转过的圈数 *　扫描时间内采
+  61   3      
+  62   3                  /*
+  63   3                      扫描时间内转过的圈数 == 一个脉冲对应转过的圈数 *　扫描时间内采
              -集到的脉冲个数
-  84   3                      1min转过的圈数　== 扫描时间内转过的圈数 / 扫描时间 * 1min
-  85   3                  */
-  86   3                  rpm = (u32)cur_engine_speed_scan_cnt * ENGINE_SPEED_SCAN_A_PULSE_PER_TURNS * CONVER_ONE_MINUTE
+  64   3                      1min转过的圈数　== 扫描时间内转过的圈数 / 扫描时间 * 1min
+  65   3                  */
+  66   3                  rpm = (u32)cur_engine_speed_scan_cnt * ENGINE_SPEED_SCAN_A_PULSE_PER_TURNS * CONVER_ONE_MINUTE
              -_TO_MS / cur_engine_speed_scan_ms;
-  87   3              }
+  67   3              }
+  68   2      
+  69   2              // printf("cur engine speed pulse cnt:%lu\n",cur_engine_speed_scan_cnt);
+  70   2      
+  71   2              cur_engine_speed_scan_cnt = 0;
+  72   2              cur_engine_speed_scan_ms = 0;
+  73   2              flag_is_engine_speed_scan_over_time = 0;
+  74   2      
+  75   2              // 限制待发送的发动机转速
+  76   2              if (rpm >= 65535)
+  77   2              {
+  78   3                  rpm = 65535;
+  79   3              }
+  80   2      
+  81   2      #if 1
+  82   2              /*
+  83   2                  扫描完就发送的程序，在显示部分会有卡顿，
+  84   2                  显示做不了动画，只能单片机来调节
+  85   2              */
+  86   2      
+  87   2              // printf("cur rpm %lu\n", rpm);
   88   2      
-  89   2              // printf("cur engine speed pulse cnt:%lu\n",cur_engine_speed_scan_cnt);
-  90   2      
-  91   2              cur_engine_speed_scan_cnt = 0;
-  92   2              cur_engine_speed_scan_ms = 0;
-  93   2              flag_is_engine_speed_scan_over_time = 0;
-  94   2      
-  95   2              // 限制待发送的发动机转速
-  96   2              if (rpm >= 65535)
-  97   2              {
-  98   3                  rpm = 65535;
-  99   3              }
- 100   2      
- 101   2      #if 0 
-                      /*
-                          扫描完就发送的程序，在显示部分会有卡顿，
-                          显示做不了动画，只能单片机来调节
-                      */
-              
-                      // printf("cur rpm %lu\n", rpm);
-C51 COMPILER V9.60.7.0   ENGINE_SPEED_SCAN                                                 08/15/2025 17:30:46 PAGE 3   
+  89   2              fun_info.engine_speeed = rpm; // 向全局变量存放发动机转速
+  90   2              flag_get_engine_speed = 1;    // 发送发动机转速
+  91   2      #endif
+  92   2      
+  93   2              // engine_speed_buff_update(rpm);
+  94   2          }
+  95   1      }
+  96          
+  97          // void engine_speed_buff_update(u32 engine_speed)
+  98          // {
+  99          //     static u32 last_engine_speed;       // 存放上一次采集到的发动机转速
+ 100          //     u32 engine_speed_difference = 0;    // 存放 发动机转速 的差值
+ 101          //     bit dir_of_engine_speed_change = 0; // 发动机转速变化的方向，0--变小，1--变大
+ 102          //     u8 i;                               // 循环计数值（由下面的语句赋值，这里为了节
+             -省程序空间，没有给初始值）
+ 103          
+ 104          //     if (engine_speed > last_engine_speed)
+ 105          //     {
+ 106          //         // 如果当前的发动机转速 大于 上一次采集到的发动机转速
+C51 COMPILER V9.60.7.0   ENGINE_SPEED_SCAN                                                 11/25/2025 15:26:55 PAGE 3   
 
-              
-                      fun_info.engine_speeed = rpm; // 向全局变量存放发动机转速
-                      flag_get_engine_speed = 1;    // 发送发动机转速
-              #endif
- 112   2      
- 113   2              engine_speed_buff_update(rpm);
- 114   2          }
- 115   1      }
- 116          
- 117          void engine_speed_buff_update(u32 engine_speed)
- 118          {
- 119   1          static u32 last_engine_speed;       // 存放上一次采集到的发动机转速
- 120   1          u32 engine_speed_difference = 0;    // 存放 发动机转速 的差值
- 121   1          bit dir_of_engine_speed_change = 0; // 发动机转速变化的方向，0--变小，1--变大
- 122   1          u8 i;                               // 循环计数值（由下面的语句赋值，这里为了节省
-             -程序空间，没有给初始值）
- 123   1      
- 124   1          if (engine_speed > last_engine_speed)
- 125   1          {
- 126   2              // 如果当前的发动机转速 大于 上一次采集到的发动机转速
- 127   2              engine_speed_difference = engine_speed - last_engine_speed;
- 128   2              dir_of_engine_speed_change = 1; // 表示发动机转速变大
- 129   2          }
- 130   1          else if (engine_speed < last_engine_speed)
- 131   1          {
- 132   2              // 如果当前的发动机转速 小于 上一次采集到的发动机转速
- 133   2              engine_speed_difference = last_engine_speed - engine_speed;
- 134   2              dir_of_engine_speed_change = 0; // 表示发动机转速变小
- 135   2          }
- 136   1          else
- 137   1          {
- 138   2              for (i = 0; i < ENGINE_SPEED_SCAN_BUFF_SIZE; i++)
- 139   2              {
- 140   3                  engine_speed_buff[i] = engine_speed;
- 141   3              }
- 142   2      
- 143   2              // // 没有差值，直接更新（修复没有差值且数值为0时，没有发送数据的问�
-             -��）
- 144   2              // fun_info.engine_speeed = engine_speed;
- 145   2              // flag_get_engine_speed = 1;
- 146   2      
- 147   2              cur_send_engine_speed_buff_index = 0; // 游标复位
- 148   2              return;
- 149   2          }
- 150   1      
- 151   1          if (dir_of_engine_speed_change)
- 152   1          {
- 153   2              // 如果发动机转速在变大，数组从 [0] ~ [ENGINE_SPEED_SCAN_BUFF_SIZE - 1] 数值越来
-             -越大
- 154   2              for (i = 0; i < ENGINE_SPEED_SCAN_BUFF_SIZE; i++)
- 155   2              {
- 156   3                  engine_speed_buff[i] = engine_speed_difference * (i + 1) / ENGINE_SPEED_SCAN_BUFF_SIZE + last_
-             -engine_speed;
- 157   3              }
- 158   2          }
- 159   1          else
- 160   1          {
- 161   2              // 如果发动机转速在变小，数组从 [0] ~ [ENGINE_SPEED_SCAN_BUFF_SIZE - 1] 数值越来
-             -越小
- 162   2              for (i = 0; i < ENGINE_SPEED_SCAN_BUFF_SIZE; i++)
- 163   2              {
- 164   3                  // 这一句会导致最后不能显示 数值为0 ：
-C51 COMPILER V9.60.7.0   ENGINE_SPEED_SCAN                                                 08/15/2025 17:30:46 PAGE 4   
-
- 165   3                  // engine_speed_buff[ENGINE_SPEED_SCAN_BUFF_SIZE - 1 - i] = last_engine_speed - (u32)engine_sp
+ 107          //         engine_speed_difference = engine_speed - last_engine_speed;
+ 108          //         dir_of_engine_speed_change = 1; // 表示发动机转速变大
+ 109          //     }
+ 110          //     else if (engine_speed < last_engine_speed)
+ 111          //     {
+ 112          //         // 如果当前的发动机转速 小于 上一次采集到的发动机转速
+ 113          //         engine_speed_difference = last_engine_speed - engine_speed;
+ 114          //         dir_of_engine_speed_change = 0; // 表示发动机转速变小
+ 115          //     }
+ 116          //     else
+ 117          //     {
+ 118          //         for (i = 0; i < ENGINE_SPEED_SCAN_BUFF_SIZE; i++)
+ 119          //         {
+ 120          //             engine_speed_buff[i] = engine_speed;
+ 121          //         }
+ 122          
+ 123          //         // // 没有差值，直接更新（修复没有差值且数值为0时，没有发送数据的�
+             -��题）
+ 124          //         // fun_info.engine_speeed = engine_speed;
+ 125          //         // flag_get_engine_speed = 1;
+ 126          
+ 127          //         cur_send_engine_speed_buff_index = 0; // 游标复位
+ 128          //         return;
+ 129          //     }
+ 130          
+ 131          //     if (dir_of_engine_speed_change)
+ 132          //     {
+ 133          //         // 如果发动机转速在变大，数组从 [0] ~ [ENGINE_SPEED_SCAN_BUFF_SIZE - 1] 数值越
+             -来越大
+ 134          //         for (i = 0; i < ENGINE_SPEED_SCAN_BUFF_SIZE; i++)
+ 135          //         {
+ 136          //             engine_speed_buff[i] = engine_speed_difference * (i + 1) / ENGINE_SPEED_SCAN_BUFF_SIZE + la
+             -st_engine_speed;
+ 137          //         }
+ 138          //     }
+ 139          //     else
+ 140          //     {
+ 141          //         // 如果发动机转速在变小，数组从 [0] ~ [ENGINE_SPEED_SCAN_BUFF_SIZE - 1] 数值越
+             -来越小
+ 142          //         for (i = 0; i < ENGINE_SPEED_SCAN_BUFF_SIZE; i++)
+ 143          //         {
+ 144          //             // 这一句会导致最后不能显示 数值为0 ：
+ 145          //             // engine_speed_buff[ENGINE_SPEED_SCAN_BUFF_SIZE - 1 - i] = last_engine_speed - (u32)engine
+             -_speed_difference * (ENGINE_SPEED_SCAN_BUFF_SIZE - i - 1) / ENGINE_SPEED_SCAN_BUFF_SIZE;
+ 146          
+ 147          //             engine_speed_buff[ENGINE_SPEED_SCAN_BUFF_SIZE - 1 - i] = last_engine_speed - (u32)engine_sp
              -eed_difference * (ENGINE_SPEED_SCAN_BUFF_SIZE - i - 1) / ENGINE_SPEED_SCAN_BUFF_SIZE;
- 166   3      
- 167   3                  engine_speed_buff[ENGINE_SPEED_SCAN_BUFF_SIZE - 1 - i] = last_engine_speed - (u32)engine_speed
-             -_difference * (ENGINE_SPEED_SCAN_BUFF_SIZE - i - 1) / ENGINE_SPEED_SCAN_BUFF_SIZE;
- 168   3              }
- 169   2          }
- 170   1      
- 171   1          last_engine_speed = engine_speed;
- 172   1          cur_send_engine_speed_buff_index = 0; // 游标复位
- 173   1      }
+ 148          //         }
+ 149          //     }
+ 150          
+ 151          //     last_engine_speed = engine_speed;
+ 152          //     cur_send_engine_speed_buff_index = 0; // 游标复位
+ 153          // }
+ 154          
+ 155          // void engine_speed_send_data(void)
+ 156          // {
+ 157          //     if (flag_is_send_engine_speed_time_come) // 如果发送 发动机转速的时间到来
+ 158          //     {
+ 159          //         flag_is_send_engine_speed_time_come = 0;
+ 160          
+ 161          //         if (cur_send_engine_speed_buff_index >= ENGINE_SPEED_SCAN_BUFF_SIZE)
+ 162          //         {
+C51 COMPILER V9.60.7.0   ENGINE_SPEED_SCAN                                                 11/25/2025 15:26:55 PAGE 4   
+
+ 163          //             // 防止越界
+ 164          //             return;
+ 165          //         }
+ 166          
+ 167          //         fun_info.engine_speeed = engine_speed_buff[cur_send_engine_speed_buff_index];
+ 168          //         cur_send_engine_speed_buff_index++;
+ 169          
+ 170          //         // printf("fun_info.engine_speed = %lu\n", fun_info.engine_speeed);
+ 171          //         flag_get_engine_speed = 1;
+ 172          //     }
+ 173          // }
  174          
- 175          void engine_speed_send_data(void)
- 176          {
- 177   1          if (flag_is_send_engine_speed_time_come) // 如果发送 发动机转速的时间到来
- 178   1          {
- 179   2              flag_is_send_engine_speed_time_come = 0;
- 180   2      
- 181   2              if (cur_send_engine_speed_buff_index >= ENGINE_SPEED_SCAN_BUFF_SIZE)
- 182   2              {
- 183   3                  // 防止越界
- 184   3                  return;
- 185   3              }
- 186   2      
- 187   2              fun_info.engine_speeed = engine_speed_buff[cur_send_engine_speed_buff_index];
- 188   2              cur_send_engine_speed_buff_index++;
- 189   2      
- 190   2              // printf("fun_info.engine_speed = %lu\n", fun_info.engine_speeed);
- 191   2              flag_get_engine_speed = 1;
- 192   2          }
- 193   1      }
- 194          
- 195          #endif // #if ENGINE_SPEED_SCAN_ENABLE
+ 175          #endif // #if ENGINE_SPEED_SCAN_ENABLE
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    536    ----
+   CODE SIZE        =    208    ----
    CONSTANT SIZE    =   ----    ----
-   XDATA SIZE       =     43      13
+   XDATA SIZE       =     14       4
    PDATA SIZE       =   ----    ----
    DATA SIZE        =   ----    ----
    IDATA SIZE       =   ----    ----
-   BIT SIZE         =      2       1
+   BIT SIZE         =      1    ----
 END OF MODULE INFORMATION.
 
 

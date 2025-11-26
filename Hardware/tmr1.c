@@ -123,15 +123,16 @@ void TIMR1_IRQHandler(void) interrupt TMR1_IRQn
 #endif
 
 #if ENGINE_SPEED_SCAN_ENABLE
-        {
-            static u16 cnt = 0;
-            cnt++;
-            if (cnt >= ENGINE_SPEED_SEND_PERIOD)
-            {
-                cnt = 0;
-                flag_is_send_engine_speed_time_come = 1;
-            }
-        }
+        // 现在不使用缓冲区，改成检测到发动机转速就发送数据
+        // {
+        //     static u16 cnt = 0;
+        //     cnt++;
+        //     if (cnt >= ENGINE_SPEED_SEND_PERIOD)
+        //     {
+        //         cnt = 0;
+        //         flag_is_send_engine_speed_time_come = 1;
+        //     }
+        // }
 #endif
 
         // if (mileage_save_time_cnt < 4294967295 - diff_ms_cnt) // 防止计数溢出

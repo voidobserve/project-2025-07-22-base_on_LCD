@@ -120,19 +120,20 @@ void eeprom_printf_all(void)
 
 #endif
 
-void eeprom_24cxx_clear(void)
-{
-    u16 i;
-    // const u8 clear_data = 0x00;
-    const u8 clear_data = 0xFF;
-    for (i = 0; i < ((u16)128 * 32); i++)
-    {
-        while (iic_eeprom_write(i, (u8 *)&clear_data, 1))
-        {
-            WDT_KEY = WDT_KEY_VAL(0xAA); // 喂狗并清除 wdt_pending
-        }
-    }
-}
+// 全片擦除
+// void eeprom_24cxx_clear(void)
+// {
+//     u16 i;
+//     // const u8 clear_data = 0x00;
+//     const u8 clear_data = 0xFF;
+//     for (i = 0; i < ((u16)128 * 32); i++)
+//     {
+//         while (iic_eeprom_write(i, (u8 *)&clear_data, 1))
+//         {
+//             WDT_KEY = WDT_KEY_VAL(0xAA); // 喂狗并清除 wdt_pending
+//         }
+//     }
+// }
 
 // 向eeprom写入需要保存的数据
 volatile eeprom_saveinfo_t eeprom_saveinfo_prev; // 存放从eeprom读出的数据，prev，同一组数据的前一页数据

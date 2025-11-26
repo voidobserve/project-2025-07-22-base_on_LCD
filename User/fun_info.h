@@ -14,7 +14,13 @@ enum
     GEAR_THIRD = 0x03,   // 三档
     GEAR_FOURTH = 0x04,  // 四档
     GEAR_FIFTH = 0x05,   // 五档
-    GEAR_SIXTH = 0x06    // 六档
+    GEAR_SIXTH = 0x06,    // 六档
+
+    /*
+        未知，如果 GEAR_NEUTRAL ~ GEAR_SIXTH 都没有检测到，
+        则返回 GEAR_UNKNOWN ， 让显示屏中档位对应的图标空着
+    */ 
+    GEAR_UNKNOWN = 0xFF, 
 };
 
 //

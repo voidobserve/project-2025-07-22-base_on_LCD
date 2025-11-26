@@ -191,7 +191,7 @@ void main(void)
 
 #if ENGINE_SPEED_SCAN_ENABLE
         engine_speed_scan();      // 检测发动机转速
-        engine_speed_send_data(); // 发动发动机转速数据，需要时间到来才会执行
+        // engine_speed_send_data(); // 发动发动机转速数据，需要时间到来才会执行
 
 #if 0 // 调试使用
         if (flag_debug_is_send_time_2)

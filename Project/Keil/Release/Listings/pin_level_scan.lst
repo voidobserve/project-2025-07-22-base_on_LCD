@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.7.0   PIN_LEVEL_SCAN                                                    08/15/2025 17:30:46 PAGE 1   
+C51 COMPILER V9.60.7.0   PIN_LEVEL_SCAN                                                    11/25/2025 15:26:55 PAGE 1   
 
 
 C51 COMPILER V9.60.7.0, COMPILATION OF MODULE PIN_LEVEL_SCAN
@@ -54,7 +54,7 @@ line level    source
   43   1      
   44   1          // 1档对应的引脚 （硬件原因，挡位检测脚不用开上拉）
   45   1          P0_MD1 &= ~(GPIO_P07_MODE_SEL(0x3)); // 配置为输入模式
-  46   1          
+  46   1      
   47   1          // 空挡对应的引脚 （硬件原因，挡位检测脚不用开上拉）
   48   1          P0_MD1 &= ~(GPIO_P06_MODE_SEL(0x3)); // 配置为输入模式
   49   1      
@@ -62,7 +62,7 @@ line level    source
   51   1          P2_MD0 &= ~(GPIO_P20_MODE_SEL(0x03)); // 输入模式
   52   1          P2_PU |= GPIO_P20_PULL_UP(0x01);      // 上拉
   53   1      
-C51 COMPILER V9.60.7.0   PIN_LEVEL_SCAN                                                    08/15/2025 17:30:46 PAGE 2   
+C51 COMPILER V9.60.7.0   PIN_LEVEL_SCAN                                                    11/25/2025 15:26:55 PAGE 2   
 
   54   1          // 测试用
   55   1          // P0_MD0 &= ~(GPIO_P02_MODE_SEL(0x03)); // 输入模式
@@ -92,136 +92,106 @@ line level    source
                       // flag_get_brake = 1;
               #endif // 刹车检测
   81   2      
-  82   2      #if 0
-                      if (PIN_DETECT_LEFT_TURN)
-                      {
-                          // 如果左转向灯未开启
-                          fun_info.left_turn = OFF;
-                      }
-                      else
-                      {
-                          // 如果左转向灯开启
-                          fun_info.left_turn = ON;
-                      }
-                      flag_get_left_turn = 1;
-              
-                      if (PIN_DETECT_RIGHT_TURN)
-                      {
-                          // 如果右转向灯未开启
-                          fun_info.right_turn = OFF;
-                      }
-                      else
-                      {
-                          // 如果右转向灯开启
-                          fun_info.right_turn = ON;
-                      }
-                      flag_get_right_turn = 1;
-              
-                      if (PIN_DETECT_HIGH_BEAM)
-                      {
-                          // 如果远光灯未开启
-                          fun_info.high_beam = OFF;
-                      }
-                      else
-                      {
-                          // 如果远光灯开启
-                          fun_info.high_beam = ON;
-C51 COMPILER V9.60.7.0   PIN_LEVEL_SCAN                                                    08/15/2025 17:30:46 PAGE 3   
-
-                      }
-                      flag_get_high_beam = 1;
-              #endif
- 119   2      
- 120   2              // 以最低挡位优先，当最低档有信号时，不管其他挡位的信号，直接以最�
+  82   2              // 以最低挡位优先，当最低档有信号时，不管其他挡位的信号，直接以最�
              -�档的为主
- 121   2              if (0 == PIN_DETECT_NEUTRAL_GEAR)
- 122   2              {
- 123   3                  // 空挡
- 124   3                  fun_info.gear = GEAR_NEUTRAL;
- 125   3              }
- 126   2              else if (0 == PIN_DETECT_FIRST_GEAR)
- 127   2              {
- 128   3                  // 一档
- 129   3                  fun_info.gear = GEAR_FIRST;
- 130   3              }
- 131   2              else if (0 == PIN_DETECT_SECOND_GEAR)
- 132   2              {
- 133   3                  // 二档
- 134   3                  fun_info.gear = GEAR_SECOND;
- 135   3              }
- 136   2              else if (0 == PIN_DETECT_THIRD_GEAR)
- 137   2              {
- 138   3                  // 三档
- 139   3                  fun_info.gear = GEAR_THIRD;
- 140   3              }
- 141   2              else if (0 == PIN_DETECT_FOURTH_GEAR)
- 142   2              {
- 143   3                  // 四档
- 144   3                  fun_info.gear = GEAR_FOURTH;
- 145   3              }
- 146   2              else if (0 == PIN_DETECT_FIFTH_GEAR)
- 147   2              {
- 148   3                  // 五档
- 149   3                  fun_info.gear = GEAR_FIFTH;
- 150   3              }
- 151   2              else if (0 == PIN_DETECT_XIXTH_GEAR)
- 152   2              {
- 153   3                  // 六档
- 154   3                  fun_info.gear = GEAR_SIXTH;
- 155   3              }
- 156   2      
- 157   2              // printf("cur gear %bu\n", fun_info.gear);
- 158   2              flag_get_gear = 1;
- 159   2      
- 160   2              if (0 == PIN_DETECT_MALFUNCTION)
- 161   2              {
- 162   3                  // 如果检测到了故障
- 163   3                  fun_info.flag_is_detect_malfunction = 1;
- 164   3      
- 165   3                  // 没有引脚检测abs的状态，这里检测到故障后，也顺便设置abs的状态
- 166   3                  fun_info.flag_is_detect_abs = 1;
- 167   3              }
- 168   2              else
- 169   2              {
- 170   3                  // 如果未检测到故障
- 171   3                  fun_info.flag_is_detect_malfunction = 0;
- 172   3      
- 173   3                  // 没有引脚检测abs的状态，这里更新故障的状态后，也顺便设置abs的状�
-             -��
- 174   3                  fun_info.flag_is_detect_abs = 0;
- 175   3              }
-C51 COMPILER V9.60.7.0   PIN_LEVEL_SCAN                                                    08/15/2025 17:30:46 PAGE 4   
+  83   2              if (0 == PIN_DETECT_NEUTRAL_GEAR)
+  84   2              {
+  85   3                  // 空挡
+  86   3                  fun_info.gear = GEAR_NEUTRAL;
+  87   3              }
+  88   2              else if (0 == PIN_DETECT_FIRST_GEAR)
+  89   2              {
+  90   3                  // 一档
+  91   3                  fun_info.gear = GEAR_FIRST;
+  92   3              }
+  93   2              else if (0 == PIN_DETECT_SECOND_GEAR)
+  94   2              {
+  95   3                  // 二档
+  96   3                  fun_info.gear = GEAR_SECOND;
+  97   3              }
+  98   2              else if (0 == PIN_DETECT_THIRD_GEAR)
+  99   2              {
+ 100   3                  // 三档
+ 101   3                  fun_info.gear = GEAR_THIRD;
+ 102   3              }
+ 103   2              else if (0 == PIN_DETECT_FOURTH_GEAR)
+ 104   2              {
+ 105   3                  // 四档
+ 106   3                  fun_info.gear = GEAR_FOURTH;
+ 107   3              }
+ 108   2              else if (0 == PIN_DETECT_FIFTH_GEAR)
+ 109   2              {
+ 110   3                  // 五档
+ 111   3                  fun_info.gear = GEAR_FIFTH;
+ 112   3              }
+ 113   2              else if (0 == PIN_DETECT_XIXTH_GEAR)
+ 114   2              {
+C51 COMPILER V9.60.7.0   PIN_LEVEL_SCAN                                                    11/25/2025 15:26:55 PAGE 3   
 
- 176   2      
- 177   2              //   printf("cur malfunction %bu\n", fun_info.flag_is_detect_malfunction);
- 178   2      
- 179   2              flag_update_malfunction_status = 1;
- 180   2          }
- 181   1      
- 182   1          // if () // ACC引脚检测，检测到高电平，P03也输出高电平，检测到低电平，让P03
+ 115   3                  // 六档
+ 116   3                  fun_info.gear = GEAR_SIXTH;
+ 117   3              }
+ 118   2              else
+ 119   2              {
+ 120   3                  /*
+ 121   3                      空挡、一档 ~ 六档都没有检测到，则赋值为 GEAR_UNKNOWN 
+ 122   3                      让显示屏中档位对应的图标空着
+ 123   3                  */
+ 124   3                  fun_info.gear = GEAR_UNKNOWN; 
+ 125   3              }
+ 126   2      
+ 127   2              // printf("cur gear %bu\n", fun_info.gear);
+ 128   2              flag_get_gear = 1;
+ 129   2      
+ 130   2              if (0 == PIN_DETECT_MALFUNCTION)
+ 131   2              {
+ 132   3                  // 如果检测到了故障
+ 133   3                  fun_info.flag_is_detect_malfunction = 1;
+ 134   3      
+ 135   3                  // 没有引脚检测abs的状态，这里检测到故障后，也顺便设置abs的状态
+ 136   3                  fun_info.flag_is_detect_abs = 1;
+ 137   3              }
+ 138   2              else
+ 139   2              {
+ 140   3                  // 如果未检测到故障
+ 141   3                  fun_info.flag_is_detect_malfunction = 0;
+ 142   3      
+ 143   3                  // 没有引脚检测abs的状态，这里更新故障的状态后，也顺便设置abs的状�
+             -��
+ 144   3                  fun_info.flag_is_detect_abs = 0;
+ 145   3              }
+ 146   2      
+ 147   2              //   printf("cur malfunction %bu\n", fun_info.flag_is_detect_malfunction);
+ 148   2      
+ 149   2              flag_update_malfunction_status = 1;
+ 150   2          }
+ 151   1      
+ 152   1          // if () // ACC引脚检测，检测到高电平，P03也输出高电平，检测到低电平，让P03
              -输出低电平
- 183   1          // if (P04)
- 184   1          // {
- 185   1          //     // 检测到ACC为高电平,
- 186   1          //     P03 = 1;
- 187   1          // }
- 188   1          // else
- 189   1          // {
- 190   1          //     P03 = 0;
- 191   1          // }
- 192   1      }
- 193          
- 194          #endif
+ 153   1          // if (P04)
+ 154   1          // {
+ 155   1          //     // 检测到ACC为高电平,
+ 156   1          //     P03 = 1;
+ 157   1          // }
+ 158   1          // else
+ 159   1          // {
+ 160   1          //     P03 = 0;
+ 161   1          // }
+ 162   1      }
+ 163          
+ 164          #endif
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    164    ----
+   CODE SIZE        =    169    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =      2    ----
    PDATA SIZE       =   ----    ----
    DATA SIZE        =   ----    ----
    IDATA SIZE       =   ----    ----
    BIT SIZE         =   ----    ----
+C51 COMPILER V9.60.7.0   PIN_LEVEL_SCAN                                                    11/25/2025 15:26:55 PAGE 4   
+
 END OF MODULE INFORMATION.
 
 

@@ -43,7 +43,7 @@ void pin_level_scan_config(void)
 
     // 1档对应的引脚 （硬件原因，挡位检测脚不用开上拉）
     P0_MD1 &= ~(GPIO_P07_MODE_SEL(0x3)); // 配置为输入模式
-    
+
     // 空挡对应的引脚 （硬件原因，挡位检测脚不用开上拉）
     P0_MD1 &= ~(GPIO_P06_MODE_SEL(0x3)); // 配置为输入模式
 
@@ -78,44 +78,6 @@ void pin_level_scan(void)
 
         // flag_get_brake = 1;
 #endif // 刹车检测
-
-#if 0
-        if (PIN_DETECT_LEFT_TURN)
-        {
-            // 如果左转向灯未开启
-            fun_info.left_turn = OFF;
-        }
-        else
-        {
-            // 如果左转向灯开启
-            fun_info.left_turn = ON;
-        }
-        flag_get_left_turn = 1;
-
-        if (PIN_DETECT_RIGHT_TURN)
-        {
-            // 如果右转向灯未开启
-            fun_info.right_turn = OFF;
-        }
-        else
-        {
-            // 如果右转向灯开启
-            fun_info.right_turn = ON;
-        }
-        flag_get_right_turn = 1;
-
-        if (PIN_DETECT_HIGH_BEAM)
-        {
-            // 如果远光灯未开启
-            fun_info.high_beam = OFF;
-        }
-        else
-        {
-            // 如果远光灯开启
-            fun_info.high_beam = ON;
-        }
-        flag_get_high_beam = 1;
-#endif
 
         // 以最低挡位优先，当最低档有信号时，不管其他挡位的信号，直接以最低档的为主
         if (0 == PIN_DETECT_NEUTRAL_GEAR)
@@ -152,6 +114,14 @@ void pin_level_scan(void)
         {
             // 六档
             fun_info.gear = GEAR_SIXTH;
+        }
+        else
+        {
+            /*
+                空挡、一档 ~ 六档都没有检测到，则赋值为 GEAR_UNKNOWN 
+                让显示屏中档位对应的图标空着
+            */
+            fun_info.gear = GEAR_UNKNOWN; 
         }
 
         // printf("cur gear %bu\n", fun_info.gear);

@@ -191,8 +191,6 @@ void fuel_capacity_scan(void)
     */
     static u8 fuel_gear = 0;
 
-    // printf("fuel_adc_val: %u\n", fuel_adc_val);
-
     /*
         刚上电直接获取一次，作为油量的状态
     */
@@ -232,6 +230,8 @@ void fuel_capacity_scan(void)
         // 如果到了扫描更新时间
         fuel_capacity_scan_cnt = 0;
 
+        // printf("adc_val: %u\n", adc_val);
+        // printf("fuel_adc_val: %u\n", fuel_adc_val);
         fuel_percent = convert_fuel_adc_to_percent(fuel_adc_val);
         cur_fuel_gear = convert_fuel_percent_to_gear(fuel_percent);
 
@@ -286,16 +286,10 @@ void fuel_capacity_scan(void)
                 }
             }
 #endif
-
             fun_info.fuel = fuel_percent;
             flag_get_fuel = 1; // 发送油量百分比数据
         }
-
-        // printf("fuel_percent:%bu\n", fuel_percent);
-        // fun_info.fuel = fuel_percent;
-        // fuel_adc_val = 0;
-        // flag_get_fuel = 1;
-    } //  if (fuel_capacity_scan_cnt >= FUEL_UPDATE_TIME)
+    }
 }
 
 #endif // FUEL_CAPACITY_SCAN_ENABLE

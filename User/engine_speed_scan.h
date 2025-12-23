@@ -22,7 +22,8 @@
 
 // 发动机转速的更新时间，单位：ms
 // #define ENGINE_SPEED_SCAN_UPDATE_TIME (500)
-#define ENGINE_SPEED_SCAN_UPDATE_TIME (100)
+#define ENGINE_SPEED_SCAN_UPDATE_TIME (100) // 旧版的更新时间
+// #define ENGINE_SPEED_SCAN_UPDATE_TIME (50)
 /*
     发动机转速的超时时间，单位：ms
     如果超时时间到来，还没有检测到脉冲，认为发动机转速为0
@@ -39,6 +40,8 @@
 // extern volatile u16 engine_scan_time_cnt; // 发动机转速扫描时，用到的时间计数值，会在定时器中断中累加
 // extern volatile u16 engine_actual_scan_time_cnt; // 实际的发动机转速扫描用时
 // extern volatile u32 detect_engine_pulse_cnt[2]; // 检测发送机转速的脉冲计数值
+
+#define CONVER_ONE_MINUTE_TO_MS (60000UL) // 将1min转换成以ms为单位的数据
 
 extern volatile bit flag_is_engine_speed_scan_over_time; // 标志位，发动机转速检测是否超时
 extern volatile u32 engine_speed_scan_cnt;               // 检测到的脉冲个数，在定时器中断累加

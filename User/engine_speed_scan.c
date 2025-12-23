@@ -33,14 +33,35 @@ void update_engine_speed_scan_data(void) // 更新检测发动机转速的数据
     engine_speed_scan_ms = 0;
 }
 
+/*
+    100ms
+    diff 1000rpm
+*/
+u32 get_diff_engine_speed(u32 cur_rpm, u32 last_rpm)
+{
+    u32 diff_rpm = 0;
+
+    if (cur_rpm >= last_rpm)
+    {
+        diff_rpm = cur_rpm - last_rpm;
+    }
+    else
+    {
+        diff_rpm = last_rpm - cur_rpm;
+    }
+
+    return diff_rpm;
+}
+
 // 发动机转速扫描
 void engine_speed_scan(void)
 {
-#define CONVER_ONE_MINUTE_TO_MS (60000UL) // 将1min转换成以ms为单位的数据
-    volatile u32 rpm;                     // 由下面的语句赋值，这里为了节省程序空间，没有赋初始值
+    static volatile u32 last_rpm;
+    volatile u32 rpm; // 由下面的语句赋值，这里为了节省程序空间，没有赋初始值
+    volatile u32 diff_rpm;
 
     if (cur_engine_speed_scan_ms >= ENGINE_SPEED_SCAN_UPDATE_TIME || flag_is_engine_speed_scan_over_time)
-    // if (cur_engine_speed_scan_ms >= ENGINE_SPEED_SCAN_UPDATE_TIME )
+    // if (cur_engine_speed_scan_ms >= ENGINE_SPEED_SCAN_UPDATE_TIME)
     {
         // printf("cur_engine_speed_scan_ms:%lu\n", cur_engine_speed_scan_ms);
         if (flag_is_engine_speed_scan_over_time)
@@ -78,6 +99,23 @@ void engine_speed_scan(void)
             rpm = 65535;
         }
 
+        diff_rpm = get_diff_engine_speed(rpm, last_rpm);
+        if (diff_rpm >= 1000)
+        {
+            if (last_rpm >= rpm)
+            {
+                last_rpm -= 1000;
+            }
+            else
+            {
+                last_rpm += 1000;
+            }
+        }
+        else
+        {
+            last_rpm = rpm;
+        }
+
 #if 1
         /*
             扫描完就发送的程序，在显示部分会有卡顿，
@@ -86,7 +124,8 @@ void engine_speed_scan(void)
 
         // printf("cur rpm %lu\n", rpm);
 
-        fun_info.engine_speeed = rpm; // 向全局变量存放发动机转速
+        // fun_info.engine_speeed = rpm; // 向全局变量存放发动机转速
+        fun_info.engine_speeed = last_rpm; // 向全局变量存放发动机转速
         flag_get_engine_speed = 1;    // 发送发动机转速
 #endif
 

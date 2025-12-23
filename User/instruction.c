@@ -426,6 +426,7 @@ void instruction_handle(void)
 
 #if USE_MY_DEBUG
         // printf(" flag_get_fuel \n");
+        // printf("cur fuel %bu\n", fun_info.fuel);
 #endif
 
         send_data(SEND_FUEL, fun_info.fuel);

@@ -9,7 +9,8 @@
                "${workspaceFolder}/Libraries/include",
                "${workspaceFolder}/Libraries/Include",
                "${workspaceFolder}/User/lib",
-               "${workspaceFolder}/User/"
+               "${workspaceFolder}/User/",
+               "${workspaceFolder}/**" /* 递归搜索当前工程目录下所有文件 */
             ],
             "defines": [
                 "__C51__",

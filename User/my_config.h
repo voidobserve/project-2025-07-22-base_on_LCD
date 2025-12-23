@@ -1,6 +1,6 @@
 // my_config.h -- 自定义的配置文件
-#ifndef __MY_CONFIG_H
-#define __MY_CONFIG_H
+#ifndef __MY_CONFIG_H__
+#define __MY_CONFIG_H__
 
 #include "include.h"        // 使用芯片官方提供的头文件
 #include "typedef_struct.h" // 包含结构体类型和别名的定义

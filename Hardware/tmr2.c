@@ -31,13 +31,13 @@ void tmr2_config(void)
 
     // TMR2_CONL &= ~(TMR_SOURCE_SEL(0x07)); // 清除TMR2的时钟源配置寄存器
     // TMR2_CONL |= TMR_SOURCE_SEL(0x05);    // 配置TMR2的时钟源，不用任何时钟
-    TMR2_CONH &= ~TMR_PRD_PND(0x01);      // 清除TMR2的计数标志位，表示未完成计数
-    TMR2_CONH |= TMR_PRD_IRQ_EN(1);       // 使能TMR2的计数中断
+    TMR2_CONH &= ~TMR_PRD_PND(0x01); // 清除TMR2的计数标志位，表示未完成计数
+    TMR2_CONH |= TMR_PRD_IRQ_EN(1);  // 使能TMR2的计数中断
 
     TMR2_CONL &= ~(TMR_SOURCE_SEL(0x07)); // 清除定时器的时钟源配置寄存器
     TMR2_CONL |= TMR_SOURCE_SEL(0x06);    // 配置定时器的时钟源，使用系统时钟
 
-    __EnableIRQ(TMR2_IRQn); // 使能中断 
+    __EnableIRQ(TMR2_IRQn); // 使能中断
 }
 
 // /**
@@ -104,17 +104,18 @@ void TIMR2_IRQHandler(void) interrupt TMR2_IRQn
         { // 记录发动机转速扫描的时间
             static u8 cnt = 0;
             cnt++;
-            if (cnt >= 20) // 每1ms进入一次
+            if (cnt >= 20) // 20 * 50us，每1ms进入一次
             {
                 cnt = 0;
                 engine_speed_scan_ms++;
 
-                if (engine_speed_scan_ms >= ENGINE_SPEED_SCAN_OVER_TIME &&
-                    flag_is_engine_speed_scan_over_time == 0)
-                {
-                    engine_speed_scan_ms = 0;
-                    flag_is_engine_speed_scan_over_time = 1; // 说明超时，脉冲计数一直没有加一
-                }
+                // if (engine_speed_scan_ms >= ENGINE_SPEED_SCAN_OVER_TIME &&
+                //     flag_is_engine_speed_scan_over_time == 0)
+                // {
+                //     engine_speed_scan_ms = 0;
+                //     flag_is_engine_speed_scan_over_time = 1; // 说明超时，脉冲计数一直没有加一
+                // }
+                update_engine_speed_scan_data();
             }
         }
 
@@ -127,8 +128,7 @@ void TIMR2_IRQHandler(void) interrupt TMR2_IRQn
                 // {
                 //     detect_engine_pulse_cnt[0]++;
                 // }
-                engine_speed_scan_cnt++;
-                update_engine_speed_scan_data();
+                engine_speed_scan_pulse_cnt++;
             }
 
             last_engine_speed_scan_level = 1;

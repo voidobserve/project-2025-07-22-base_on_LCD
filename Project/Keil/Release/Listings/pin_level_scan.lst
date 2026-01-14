@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.7.0   PIN_LEVEL_SCAN                                                    12/23/2025 15:43:36 PAGE 1   
+C51 COMPILER V9.60.7.0   PIN_LEVEL_SCAN                                                    01/14/2026 17:22:28 PAGE 1   
 
 
 C51 COMPILER V9.60.7.0, COMPILATION OF MODULE PIN_LEVEL_SCAN
@@ -62,7 +62,7 @@ line level    source
   51   1          P2_MD0 &= ~(GPIO_P20_MODE_SEL(0x03)); // 输入模式
   52   1          P2_PU |= GPIO_P20_PULL_UP(0x01);      // 上拉
   53   1      
-C51 COMPILER V9.60.7.0   PIN_LEVEL_SCAN                                                    12/23/2025 15:43:36 PAGE 2   
+C51 COMPILER V9.60.7.0   PIN_LEVEL_SCAN                                                    01/14/2026 17:22:28 PAGE 2   
 
   54   1          // 测试用
   55   1          // P0_MD0 &= ~(GPIO_P02_MODE_SEL(0x03)); // 输入模式
@@ -126,7 +126,7 @@ line level    source
  112   3              }
  113   2              else if (0 == PIN_DETECT_XIXTH_GEAR)
  114   2              {
-C51 COMPILER V9.60.7.0   PIN_LEVEL_SCAN                                                    12/23/2025 15:43:36 PAGE 3   
+C51 COMPILER V9.60.7.0   PIN_LEVEL_SCAN                                                    01/14/2026 17:22:28 PAGE 3   
 
  115   3                  // 六档
  116   3                  fun_info.gear = GEAR_SIXTH;
@@ -190,7 +190,7 @@ MODULE INFORMATION:   STATIC OVERLAYABLE
    DATA SIZE        =   ----    ----
    IDATA SIZE       =   ----    ----
    BIT SIZE         =   ----    ----
-C51 COMPILER V9.60.7.0   PIN_LEVEL_SCAN                                                    12/23/2025 15:43:36 PAGE 4   
+C51 COMPILER V9.60.7.0   PIN_LEVEL_SCAN                                                    01/14/2026 17:22:28 PAGE 4   
 
 END OF MODULE INFORMATION.
 

@@ -8,11 +8,13 @@
  */
 void send_data(u8 instruct, u32 send_data)
 {
+    // USER_TO_DO 测试时屏蔽了，实际要恢复
+#if 1
     u32 check_num = 0; // 存放校验和
 
     uart0_sendbyte(FORMAT_HEAD); // 先发送格式头
 
-    check_num += FORMAT_HEAD; // 使用if()语句时，才使用这一条程序
+    check_num += FORMAT_HEAD;
 
     if (SEND_GEAR == instruct ||                /* 发送挡位的状态 */
         SEND_BATTERY == instruct ||             /* 发送电池电量的状态 */
@@ -109,4 +111,5 @@ void send_data(u8 instruct, u32 send_data)
 
     delay_ms(1);
     // delay_ms(10); // 每次发送完成后，延时10ms
+#endif
 }

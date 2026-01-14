@@ -9,8 +9,6 @@
 // ======================================================
 // 检测发动机转速所需的配置：
 #define ENGINE_SPEED_SCAN_PIN P02 // 检测发动机转速的引脚
-// 检测到 多少个脉冲 表示 发动机转过一圈
-// #define ENGINE_SPEED_SCAN_PULSE_PER_TURN (60)
 
 // 检测到一个脉冲表示发动机转过多少圈
 #define ENGINE_SPEED_SCAN_A_PULSE_PER_TURNS (1)
@@ -21,17 +19,22 @@
 // #define ENGINE_SPEED_SCAN_FILTER_CNT (5)
 
 // 发动机转速的更新时间，单位：ms
-// #define ENGINE_SPEED_SCAN_UPDATE_TIME (500)
+// #define ENGINE_SPEED_SCAN_UPDATE_TIME (200) // 速度变化较大的时候，LCD显示的滑动条会有停顿
+// #define ENGINE_SPEED_SCAN_UPDATE_TIME (175) //  速度变化较大的时候，LCD显示的滑动条会有停顿
+// #define ENGINE_SPEED_SCAN_UPDATE_TIME (150) //
+// #define ENGINE_SPEED_SCAN_UPDATE_TIME (125) //
 #define ENGINE_SPEED_SCAN_UPDATE_TIME (100) // 旧版的更新时间
+// #define ENGINE_SPEED_SCAN_UPDATE_TIME (85) //
+// #define ENGINE_SPEED_SCAN_UPDATE_TIME (70) // 有概率会导致LCD显示的滑动条跳变
 // #define ENGINE_SPEED_SCAN_UPDATE_TIME (50)
 /*
     发动机转速的超时时间，单位：ms
     如果超时时间到来，还没有检测到脉冲，认为发动机转速为0
 */
-#define ENGINE_SPEED_SCAN_OVER_TIME (600)
+// #define ENGINE_SPEED_SCAN_OVER_TIME (600)
 
-#define ENGINE_SPEED_SCAN_BUFF_SIZE (6)                                                      // 存放发动机转速值的缓冲区大小
-#define ENGINE_SPEED_SEND_PERIOD (ENGINE_SPEED_SCAN_OVER_TIME / ENGINE_SPEED_SCAN_BUFF_SIZE) // 发动机转速更新发送时间，单位：ms （要小于一轮发送机转速的扫描检测时间）
+// #define ENGINE_SPEED_SCAN_BUFF_SIZE (6)                                                      // 存放发动机转速值的缓冲区大小
+// #define ENGINE_SPEED_SEND_PERIOD (ENGINE_SPEED_SCAN_OVER_TIME / ENGINE_SPEED_SCAN_BUFF_SIZE) // 发动机转速更新发送时间，单位：ms （要小于一轮发送机转速的扫描检测时间）
 
 // 检测发动机转速所需的配置
 // ======================================================
@@ -43,8 +46,8 @@
 
 #define CONVER_ONE_MINUTE_TO_MS (60000UL) // 将1min转换成以ms为单位的数据
 
-extern volatile bit flag_is_engine_speed_scan_over_time; // 标志位，发动机转速检测是否超时
-extern volatile u32 engine_speed_scan_cnt;               // 检测到的脉冲个数，在定时器中断累加
+// extern volatile bit flag_is_engine_speed_scan_over_time; // 标志位，发动机转速检测是否超时
+extern volatile u32 engine_speed_scan_pulse_cnt; // 检测到的脉冲个数，在定时器中断累加
 extern volatile u16 engine_speed_scan_ms;
 
 // extern bit flag_is_send_engine_speed_time_come; // 标志位，发送发动机转速的时间到来

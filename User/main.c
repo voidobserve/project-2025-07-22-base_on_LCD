@@ -52,10 +52,6 @@ void user_init(void)
     adc_config();
 #endif
 
-#if TOUCH_KEY_ENABLE
-    tk_param_init(); // 触摸按键模块初始化
-#endif
-
 #if IC_1302_ENABLE
     aip1302_config(); // 初始化时钟ic，函数内部会读取时间信息，并存放到全局变量中
 #endif
@@ -110,6 +106,14 @@ void main(void)
     P23 = 1;
     delay_ms(1000);
     P23 = 0;
+
+#if TOUCH_KEY_ENABLE
+    /*
+        触摸按键模块初始化
+        要等一段时间再初始化触摸按键的引脚，如果一上电就初始化，会有概率一直检测到某个按键长按
+    */
+    tk_param_init();
+#endif
 
     // printf("sys reset\n");
 

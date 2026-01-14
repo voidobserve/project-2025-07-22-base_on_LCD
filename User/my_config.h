@@ -20,9 +20,7 @@
 #define ENGINE_SPEED_SCAN_ENABLE 1  // 是否使能发动机转速检测功能
 #define BATTERY_SCAN_ENABLE 1       // 是否使能电池检测功能
 #define FUEL_CAPACITY_SCAN_ENABLE 1 // 是否使能油量检测功能
-
 #define PIN_LEVEL_SCAN_ENABLE 1 // 是否使能引脚电平检测功能
-
 #define IC_1302_ENABLE 1 // 是否使能时钟IC 1302
 
 #define TEMP_OF_WATER_SCAN_ENABLE 0 // 是否使能水温检测

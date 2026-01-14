@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.7.0   TMR1                                                              12/23/2025 15:43:35 PAGE 1   
+C51 COMPILER V9.60.7.0   TMR1                                                              01/14/2026 17:22:27 PAGE 1   
 
 
 C51 COMPILER V9.60.7.0, COMPILATION OF MODULE TMR1
@@ -62,7 +62,7 @@ line level    source
   50   1          __IRQnIPnPush(TMR1_IRQn);
   51   1      
   52   1          // ---------------- 用户函数处理 -------------------
-C51 COMPILER V9.60.7.0   TMR1                                                              12/23/2025 15:43:35 PAGE 2   
+C51 COMPILER V9.60.7.0   TMR1                                                              01/14/2026 17:22:27 PAGE 2   
 
   53   1      
   54   1          // 周期中断
@@ -126,7 +126,7 @@ line level    source
  112   2      
  113   2      #if SPEED_SCAN_ENABLE
  114   2              {
-C51 COMPILER V9.60.7.0   TMR1                                                              12/23/2025 15:43:35 PAGE 3   
+C51 COMPILER V9.60.7.0   TMR1                                                              01/14/2026 17:22:27 PAGE 3   
 
  115   3                  static u16 cnt = 0;
  116   3                  cnt++;
@@ -136,47 +136,34 @@ line level    source
  120   4                      flag_is_send_speed_time_come = 1;
  121   4                  }
  122   3              }
- 123   2      #endif
+ 123   2      #endif 
  124   2      
- 125   2      #if ENGINE_SPEED_SCAN_ENABLE
- 126   2              // 现在不使用缓冲区，改成检测到发动机转速就发送数据
- 127   2              // {
- 128   2              //     static u16 cnt = 0;
- 129   2              //     cnt++;
- 130   2              //     if (cnt >= ENGINE_SPEED_SEND_PERIOD)
- 131   2              //     {
- 132   2              //         cnt = 0;
- 133   2              //         flag_is_send_engine_speed_time_come = 1;
- 134   2              //     }
- 135   2              // }
+ 125   2              // if (mileage_save_time_cnt < 4294967295 - diff_ms_cnt) // 防止计数溢出
+ 126   2              if (mileage_save_time_cnt < 65535) // 防止计数溢出
+ 127   2              {
+ 128   3                  mileage_save_time_cnt++;
+ 129   3              }
+ 130   2      
+ 131   2      #if FUEL_CAPACITY_SCAN_ENABLE
+ 132   2              // if (fuel_capacity_scan_cnt < 4294967295 - diff_ms_cnt) // 防止计数溢出
+ 133   2              {
+ 134   3                  fuel_capacity_scan_cnt++;
+ 135   3              }
  136   2      #endif
  137   2      
- 138   2              // if (mileage_save_time_cnt < 4294967295 - diff_ms_cnt) // 防止计数溢出
- 139   2              if (mileage_save_time_cnt < 65535) // 防止计数溢出
- 140   2              {
- 141   3                  mileage_save_time_cnt++;
- 142   3              }
- 143   2      
- 144   2      #if FUEL_CAPACITY_SCAN_ENABLE
- 145   2              // if (fuel_capacity_scan_cnt < 4294967295 - diff_ms_cnt) // 防止计数溢出
- 146   2              {
- 147   3                  fuel_capacity_scan_cnt++;
+ 138   2              // if (synchronous_request_status == SYN_REQUEST_STATUS_HANDLING)
+ 139   2              {
+ 140   3                  synchronous_request_time_cnt++; // 同步请求的冷却计时
+ 141   3                  // synchronous_request_time_cnt += diff_ms_cnt; // 同步请求的冷却计时
+ 142   3                  if (synchronous_request_time_cnt >= 2000)
+ 143   3                  {
+ 144   4                      // 如果接收同步请求已经过了 xx s，清除冷却状态
+ 145   4                      synchronous_request_time_cnt = 0;
+ 146   4                      synchronous_request_status = SYN_REQUEST_STATUS_NONE;
+ 147   4                  }
  148   3              }
- 149   2      #endif
- 150   2      
- 151   2              // if (synchronous_request_status == SYN_REQUEST_STATUS_HANDLING)
- 152   2              {
- 153   3                  synchronous_request_time_cnt++; // 同步请求的冷却计时
- 154   3                  // synchronous_request_time_cnt += diff_ms_cnt; // 同步请求的冷却计时
- 155   3                  if (synchronous_request_time_cnt >= 2000)
- 156   3                  {
- 157   4                      // 如果接收同步请求已经过了 xx s，清除冷却状态
- 158   4                      synchronous_request_time_cnt = 0;
- 159   4                      synchronous_request_status = SYN_REQUEST_STATUS_NONE;
- 160   4                  }
- 161   3              }
- 162   2      
- 163   2      #if 0 // 日期和时间合到了一起，就不用这部分程序
+ 149   2      
+ 150   2      #if 0 // 日期和时间合到了一起，就不用这部分程序
                   if (update_date_status == UPDATE_STATUS_HANDLING)
                   {
                       // 如果更新日期进入冷却状态，进行冷却计时
@@ -190,35 +177,35 @@ line level    source
                       }
                   }
               #endif
-C51 COMPILER V9.60.7.0   TMR1                                                              12/23/2025 15:43:35 PAGE 4   
+ 164   2      
+ 165   2              // if (update_time_status == UPDATE_STATUS_HANDLING)
+ 166   2              {
+ 167   3                  // 如果更新时间进入冷却状态，进行冷却计时
+ 168   3                  update_time_cooling_cnt++;
+ 169   3                  // update_time_cooling_cnt += diff_ms_cnt;
+ 170   3                  if (update_time_cooling_cnt >= 100) // xx ms
+ 171   3                  {
+ 172   4                      // 过了冷却时间，退出冷却状态
+ 173   4                      update_time_cooling_cnt = 0;
+ 174   4                      update_time_status = UPDATE_STATUS_NONE;
+ 175   4                  }
+ 176   3              }
+C51 COMPILER V9.60.7.0   TMR1                                                              01/14/2026 17:22:27 PAGE 4   
 
  177   2      
- 178   2              // if (update_time_status == UPDATE_STATUS_HANDLING)
+ 178   2              // if (mileage_update_time_cnt < 65535)
  179   2              {
- 180   3                  // 如果更新时间进入冷却状态，进行冷却计时
- 181   3                  update_time_cooling_cnt++;
- 182   3                  // update_time_cooling_cnt += diff_ms_cnt;
- 183   3                  if (update_time_cooling_cnt >= 100) // xx ms
- 184   3                  {
- 185   4                      // 过了冷却时间，退出冷却状态
- 186   4                      update_time_cooling_cnt = 0;
- 187   4                      update_time_status = UPDATE_STATUS_NONE;
- 188   4                  }
- 189   3              }
- 190   2      
- 191   2              // if (mileage_update_time_cnt < 65535)
- 192   2              {
- 193   3                  mileage_update_time_cnt++;
- 194   3              }
- 195   2      
- 196   2      #if BATTERY_SCAN_ENABLE
- 197   2              // if (battery_scan_time_cnt < 4294967295)
- 198   2              {
- 199   3                  battery_scan_time_cnt++;
- 200   3              }
- 201   2      #endif // BATTERY_SCAN_ENABLE
- 202   2      
- 203   2      #if 0 // DEBUG 只在测试时使用
+ 180   3                  mileage_update_time_cnt++;
+ 181   3              }
+ 182   2      
+ 183   2      #if BATTERY_SCAN_ENABLE
+ 184   2              // if (battery_scan_time_cnt < 4294967295)
+ 185   2              {
+ 186   3                  battery_scan_time_cnt++;
+ 187   3              }
+ 188   2      #endif // BATTERY_SCAN_ENABLE
+ 189   2      
+ 190   2      #if 0 // DEBUG 只在测试时使用
               
                           {
                               static u16 cnt;
@@ -231,31 +218,29 @@ line level    source
                           }
               
               #endif // // DEBUG 只在测试时使用
- 216   2      
- 217   2              // {
- 218   2              //     static u16 cnt;
- 219   2              //     cnt++;
- 220   2              //     if (cnt >= 4000)
- 221   2              //     {
- 222   2              //         cnt = 0;
- 223   2              //         flag_debug_is_send_time = 1; // 发送时间
- 224   2              //         // flag_debug_is_send_time_2 = 1;
- 225   2              //     }
- 226   2              // }
- 227   2          }
- 228   1      
- 229   1          // P20 = 0;// 测试中断持续时间
- 230   1          // 退出中断设置IP，不可删除
- 231   1          __IRQnIPnPop(TMR1_IRQn);
- 232   1      }
+ 203   2      
+ 204   2              // {
+ 205   2              //     static u16 cnt;
+ 206   2              //     cnt++;
+ 207   2              //     if (cnt >= 4000)
+ 208   2              //     {
+ 209   2              //         cnt = 0;
+ 210   2              //         flag_debug_is_send_time = 1; // 发送时间
+ 211   2              //         // flag_debug_is_send_time_2 = 1;
+ 212   2              //     }
+ 213   2              // }
+ 214   2          }
+ 215   1      
+ 216   1          // P20 = 0;// 测试中断持续时间
+ 217   1          // 退出中断设置IP，不可删除
+ 218   1          __IRQnIPnPop(TMR1_IRQn);
+ 219   1      }
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
    CODE SIZE        =    340    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =      2    ----
-C51 COMPILER V9.60.7.0   TMR1                                                              12/23/2025 15:43:35 PAGE 5   
-
    PDATA SIZE       =   ----    ----
    DATA SIZE        =   ----    ----
    IDATA SIZE       =   ----    ----

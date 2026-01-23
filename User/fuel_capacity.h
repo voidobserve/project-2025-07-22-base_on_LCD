@@ -117,6 +117,7 @@ enum
 
 // 如果当前油量百分比与上一次油量百分比不在同一个挡位，要更新这个挡位所需的时间，单位：ms
 #define FUEL_UPDATE_LAST_FUEL_PERCENTAGE_TIME ((u16)40000)
+// #define FUEL_UPDATE_LAST_FUEL_PERCENTAGE_TIME ((u16)2000) // USER_TO_DO 测试时使用，实际要改回去
 
 // 油量检测配置
 // ======================================================
@@ -141,6 +142,8 @@ extern volatile bit flag_timer_scan_update_fuel_gear;
 extern volatile u16 timer_scan_update_fuel_gear_cnt;
 
 // extern volatile u16 fuel_adc_val; // DEBUG 测试用
+void adc_update_fuel_val(u16 adc_val);
+u16 adc_get_fuel_val(void);
 
 void fuel_capacity_scan(void);
 

@@ -109,7 +109,29 @@ void send_data(u8 instruct, u32 send_data)
     check_num &= 0xFF;         // 取前面的数字相加的低八位
     uart0_sendbyte(check_num); // 发送校验和
 
-    delay_ms(1);
-    // delay_ms(10); // 每次发送完成后，延时10ms
 #endif
+
+#if 0 // 测试时使用，只发送发动机转速
+    if (SEND_ENGINE_SPEED == instruct)
+    {
+        u32 check_num = 0; // 存放校验和
+        check_num += FORMAT_HEAD;
+        check_num += 0x06 + (u8)instruct + (u8)(send_data >> 8) + (u8)(send_data);
+
+        uart0_sendbyte(FORMAT_HEAD);    // 先发送格式头
+        uart0_sendbyte(0x06);           // 发送指令的总长度
+        uart0_sendbyte(instruct);       // 发送指令
+        uart0_sendbyte(send_data >> 8); // 发送信息
+        uart0_sendbyte(send_data);      // 发送信息
+        uart0_sendbyte(check_num);
+        // USER_TO_DO 测试时使用，用于观察发送时间间隔
+        // if (instruct == SEND_ENGINE_SPEED)
+        // {
+        //     P23 = ~P23;
+        // }
+    }
+#endif
+
+    // delay_ms(1);
+    // delay_ms(10); // 每次发送完成后，延时10ms
 }

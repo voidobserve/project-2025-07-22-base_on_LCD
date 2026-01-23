@@ -236,6 +236,8 @@ void instruction_scan(void)
 
 void instruction_handle(void)
 {
+#if 1
+
     if (flag_get_all_status)
     {
         // 如果要获取所有功能的状态
@@ -622,4 +624,5 @@ void instruction_handle(void)
         distance = 0;
         fun_info_save(); // 将信息写回flash
     }
+#endif
 }

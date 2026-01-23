@@ -21,34 +21,6 @@ void mileage_scan(void)
     */
     static volatile bit flag_is_any_mileage_save;
 
-    /*
-        速度为0，里程变化一次就保存一次
-        速度不为0， 每30s且里程有变化，则保存一次，每走过100m也保存一次
-    */
-    // if (mileage_save_time_cnt >= 30000) // 30 000 ms -- 30s
-    // {
-    //     if (fun_info.speed > 0 && flag_is_any_mileage_save)
-    //     {
-    //         // 速度大于0且里程有变化
-    //         // printf("30s \n");
-    //         fun_info_save(); // 将 fun_info 写回flash
-    //         flag_is_any_mileage_save = 0;
-    //     }
-
-    //     mileage_save_time_cnt = 0;
-    // }
-
-    // 如果速度==0，里程有变化，每 1s 写入一次flash
-    // if ((0 == fun_info.speed) &&           /* 当前速度为0 */
-    //     (mileage_save_time_cnt >= 1000) && /* 1s 后 */
-    //     flag_is_any_mileage_save)          /* 里程有变化，需要保存 */
-    // {
-    //     // printf("1s \n");
-    //     fun_info_save();
-    //     flag_is_any_mileage_save = 0;
-    //     mileage_save_time_cnt = 0;
-    // }
-
     // 每过1s，且里程有变化，就保存一次；这个里程变化的条件最好大于10m，否则会经常写入eeprom
     if ((mileage_save_time_cnt >= 1000) && /* 1s后 */
         flag_is_any_mileage_save)          /* 里程有变化，需要保存 */

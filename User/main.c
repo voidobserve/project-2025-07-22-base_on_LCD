@@ -38,7 +38,9 @@ void user_init(void)
     pin_level_scan_config(); // 刹车、转向灯、挡位的检测引脚配置
 #endif
 
-    tmr1_config(); // 检测一段时间内的脉冲个数所需的定时器(用于计时)
+#if (BATTERY_SCAN_ENABLE || AD_KEY_ENABLE || FUEL_CAPACITY_SCAN_ENABLE || TEMP_OF_WATER_SCAN_ENABLE)
+    adc_config();
+#endif
 
 #if SPEED_SCAN_ENABLE
     speed_scan_config(); // 时速扫描的配置
@@ -48,27 +50,22 @@ void user_init(void)
     engine_speed_scan_config(); // 发动机转速扫描的配置
 #endif                          // #if ENGINE_SPEED_SCAN_ENABLE
 
-#if (BATTERY_SCAN_ENABLE || AD_KEY_ENABLE || FUEL_CAPACITY_SCAN_ENABLE || TEMP_OF_WATER_SCAN_ENABLE)
-    adc_config();
-#endif
-
 #if IC_1302_ENABLE
     aip1302_config(); // 初始化时钟ic，函数内部会读取时间信息，并存放到全局变量中
 #endif
 
+    tmr1_config(); // 检测一段时间内的脉冲个数所需的定时器(用于计时)
     tmr2_config(); // 扫描脉冲(电平变化)的定时器
 
-    // tmr1_enable(); // 打开 检测引脚电平、检测时速、发动机转速、更新里程、定时检测油量 使用的定时器 【现在直接放到了tmr1_config()函数中】
-    // tmr2_enable(); // 打开定时检测脉冲的定时器
-
+#if 1 // USER_TO_DO 在测试时屏蔽
     iic_config();
 
     // eeprom_24cxx_clear(); // 全片擦除
-
     // printf("begin read eeprom\n");
-    fun_info_init(); // 初始化用于存放信息的变量（要放在iic初始化后面）
 
-    // delay_ms(10); // 等待系统稳定
+    fun_info_init(); // 初始化用于存放信息的变量（要放在iic初始化后面）
+#endif
+
     delay_ms(1); // 等待系统稳定
     // delay_ms(2000); // 等待系统稳定
 }
@@ -97,6 +94,10 @@ void main(void)
     // P2_MD0 |= GPIO_P20_MODE_SEL(0x1);  // 输出模式
     // FOUT_S20 |= GPIO_FOUT_AF_FUNC;
     // P20 = 0;
+    // P2_MD0 &= ~GPIO_P22_MODE_SEL(0x03);
+    // P2_MD0 |= GPIO_P22_MODE_SEL(0x01);
+    // FOUT_S22 |= GPIO_FOUT_AF_FUNC;
+    // P22 = 0;
 
 #if USE_MY_DEBUG
     printf("sys reset\n");
@@ -151,7 +152,6 @@ void main(void)
 
 #if ENGINE_SPEED_SCAN_ENABLE
         engine_speed_scan(); // 检测发动机转速
-                             // engine_speed_send_data(); // 发动发动机转速数据，需要时间到来才会执行
 
 #endif // #if ENGINE_SPEED_SCAN_ENABLE
 

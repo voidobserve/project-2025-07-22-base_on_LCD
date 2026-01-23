@@ -2,82 +2,17 @@
 
 #if AD_KEY_ENABLE
 
-// 自定义ad按键的键值:
-// enum
-// {
-//     AD_KEY_ID_ONE_LEFT = 0x01,
-//     AD_KEY_ID_TWO_LEFT,
-//     AD_KEY_ID_THREE_LEFT,
-//     AD_KEY_ID_ONE_RIGHT,
-//     AD_KEY_ID_TWO_RIGHT,
-//     AD_KEY_ID_THREE_RIGHT,
-// };
-
-// 定义按键扫描函数中，各个扫描状态：
-// enum
-// {
-//     AD_KEY_SCAN_STATUS_NONE,                  // 空状态，检测是否有按键按下
-//     AD_KEY_SCAN_STATUS_IS_DETECT_LOOG_PRESS,  // 正在检测是否为长按（要跟检测长按作区分）
-//     AD_KEY_SCAN_STATUS_IS_HANDLE_LONG_PRESS,  // 正在处理长按
-//     AD_KEY_SCAN_STATUS_IS_HANDLE_HOLD_PRESS,  // 正在处理长按持续（不松手）
-//     AD_KEY_SCAN_STATUS_IS_HANDLE_SHORT_PRESS, // 正在处理短按
-
-//     AD_KEY_SCAN_STATUS_IS_WAIT_SHORT_PRESS_RELEASE, // 正在等待短按松开
-//     AD_KEY_SCAN_STATUS_IS_WAIT_LONG_PRESS_RELEASE,  // 正在等待长按松开
-//     AD_KEY_SCAN_STATUS_IS_END,                      // 收尾处理
-// };
-// static volatile u8 ad_key_scan_status = 0; // 非阻塞的按键扫描函数中，使用的状态机
+static volatile adc_val_of_adkey = 0;
 
 // 存放按键对应的ad值:
 static const u16 ad_key_scan_table[][2] = {
     // [][0]按键对应的标号,在判断按键键值时使用   [][1]按键对应的ad值
-    // {AD_KEY_ID_ONE_LEFT, AD_KEY_ONE_LEFT_VAL},
-    // {AD_KEY_ID_TWO_LEFT, AD_KEY_TWO_LEFT_VAL},
-    // {AD_KEY_ID_THREE_LEFT, AD_KEY_THREE_LEFT_VAL},
-    // {AD_KEY_ID_ONE_RIGHT, AD_KEY_ONE_RIGHT_VAL},
-    // {AD_KEY_ID_TWO_RIGHT, AD_KEY_TWO_RIGHT_VAL},
-    // {AD_KEY_ID_THREE_RIGHT, AD_KEY_THREE_RIGHT_VAL},
 
     {AD_KEY_ID_1, AD_KEY_ID_1_VAL}, // 339
     {AD_KEY_ID_2, AD_KEY_ID_2_VAL}, // 1140
     {AD_KEY_ID_3, AD_KEY_ID_3_VAL}, // 1875
     {AD_KEY_ID_4, AD_KEY_ID_4_VAL}, // 2333
     {AD_KEY_ID_5, AD_KEY_ID_5_VAL}, // 3309
-};
-
-// 定义ad按键的按键事件
-enum AD_KEY_EVENT
-{
-    AD_KEY_EVENT_NONE,
-    AD_KEY_EVENT_ID_1_CLICK,
-    AD_KEY_EVENT_ID_1_DOUBLE,
-    AD_KEY_EVENT_ID_1_LONG,
-    AD_KEY_EVENT_ID_1_HOLD,
-    AD_KEY_EVENT_ID_1_LOOSE,
-
-    AD_KEY_EVENT_ID_2_CLICK,
-    AD_KEY_EVENT_ID_2_DOUBLE,
-    AD_KEY_EVENT_ID_2_LONG,
-    AD_KEY_EVENT_ID_2_HOLD,
-    AD_KEY_EVENT_ID_2_LOOSE,
-
-    AD_KEY_EVENT_ID_3_CLICK,
-    AD_KEY_EVENT_ID_3_DOUBLE,
-    AD_KEY_EVENT_ID_3_LONG,
-    AD_KEY_EVENT_ID_3_HOLD,
-    AD_KEY_EVENT_ID_3_LOOSE,
-
-    AD_KEY_EVENT_ID_4_CLICK,
-    AD_KEY_EVENT_ID_4_DOUBLE,
-    AD_KEY_EVENT_ID_4_LONG,
-    AD_KEY_EVENT_ID_4_HOLD,
-    AD_KEY_EVENT_ID_4_LOOSE,
-
-    AD_KEY_EVENT_ID_5_CLICK,
-    AD_KEY_EVENT_ID_5_DOUBLE,
-    AD_KEY_EVENT_ID_5_LONG,
-    AD_KEY_EVENT_ID_5_HOLD,
-    AD_KEY_EVENT_ID_5_LOOSE,
 };
 
 #define AD_KEY_EFFECT_EVENT_NUMS (5) // 单个ad按键的有效按键事件个数
@@ -142,20 +77,11 @@ volatile struct key_driver_para ad_key_para = {
 static u16 __conver_cur_ad_to_ad_key(const u16 cur_ad_key)
 {
     u8 i = 0;
-    // u16 ad_key_id = AD_KEY_ID_NONE;
     u16 ad_key_id = NO_KEY;
 
     // ARRAY_SIZE(ad_key_scan_table) 这里是求出数组中存放的按键个数
     for (i = 0; i < ARRAY_SIZE(ad_key_scan_table); i++)
     {
-        // if (cur_ad_key > (ad_key_scan_table[i][1] - AD_KEY_INTERVAL) &&
-        //     cur_ad_key < (ad_key_scan_table[i][1] + AD_KEY_INTERVAL))
-        // {
-        //     // 如果之前未检测到按键，现在检测到按键按下
-        //     ad_key_id = ad_key_scan_table[i][0]; // 获取ad值对应的键值
-        //     break;
-        // }
-
         if (cur_ad_key < ad_key_scan_table[i][1])
         {
             ad_key_id = ad_key_scan_table[i][0];
@@ -184,16 +110,6 @@ static u8 __ad_key_get_event(const u8 key_val, const u8 key_event)
         {
             // 如果往 KEY_EVENT 枚举中添加了新的按键事件，这里查表的方法就会失效，需要手动修改
             ret_key_event = ad_key_event_table[i][key_event];
-
-            // if (KEY_EVENT_CLICK == key_event)
-            // {
-            //     ret_key_event = ad_key_event_table[i][1];
-            // }
-            // else if (KEY_EVENT_DOUBLE_CLICK == key_event)
-            // {
-            //     ret_key_event = ad_key_event_table[i][2];
-            // }
-
             break;
         }
     }
@@ -201,20 +117,25 @@ static u8 __ad_key_get_event(const u8 key_val, const u8 key_event)
     return ret_key_event;
 }
 
+void adc_update_ad_key_val(u16 adc_val)
+{
+    adc_val_of_adkey = adc_val;
+}
+
+u16 adc_get_ad_key_val(void)
+{
+    return adc_val_of_adkey;
+}
+
 u8 ad_key_get_key_id(void)
 {
     volatile u16 ad_key_id = 0;       // 单次按键标志
-    adc_sel_pin(ADC_PIN_KEY);         // 内部至少占用1ms
-    ad_key_id = adc_single_convert(); // 直接用单次转换,不取平均值,防止识别不到按键
+    // adc_sel_pin(ADC_PIN_KEY);         // 内部至少占用1ms
+    // ad_key_id = adc_single_convert(); // 直接用单次转换,不取平均值,防止识别不到按键
+    ad_key_id = adc_get_ad_key_val();
     // printf("ad key val %u \n", ad_key_id);
     // printf("ad_key_id val %u\n", ad_key_id);
     ad_key_id = __conver_cur_ad_to_ad_key(ad_key_id); // 将采集到的ad值转换成自定义的键值
-
-    // 测试用：
-    // if (ad_key_id != 0)
-    // {
-    //     printf("ad key id %u\n", ad_key_id);
-    // }
 
     return ad_key_id;
 }
@@ -350,4 +271,4 @@ void ad_key_handle(void)
     }
 }
 
-#endif//  AD_KEY_ENABLE
+#endif //  AD_KEY_ENABLE

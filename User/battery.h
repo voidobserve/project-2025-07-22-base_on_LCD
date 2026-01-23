@@ -26,6 +26,8 @@
 
 extern volatile u16 battery_scan_time_cnt; // 电池扫描时间计时
 
+void adc_update_battery_val(u16 adc_val);
+u16 adc_get_battery_val(void);
 void battery_scan(void);
 
 #endif // BATTERY_SCAN_ENABLE

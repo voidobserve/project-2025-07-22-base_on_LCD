@@ -1,4 +1,6 @@
 #include "tmr1.h"
+#include "engine_speed_scan.h"
+#include "adc.h"
 
 // #define TMR1_CNT_TIME 152 // 152 * 0.65625us 约等于100us
 
@@ -14,7 +16,7 @@
  */
 void tmr1_config(void)
 {
-    __SetIRQnIP(TMR1_IRQn, TMR1_IQn_CFG); // 设置中断优先级（TMR1）
+    // __SetIRQnIP(TMR1_IRQn, TMR1_IQn_CFG); // 设置中断优先级（TMR1）
     __DisableIRQ(TMR1_IRQn);              // 禁用中断
     IE_EA = 1;                            // 打开总中断
 
@@ -54,12 +56,7 @@ void TIMR1_IRQHandler(void) interrupt TMR1_IRQn
     // 周期中断
     if (TMR1_CONH & TMR_PRD_PND(0x1))
     {
-        TMR1_CONH |= TMR_PRD_PND(0x1); // 清除pending
-
-        // if (tmr1_cnt < 4294967295)
-        // {
-        //     tmr1_cnt++;
-        // }
+        TMR1_CONH |= TMR_PRD_PND(0x1); // 清除pending 
 
         // 串口接收超时计数
         if (flag_is_uart0_receive_timeout_enable)
@@ -120,7 +117,7 @@ void TIMR1_IRQHandler(void) interrupt TMR1_IRQn
                 flag_is_send_speed_time_come = 1;
             }
         }
-#endif 
+#endif
 
         // if (mileage_save_time_cnt < 4294967295 - diff_ms_cnt) // 防止计数溢出
         if (mileage_save_time_cnt < 65535) // 防止计数溢出
@@ -186,6 +183,15 @@ void TIMR1_IRQHandler(void) interrupt TMR1_IRQn
             battery_scan_time_cnt++;
         }
 #endif // BATTERY_SCAN_ENABLE
+
+#if ENGINE_SPEED_SCAN_ENABLE
+        {
+            engine_speed_scan_ms++;
+            update_engine_speed_scan_data();
+        }
+#endif
+
+        adc_channel_handle();
 
 #if 0 // DEBUG 只在测试时使用
 

@@ -29,7 +29,7 @@ static volatile u32 blank_index; // 记录当前存放数据帧的缓冲区的�
 */
 volatile bit flag_is_uart0_receive_timeout;        // 标志位，串口是否接收超时，0--未超时，1--已超时
 volatile bit flag_is_uart0_receive_timeout_enable; // 标志位，是否使能串口接收超时，0--否，1--串口接收了数据，却未收到完整一帧数据，使能串口接收超时
-volatile u8 uart0_receive_timeout_cnt;            // 存放串口接收超时计数值
+volatile u8 uart0_receive_timeout_cnt;             // 存放串口接收超时计数值
 
 #if USE_MY_DEBUG
 #if 1 // 将uart0用作串口打印
@@ -205,7 +205,7 @@ void UART0_IRQHandler(void) interrupt UART0_IRQn
                 {
                     // tmr0_disable();
                     // tmr0_cnt = 0;
-                    
+
                     uart0_receive_timeout_disable(); // 不使能接收超时检测功能
                     __IRQnIPnPop(UART0_IRQn);
                     return;
@@ -226,9 +226,12 @@ void UART0_IRQHandler(void) interrupt UART0_IRQn
 // UART0发送一个字节数据的函数
 void uart0_sendbyte(u8 senddata)
 {
+
     while (!(UART0_STA & UART_TX_DONE(0x01)))
         ;
+    // IE_EA = 0;
     UART0_DATA = senddata;
+    // IE_EA = 1;
     while (!(UART0_STA & UART_TX_DONE(0x01))) // 等待这次发送完成
         ;
 }

@@ -69,7 +69,7 @@ void tmr2_disable(void)
 }
 #endif // void tmr2_disable(void)
 
-extern void update_engine_speed_scan_data(void); // 更新检测发动机转速的数据
+
 #if SPEED_SCAN_ENABLE
 extern void update_speed_scan_data(void);
 #endif // #if SPEED_SCAN_ENABLE
@@ -101,23 +101,22 @@ void TIMR2_IRQHandler(void) interrupt TMR2_IRQn
 
 #if ENGINE_SPEED_SCAN_ENABLE
 
-        { // 记录发动机转速扫描的时间
-            static u8 cnt = 0;
-            cnt++;
-            if (cnt >= 20) // 20 * 50us，每1ms进入一次
-            {
-                cnt = 0;
-                engine_speed_scan_ms++;
+        // { // 记录发动机转速扫描的时间
+        //     static u8 cnt = 0;
+        //     cnt++;
+        //     if (cnt >= 20) // 20 * 50us，每1ms进入一次
+        //     {
+        //         cnt = 0;
 
-                // if (engine_speed_scan_ms >= ENGINE_SPEED_SCAN_OVER_TIME &&
-                //     flag_is_engine_speed_scan_over_time == 0)
-                // {
-                //     engine_speed_scan_ms = 0;
-                //     flag_is_engine_speed_scan_over_time = 1; // 说明超时，脉冲计数一直没有加一
-                // }
-                update_engine_speed_scan_data();
-            }
-        }
+        //         // if (engine_speed_scan_ms >= ENGINE_SPEED_SCAN_OVER_TIME &&
+        //         //     flag_is_engine_speed_scan_over_time == 0)
+        //         // {
+        //         //     engine_speed_scan_ms = 0;
+        //         //     flag_is_engine_speed_scan_over_time = 1; // 说明超时，脉冲计数一直没有加一
+        //         // }
+                
+        //     }
+        // }
 
         if (ENGINE_SPEED_SCAN_PIN) // 检测发动机转速的引脚
         {

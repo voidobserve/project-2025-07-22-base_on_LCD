@@ -57,23 +57,48 @@ enum
     AD_KEY_ID_5,
 };
 
-// #define AD_KEY_INTERVAL (75)         // 判断区间，检测到ad值在(目标ad值-区间区 ~ 目标ad值+区间值,认为条件成立)
-// #define AD_KEY_ONE_LEFT_VAL (876)    // 从左往下数，第一个按键对应的ad值 (1.07V)
-// #define AD_KEY_TWO_LEFT_VAL (3604)   // 从左往下数，第二个按键对应的ad值 (4.40V)
-// #define AD_KEY_THREE_LEFT_VAL (2859) // 从左往下数，第三个按键对应的ad值 (3.49V)
 
-// #define AD_KEY_ONE_RIGHT_VAL (1499)   // 从右往下数，第一个按键对应的ad值 (1.83V)
-// #define AD_KEY_TWO_RIGHT_VAL (1744)   // 从右往下数，第二个按键对应的ad值 (2.13V)
-// #define AD_KEY_THREE_RIGHT_VAL (2359) // 从右往下数，第三个按键对应的ad值 (2.88V)
+// 定义ad按键的按键事件
+enum AD_KEY_EVENT
+{
+    AD_KEY_EVENT_NONE,
+    AD_KEY_EVENT_ID_1_CLICK,
+    AD_KEY_EVENT_ID_1_DOUBLE,
+    AD_KEY_EVENT_ID_1_LONG,
+    AD_KEY_EVENT_ID_1_HOLD,
+    AD_KEY_EVENT_ID_1_LOOSE,
 
-// 不能使用这种方式，ad值不在定义的按键对应的ad值区间时，都认为按键没有按下:
-// #define AD_KEY_NONE (4095) // 没有按键按下时，对应的ad值
+    AD_KEY_EVENT_ID_2_CLICK,
+    AD_KEY_EVENT_ID_2_DOUBLE,
+    AD_KEY_EVENT_ID_2_LONG,
+    AD_KEY_EVENT_ID_2_HOLD,
+    AD_KEY_EVENT_ID_2_LOOSE,
 
-extern volatile struct key_driver_para ad_key_para;
-// extern key_driver_para_t ad_key_para; // 写成这种编译器会报错
-// extern volatile struct key_driver_para *p_ad_key_para;
+    AD_KEY_EVENT_ID_3_CLICK,
+    AD_KEY_EVENT_ID_3_DOUBLE,
+    AD_KEY_EVENT_ID_3_LONG,
+    AD_KEY_EVENT_ID_3_HOLD,
+    AD_KEY_EVENT_ID_3_LOOSE,
 
-// void ad_key_scan(void);
+    AD_KEY_EVENT_ID_4_CLICK,
+    AD_KEY_EVENT_ID_4_DOUBLE,
+    AD_KEY_EVENT_ID_4_LONG,
+    AD_KEY_EVENT_ID_4_HOLD,
+    AD_KEY_EVENT_ID_4_LOOSE,
+
+    AD_KEY_EVENT_ID_5_CLICK,
+    AD_KEY_EVENT_ID_5_DOUBLE,
+    AD_KEY_EVENT_ID_5_LONG,
+    AD_KEY_EVENT_ID_5_HOLD,
+    AD_KEY_EVENT_ID_5_LOOSE,
+};
+ 
+
+extern volatile struct key_driver_para ad_key_para; 
+ 
+void adc_update_ad_key_val(u16 adc_val);
+u16 adc_get_ad_key_val(void);
+
 void ad_key_handle(void);
 #endif // AD_KEY_ENABLE
 

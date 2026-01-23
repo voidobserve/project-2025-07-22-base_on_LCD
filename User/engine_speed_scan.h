@@ -1,5 +1,5 @@
-#ifndef __ENGINE_SPEED_SCAN_H
-#define __ENGINE_SPEED_SCAN_H
+#ifndef __ENGINE_SPEED_SCAN_H__
+#define __ENGINE_SPEED_SCAN_H__
 
 #include "include.h"   // 使用芯片官方提供的头文件
 #include "my_config.h" // 包含自定义的头文件
@@ -27,6 +27,16 @@
 // #define ENGINE_SPEED_SCAN_UPDATE_TIME (85) //
 // #define ENGINE_SPEED_SCAN_UPDATE_TIME (70) // 有概率会导致LCD显示的滑动条跳变
 // #define ENGINE_SPEED_SCAN_UPDATE_TIME (50)
+// #define ENGINE_SPEED_SCAN_UPDATE_TIME (20)
+// #define ENGINE_SPEED_SCAN_UPDATE_TIME (15)
+// #define ENGINE_SPEED_SCAN_UPDATE_TIME (11)
+// #define ENGINE_SPEED_SCAN_UPDATE_TIME (10)
+// #define ENGINE_SPEED_SCAN_UPDATE_TIME (8)
+// #define ENGINE_SPEED_SCAN_UPDATE_TIME (5)
+
+// 每两次发送的最大差值：
+#define ENGINE_SPEED_MAX_DIFF_RPM (65535) 
+// #define ENGINE_SPEED_MAX_DIFF_RPM (10) // 如果是10ms发送一次，每次发送最大差值不超过10，这样变化会过于慢
 /*
     发动机转速的超时时间，单位：ms
     如果超时时间到来，还没有检测到脉冲，认为发动机转速为0
@@ -52,10 +62,11 @@ extern volatile u16 engine_speed_scan_ms;
 
 // extern bit flag_is_send_engine_speed_time_come; // 标志位，发送发动机转速的时间到来
 
+extern void update_engine_speed_scan_data(void); // 更新检测发动机转速的数据
 extern void engine_speed_scan_config(void); // 发动机转速扫描的配置
 extern void engine_speed_scan(void);        // 发动机转速扫描
 
-extern void engine_speed_buff_update(u32 engine_speed);
+// extern void engine_speed_buff_update(u32 engine_speed);
 // extern void engine_speed_send_data(void);
 
 #endif // #if ENGINE_SPEED_SCAN_ENABLE

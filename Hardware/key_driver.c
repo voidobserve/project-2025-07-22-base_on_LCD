@@ -54,33 +54,6 @@ void key_driver_scan(void *_scan_para)
         is_key_active--;
     }
 
-    // if (cur_key_value != NO_KEY)
-    // {
-    //     //     printf("scan_times %bu\n", scan_para->scan_times);
-    //     //     printf("cur_scan_times %bu\n", scan_para->cur_scan_times);
-    //     //     printf("last_key %bu\n", scan_para->last_key);
-    //     //     printf("filter_value %bu\n", scan_para->filter_value);
-    //     //     printf("filter_cnt %bu\n", scan_para->filter_cnt);
-    //     //     printf("filter_time %bu\n", scan_para->filter_time);
-    //     printf("long_time %bu\n", ad_key_para.long_time);
-    //     printf("long_time %bu\n", (*scan_para).long_time);
-    //     //     printf("hold_time %bu\n", scan_para->hold_time);
-    //     //     printf("press_cnt %bu\n", scan_para->press_cnt);
-
-    //     //     printf("click_cnt %bu\n", scan_para->click_cnt);
-    //     //     printf("click_delay_cnt %bu\n", scan_para->click_delay_cnt);
-    //     //     printf("click_delay_time %bu\n", scan_para->click_delay_time);
-    //     //     printf("notify_value %bu\n", scan_para->notify_value);
-    //     //     printf("key_type %bu\n", scan_para->key_type);
-
-    //     //     printf("latest_key_val %bu\n", scan_para->latest_key_val);
-    //     //     printf("latest_key_event %bu\n", scan_para->latest_key_event);
-
-    //     printf("ad key long time addr %p\n", &ad_key_para.long_time);
-    //     // printf("scan para long time addr %p\n", &(scan_para->long_time));
-    //     printf("scan para long time addr %p\n", (*scan_para).long_time);
-    // }
-
     //===== 按键消抖处理
     if (cur_key_value != scan_para->filter_value && scan_para->filter_time)
     {
